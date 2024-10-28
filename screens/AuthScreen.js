@@ -26,15 +26,16 @@ export default function AuthScreen() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: loginUsername,
-          password: loginPassword,
+          //.trim() retire les espaces en trop mis par inadvertance
+          username: loginUsername.trim(),
+          password: loginPassword.trim(),
         }),
       });
       const data = await response.json();
       if (data.result) {
-        Alert.alert('Connexion réussie !', data.message);
+        Alert.alert('Connexion réussie ! ', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
-        navigation.navigate('TabNavigator') // Rediriger vers la page d'accueil
+        navigation.navigate('TabNavigator'); // Rediriger vers la page d'accueil
       } else {
         Alert.alert('Erreur', data.error);
       }
@@ -43,7 +44,7 @@ export default function AuthScreen() {
       Alert.alert('Erreur de connexion', 'Veuillez réessayer.');
     }
   };
-
+  
   const handleSignUp = async () => {
     try {
       const response = await fetch('https://conso-maestro-backend.vercel.app//users/signup', {
@@ -52,9 +53,9 @@ export default function AuthScreen() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: signupEmail,
-          username: signupUsername,
-          password: signupPassword,
+          email: signupEmail.trim(),
+          username: signupUsername.trim(),
+          password: signupPassword.trim(),
         }),
       });
       const data = await response.json();
