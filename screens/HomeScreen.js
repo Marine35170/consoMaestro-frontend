@@ -29,7 +29,7 @@ export default function HomeScreen({navigation}) {
         {/* Champ de saisie pour le code-barres */}
       <TextInput
         style={styles.input}
-        placeholder="Je saisis mon code-barres"
+        placeholder="Je saisis mon code-barre..."
         keyboardType="numeric"
       />
     </View>
