@@ -9,7 +9,7 @@ export default function HomeScreen({navigation}) {
       
         const handleScanPress = () => {
           {/* Naviguer vers la page de scan de produit*/}
-          navigation.navigate('ScanScreen');
+          navigation.navigate('ScanPage');
         };
 
     return (
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         height: 60,
         marginBottom: 10,
         marginRight: 250,
-        marginTop: -60,
+        marginTop: -55,
     },
     tipsContainer: {
         marginTop: 10,

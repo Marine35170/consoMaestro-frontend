@@ -1,7 +1,19 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 
+
+
 const FridgeScreen = () => {
+
+    const handleFreezerPress = () => {
+        {/* Naviguer vers la page du congélateur */}
+        navigation.navigate('FreezerPage');
+      };
+      const handleCeboardPress = () => {
+        {/* Naviguer vers la page du placard */}
+        navigation.navigate('CeboardPage');
+      };
+
   return (
     <View style={styles.container}>
         <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel}/>
@@ -19,20 +31,18 @@ const FridgeScreen = () => {
 
         <Text style={styles.ProductTitle}>Produit 3</Text>
         <Text style={styles.DLCDate}>DLC</Text>
-        <TouchableOpacity style={styles.scan} onPress={handleScanPress}>
           <Image source={require("../assets/FRIGO")} style={styles.frigoLogo} />
-        </TouchableOpacity>
       </View>
-      {/* Boutons d'accès congélateur et placards */}
-      <View style={styles.stockButtonsContainer}>
-      <TouchableOpacity style={styles.scan} onPress={handleScanPress}>
-                <Text style={styles.buttonText}>Mon Congélo</Text>
-                <Image source={require('../assets/scanner.png')} style={styles.scanImage}/>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.scan} onPress={handleScanPress}>
+      {/* Boutons d'accès au congélateur */}
+      <View style={styles.stocksButtonsContainer}>
+      <TouchableOpacity style={styles.freezer} onPress={handleFreezerPress}>
+                <Text style={styles.buttonText}>Mon Congélo</Text>
+                
+        </TouchableOpacity>
+      {/* Boutons d'accès aux placards */}
+        <TouchableOpacity style={styles.ceboard} onPress={handleCeboardPress}>
                 <Text style={styles.buttonText}>Mes Placards</Text>
-                <Image source={require('../assets/scanner.png')} style={styles.scanImage}/>
         </TouchableOpacity>
 
       </View>
@@ -56,13 +66,11 @@ const styles = StyleSheet.create({
         marginRight: 250,
         marginTop: -55,
     },
-    tipsTitle: {
-       
-        borderWidth: 1,
-        width: '85%',
-        height: '10%',
-        borderRadius: 10,
-        padding: 10,
+    PageTitle:{
+
+    },
+    productContainer:{
+
     },
     ProductTitle: {
         position: 'absolute',
@@ -73,22 +81,23 @@ const styles = StyleSheet.create({
         top: 0,
         
     },
-    tipsTitle: {
-        marginTop: 10,
-        fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 20,
-    },
     tipsText: {
         fontSize: 15,
         textAlign: 'center',
     },
-    scanImage: {
-        position: 'absolute',
-        width: 250,
-        height: 250,
-        top: 0,
-        
+    DLCDate:{
+
+    },
+    frigoLogo{
+
+    },
+    stocksButtonsContainer: {
+       
+        borderWidth: 1,
+        width: '85%',
+        height: '10%',
+        borderRadius: 10,
+        padding: 10,
     },
 
 });
