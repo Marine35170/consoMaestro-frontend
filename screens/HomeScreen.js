@@ -9,7 +9,7 @@ export default function HomeScreen({navigation}) {
       
         const handleScanPress = () => {
           {/* Naviguer vers la page de scan de produit*/}
-          navigation.navigate('ScanPage');
+          navigation.navigate('ScanScreen');
         };
 
     return (
