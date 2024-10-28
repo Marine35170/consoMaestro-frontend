@@ -7,6 +7,8 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import MenuScreen from './screens/MenuScreen';
 import { Ionicons } from '@expo/vector-icons';
+import AuthScreen from './screens/AuthScreen';
+import FridgeScreen from './screens/FrigoScreen';
 import ScanScreen from './screens/ScanScreen';import AuthScreen from './screens/AuthScreen';
 
 

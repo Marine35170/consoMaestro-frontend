@@ -4,6 +4,10 @@ import {Button, Image,ImageBackground,KeyboardAvoidingView,Platform,StyleSheet,T
 
 
 const MenuScreen = () => {
+    const handleFridgePress = () => {
+        {/* Naviguer vers la page du frigo */}
+        navigation.navigate('FridgeScreen');
+      };
     return (
         <View style={styles.container}>
         <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel}/>
@@ -17,7 +21,7 @@ const MenuScreen = () => {
             </View>
 
                         <View style={styles.stockageOptions}>  
-                <TouchableOpacity style={styles.stockageItem}>
+                <TouchableOpacity style={styles.stockageItem} onPress={handleFridgePress}>
                     <Image source={{ uri: '../assets/FRIGO.png' }} style={styles.iconImage} />
                     <Text style={styles.stockageText}>FRIGO</Text>
                 </TouchableOpacity>

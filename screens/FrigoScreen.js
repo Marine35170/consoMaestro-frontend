@@ -7,11 +7,11 @@ const FridgeScreen = () => {
 
     const handleFreezerPress = () => {
         {/* Naviguer vers la page du congélateur */}
-        navigation.navigate('FreezerPage');
+        navigation.navigate('FreezerScreen');
       };
       const handleCeboardPress = () => {
         {/* Naviguer vers la page du placard */}
-        navigation.navigate('CeboardPage');
+        navigation.navigate('PantryScreen ');
       };
 
   return (
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     DLCDate:{
 
     },
-    frigoLogo{
+    frigoLogo:{
 
     },
     stocksButtonsContainer: {
