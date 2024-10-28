@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+const navigation = useNavigation();
 
 export default function AuthScreen() {
   // États pour gérer la modale de connexion et d'inscription
@@ -31,6 +33,7 @@ export default function AuthScreen() {
       if (data.result) {
         Alert.alert('Connexion réussie !', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
+        navigation.navigate('HomeScreen'); // Rediriger vers la page d'accueil
       } else {
         Alert.alert('Erreur', data.error);
       }
@@ -69,16 +72,19 @@ export default function AuthScreen() {
   return (
     <ImageBackground source={require('../assets/backgroundAuth.png')} style={styles.background}>
       <View style={styles.container}>
+        <Text style={styles.title}>Conso Maestro</Text>
 
-        {/* Bouton Connexion */}
-        <TouchableOpacity style={styles.button} onPress={() => setLoginModalVisible(true)}>
-          <Text style={styles.buttonText}>Connexion</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          {/* Bouton Connexion */}
+          <TouchableOpacity style={styles.button} onPress={() => setLoginModalVisible(true)}>
+            <Text style={styles.buttonText}>Connexion</Text>
+          </TouchableOpacity>
 
-        {/* Bouton Inscription */}
-        <TouchableOpacity style={styles.button} onPress={() => setSignupModalVisible(true)}>
-          <Text style={styles.buttonText}>Créer mon compte</Text>
-        </TouchableOpacity>
+          {/* Bouton Inscription */}
+          <TouchableOpacity style={styles.button} onPress={() => setSignupModalVisible(true)}>
+            <Text style={styles.buttonText}>Créer mon compte</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Modale de Connexion */}
         <Modal visible={isLoginModalVisible} animationType="slide" transparent={true}>
@@ -145,9 +151,9 @@ export default function AuthScreen() {
 
         {/* Boutons SSO */}
         <View style={styles.socialContainer}>
-          <Image source={require('../assets/facebook.png')} style={styles.socialIcon} />
-          <Image source={require('../assets/google.png')} style={styles.socialIcon} />
-          <Image source={require('../assets/apple.png')} style={styles.socialIcon} />
+          <Image source={require('./assets/facebook.png')} style={styles.socialIcon} />
+          <Image source={require('./assets/google.png')} style={styles.socialIcon} />
+          <Image source={require('./assets/apple.png')} style={styles.socialIcon} />
         </View>
       </View>
     </ImageBackground>
@@ -157,12 +163,24 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover', 
+    resizeMode: 'cover',
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#E7734B',
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 150, 
+    alignItems: 'center',
+    width: '100%',
   },
   input: {
     width: '80%',
@@ -211,7 +229,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '50%',
-    marginTop: 30,
+    position: 'absolute',
+    bottom: 80, 
   },
   socialIcon: {
     width: 40,
