@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         marginBottom: 10,
-        marginRight: 230,
-        marginTop: -40,
+        marginRight: 250,
+        marginTop: -55,
     },
     tipsContainer: {
         marginTop: 10,
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
         width: '85%',
         height: '25%',
         marginBottom: 20,
+        overflow: 'hidden',
     },
     scan: {
       position: 'relative',
