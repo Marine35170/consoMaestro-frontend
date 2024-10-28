@@ -7,7 +7,7 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import MenuScreen from './screens/MenuScreen';
 import { Ionicons } from '@expo/vector-icons';
-
+import ScanScreen from './screens/ScanScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,6 +48,7 @@ export default function App() {
      <Stack.Navigator screenOptions={{ headerShown: false }}>
        {/*<Stack.Screen name="Home" component={HomeScreen} />*/}
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
+       <Stack.Screen name="ScanScreen" component={ScanScreen} />
      </Stack.Navigator>
    </NavigationContainer>
  );
