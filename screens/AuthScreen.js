@@ -73,7 +73,6 @@ export default function AuthScreen() {
   return (
     <ImageBackground source={require('../assets/backgroundAuth.png')} style={styles.background}>
       <View style={styles.container}>
-        <Text style={styles.title}>Conso Maestro</Text>
 
         <View style={styles.buttonContainer}>
           {/* Bouton Connexion */}
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 150, 
+    bottom: 100, 
     alignItems: 'center',
     width: '100%',
   },
@@ -231,7 +230,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '50%',
     position: 'absolute',
-    bottom: 80, 
+    bottom: 40, 
   },
   socialIcon: {
     width: 40,
