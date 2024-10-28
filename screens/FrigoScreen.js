@@ -23,15 +23,15 @@ const FridgeScreen = () => {
         {/* Affichage des produits */}
         <Text style={styles.ProductTitle}>Produit 1</Text>
         <Text style={styles.DLCDate}>DLC</Text>
-        <Image source={require("../assets/FRIGO")} style={styles.frigoLogo} />
+        <Image source={require("../assets/FRIGO.png")} style={styles.frigoLogo} />
         
         <Text style={styles.ProductTitle}>Produit 2</Text>
         <Text style={styles.DLCDate}>DLC</Text>
-        <Image source={require("../assets/FRIGO")} style={styles.frigoLogo} />
+        <Image source={require("../assets/FRIGO.png")} style={styles.frigoLogo} />
 
         <Text style={styles.ProductTitle}>Produit 3</Text>
         <Text style={styles.DLCDate}>DLC</Text>
-          <Image source={require("../assets/FRIGO")} style={styles.frigoLogo} />
+          <Image source={require("../assets/FRIGO.png")} style={styles.frigoLogo} />
       </View>
 
       {/* Boutons d'accès au congélateur */}
