@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 export default function AuthScreen() {
@@ -152,9 +153,15 @@ export default function AuthScreen() {
 
         {/* Boutons SSO */}
         <View style={styles.socialContainer}>
-          <Image source={require('../assets/facebook.png')} style={styles.socialIcon} />
-          <Image source={require('../assets/google.png')} style={styles.socialIcon} />
-          <Image source={require('../assets/apple.png')} style={styles.socialIcon} />
+          <TouchableOpacity style={styles.socialButton}>
+            <FontAwesome name="facebook" size={24} color="#4267B2" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <AntDesign name="google" size={24} color="#DB4437" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <MaterialCommunityIcons name="apple" size={24} color="#000000" />
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -233,8 +240,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 40, 
   },
-  socialIcon: {
-    width: 40,
-    height: 40,
+  socialButton: {
+    backgroundColor: '#F5F5F5',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
+    height: 50,
   },
 });
