@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 50, // Lowered to push buttons closer to the bottom
+    bottom: 100, 
     alignItems: 'center',
     width: '100%',
   },
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '50%',
     position: 'absolute',
-    bottom: 30, 
+    bottom: 40, 
   },
   socialIcon: {
     width: 40,
