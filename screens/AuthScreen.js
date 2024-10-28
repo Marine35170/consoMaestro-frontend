@@ -34,7 +34,7 @@ export default function AuthScreen() {
       if (data.result) {
         Alert.alert('Connexion réussie !', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
-        navigation.navigate('HomeScreen'); // Rediriger vers la page d'accueil
+        navigation.navigate('TabNavigator') // Rediriger vers la page d'accueil
       } else {
         Alert.alert('Erreur', data.error);
       }
