@@ -10,11 +10,6 @@ import { Ionicons } from '@expo/vector-icons';
 import ScanScreen from './screens/ScanScreen';
 import AuthScreen from './screens/AuthScreen';
 import FridgeScreen from './screens/FrigoScreen';
-<<<<<<< HEAD
-import ScanScreen from './screens/ScanScreen';
-=======
-
->>>>>>> 844045c1c69d708428da06343cfb078d4175c261
 
 
 const Stack = createNativeStackNavigator();
