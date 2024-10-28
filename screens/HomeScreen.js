@@ -9,7 +9,7 @@ export default function HomeScreen({navigation}) {
       
         const handleScanPress = () => {
           {/* Naviguer vers la page de scan de produit*/}
-          navigation.navigate('ScanPage');
+          navigation.navigate('ScanScreen');
         };
 
     return (
@@ -23,12 +23,13 @@ export default function HomeScreen({navigation}) {
         </View>
         <TouchableOpacity style={styles.scan} onPress={handleScanPress}>
                 <Text style={styles.buttonText}>Je scanne mon produit</Text>
+                <Image source={require('../assets/scanner.png')} style={styles.scanImage}/>
         </TouchableOpacity>
 
         {/* Champ de saisie pour le code-barres */}
       <TextInput
         style={styles.input}
-        placeholder="Je saisis mon code-barres"
+        placeholder="Je saisis mon code-barre..."
         keyboardType="numeric"
       />
     </View>
@@ -45,36 +46,68 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     squirrel: {
-        position: 'absolute',
-        width: 50,
-        height: 50,
-        top: 30,
-        left: 30,
+       
+        width: 60,
+        height: 60,
+        marginBottom: 10,
+        marginRight: 250,
+        marginTop: -60,
     },
     tipsContainer: {
-        
+        marginTop: 10,
         borderWidth: 1,
         padding: 10,
         borderRadius: 10,
-        width: 300,
-        height: 255,
+        width: '85%',
+        height: '25%',
         marginBottom: 20,
+        overflow: 'hidden',
     },
     scan: {
-       
+      position: 'relative',
        borderWidth: 1,
-       width: 300,
-       height: 170,
+       width: '85%',
+       height: '25%',
        borderRadius: 10,
        marginBottom: 20,
+       justifyContent: 'center',
+       alignItems: 'center',
+       flexDirection: 'column',
+       overflow: 'hidden',
     },
     input: {
        
         borderWidth: 1,
-        width: 300,
-        height: 50,
+        width: '85%',
+        height: '10%',
         borderRadius: 10,
         padding: 10,
+    },
+    buttonText: {
+        position: 'absolute',
+       marginTop: 20,
+        textAlign: 'center',
+        color: 'black',
+        fontSize: 20,
+        top: 0,
+        
+    },
+    tipsTitle: {
+        marginTop: 10,
+        fontSize: 20,
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    tipsText: {
+        fontSize: 15,
+        textAlign: 'center',
+    },
+    scanImage: {
+        position: 'absolute',
+        width: 250,
+        height: 250,
+        top: 0,
+        
     },
 
 });
