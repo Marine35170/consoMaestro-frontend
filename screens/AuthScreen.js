@@ -17,7 +17,7 @@ export default function AuthScreen() {
 
   const handleSignIn = async () => {
     try {
-      const response = await fetch('http://your-backend-url/users/signin', {
+      const response = await fetch('https://conso-maestro-backend.vercel.app//users/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function AuthScreen() {
 
   const handleSignUp = async () => {
     try {
-      const response = await fetch('http://your-backend-url/users/signup', {
+      const response = await fetch('https://conso-maestro-backend.vercel.app//users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
