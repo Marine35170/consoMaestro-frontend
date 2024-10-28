@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-const navigation = useNavigation();
+
 
 export default function AuthScreen() {
   // États pour gérer la modale de connexion et d'inscription
+  const navigation = useNavigation();
   const [isLoginModalVisible, setLoginModalVisible] = useState(false);
   const [isSignupModalVisible, setSignupModalVisible] = useState(false);
 
