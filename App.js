@@ -7,8 +7,12 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import MenuScreen from './screens/MenuScreen';
 import { Ionicons } from '@expo/vector-icons';
+<<<<<<< HEAD
 import AuthScreen from './screens/AuthScreen';
 import FridgeScreen from './screens/FrigoScreen';
+=======
+import ScanScreen from './screens/ScanScreen';import AuthScreen from './screens/AuthScreen';
+>>>>>>> 0bbb05602f6f99b5ad0443c2cb6478bcc73d478c
 
 
 const Stack = createNativeStackNavigator();
@@ -50,6 +54,7 @@ export default function App() {
      <Stack.Navigator screenOptions={{ headerShown: false }}>
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
+       <Stack.Screen name="ScanScreen" component={ScanScreen} />
      </Stack.Navigator>
    </NavigationContainer>
  );
