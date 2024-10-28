@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 
 export default function AuthScreen() {
+  // États pour gérer la modale de connexion et d'inscription
+  const [isLoginModalVisible, setLoginModalVisible] = useState(false);
+  const [isSignupModalVisible, setSignupModalVisible] = useState(false);
+
   // États pour stocker les informations de connexion
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -26,6 +30,7 @@ export default function AuthScreen() {
       const data = await response.json();
       if (data.result) {
         Alert.alert('Connexion réussie !', data.message);
+        setLoginModalVisible(false); // Fermer la modale après connexion
       } else {
         Alert.alert('Erreur', data.error);
       }
@@ -51,6 +56,7 @@ export default function AuthScreen() {
       const data = await response.json();
       if (data.result) {
         Alert.alert('Succès', data.message);
+        setSignupModalVisible(false); // Fermer la modale après inscription
       } else {
         Alert.alert('Erreur', data.error);
       }
@@ -61,75 +67,102 @@ export default function AuthScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Conso Maestro</Text>
+    <ImageBackground source={require('../assets/backgroundAuth.png')} style={styles.background}>
+      <View style={styles.container}>
 
-      {/* Champs de Connexion */}
-      <TextInput
-        style={styles.input}
-        placeholder="Nom d'utilisateur"
-        value={loginUsername}
-        onChangeText={setLoginUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Mot de passe"
-        value={loginPassword}
-        onChangeText={setLoginPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-        <Text style={styles.buttonText}>Connexion</Text>
-      </TouchableOpacity>
+        {/* Bouton Connexion */}
+        <TouchableOpacity style={styles.button} onPress={() => setLoginModalVisible(true)}>
+          <Text style={styles.buttonText}>Connexion</Text>
+        </TouchableOpacity>
 
-      {/* Champs d'Inscription */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={signupEmail}
-        onChangeText={setSignupEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Nom d'utilisateur"
-        value={signupUsername}
-        onChangeText={setSignupUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Mot de passe"
-        value={signupPassword}
-        onChangeText={setSignupPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-        <Text style={styles.buttonText}>Créer mon compte</Text>
-      </TouchableOpacity>
+        {/* Bouton Inscription */}
+        <TouchableOpacity style={styles.button} onPress={() => setSignupModalVisible(true)}>
+          <Text style={styles.buttonText}>Créer mon compte</Text>
+        </TouchableOpacity>
 
-      {/* Boutons SSO (statique) */}
-      <View style={styles.socialContainer}>
-        <Image source={require('./assets/facebook.png')} style={styles.socialIcon} />
-        <Image source={require('./assets/google.png')} style={styles.socialIcon} />
-        <Image source={require('./assets/apple.png')} style={styles.socialIcon} />
+        {/* Modale de Connexion */}
+        <Modal visible={isLoginModalVisible} animationType="slide" transparent={true}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Connexion</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Nom d'utilisateur"
+                value={loginUsername}
+                onChangeText={setLoginUsername}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Mot de passe"
+                value={loginPassword}
+                onChangeText={setLoginPassword}
+                secureTextEntry
+              />
+              <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+                <Text style={styles.buttonText}>Se connecter</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setLoginModalVisible(false)}>
+                <Text style={styles.cancelText}>Annuler</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modale d'Inscription */}
+        <Modal visible={isSignupModalVisible} animationType="slide" transparent={true}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Créer un compte</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={signupEmail}
+                onChangeText={setSignupEmail}
+                keyboardType="email-address"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Nom d'utilisateur"
+                value={signupUsername}
+                onChangeText={setSignupUsername}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Mot de passe"
+                value={signupPassword}
+                onChangeText={setSignupPassword}
+                secureTextEntry
+              />
+              <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+                <Text style={styles.buttonText}>S'inscrire</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setSignupModalVisible(false)}>
+                <Text style={styles.cancelText}>Annuler</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Boutons SSO */}
+        <View style={styles.socialContainer}>
+          <Image source={require('../assets/facebook.png')} style={styles.socialIcon} />
+          <Image source={require('../assets/google.png')} style={styles.socialIcon} />
+          <Image source={require('../assets/apple.png')} style={styles.socialIcon} />
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
-// Styles
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover', 
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F5EAD9',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#E7734B',
-    marginBottom: 20,
   },
   input: {
     width: '80%',
@@ -149,6 +182,30 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFF',
     fontSize: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#E7734B',
+    marginBottom: 10,
+  },
+  cancelText: {
+    color: '#E7734B',
+    fontSize: 16,
+    marginTop: 10,
   },
   socialContainer: {
     flexDirection: 'row',
