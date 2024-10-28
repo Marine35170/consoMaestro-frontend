@@ -151,9 +151,9 @@ export default function AuthScreen() {
 
         {/* Boutons SSO */}
         <View style={styles.socialContainer}>
-          <Image source={require('./assets/facebook.png')} style={styles.socialIcon} />
-          <Image source={require('./assets/google.png')} style={styles.socialIcon} />
-          <Image source={require('./assets/apple.png')} style={styles.socialIcon} />
+          <Image source={require('../assets/facebook.png')} style={styles.socialIcon} />
+          <Image source={require('../assets/google.png')} style={styles.socialIcon} />
+          <Image source={require('../assets/apple.png')} style={styles.socialIcon} />
         </View>
       </View>
     </ImageBackground>
