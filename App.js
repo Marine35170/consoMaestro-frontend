@@ -8,6 +8,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import MenuScreen from './screens/MenuScreen';
 import { Ionicons } from '@expo/vector-icons';
 import AuthScreen from './screens/AuthScreen';
+import FridgeScreen from './screens/FrigoScreen';
 
 
 const Stack = createNativeStackNavigator();
