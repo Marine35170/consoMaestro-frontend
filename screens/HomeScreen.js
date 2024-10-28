@@ -21,7 +21,9 @@ export default function HomeScreen({navigation}) {
         <Text style={styles.tipsTitle}>Trucs et Astuces</Text>
         <Text style={styles.tipsText}>Astuce 1: Profitez de notre fonctionnalité de scan rapide pour trouver vos produits !</Text>
         </View>
-        <Button title="Je scanne mon produit" onPress={handleScanPress} />
+        <TouchableOpacity style={styles.scan} onPress={handleScanPress}>
+                <Text style={styles.buttonText}>Je scanne mon produit</Text>
+        </TouchableOpacity>
 
         {/* Champ de saisie pour le code-barres */}
       <TextInput
@@ -42,4 +44,37 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    squirrel: {
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        top: 30,
+        left: 30,
+    },
+    tipsContainer: {
+        
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 10,
+        width: 300,
+        height: 255,
+        marginBottom: 20,
+    },
+    scan: {
+       
+       borderWidth: 1,
+       width: 300,
+       height: 170,
+       borderRadius: 10,
+       marginBottom: 20,
+    },
+    input: {
+       
+        borderWidth: 1,
+        width: 300,
+        height: 50,
+        borderRadius: 10,
+        padding: 10,
+    },
+
 });
