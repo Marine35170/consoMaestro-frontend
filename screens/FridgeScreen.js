@@ -2,19 +2,15 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 
 const FridgeScreen = () => {
+
   const navigation = useNavigation();
-  const handleFreezerPress = () => {
-    {
-      /* Naviguer vers la page du congélateur */
-    }
-    navigation.navigate("FreezerScreen");
-  };
-  const handleCeboardPress = () => {
-    {
-      /* Naviguer vers la page du placard */
-    }
-    navigation.navigate("PantryScreen ");
-  };
+
+  const handlePlacardPress = () => {                     
+    navigation.navigate('PlacardScreen')  // Permet d'aller vers la page Placard
+};
+  const handleCongeloPress = () => {      // Permet d'aller vers la page Congelo 
+    navigation.navigate('CongeloScreen')
+};
 
   return (
     <View style={styles.container}>
@@ -23,7 +19,7 @@ const FridgeScreen = () => {
         style={styles.squirrel}
       />
 
-      <Text style={styles.PageTitle}>Contenu de mon Frigo</Text>
+      <Text style={styles.PageTitle}>Mon Frigo</Text>
       <View style={styles.productContainer}>
         {/* Affichage des produits */}
         <View style={styles.ProductLineContainer}>
@@ -32,10 +28,12 @@ const FridgeScreen = () => {
           <Text style={styles.DlcText}>DLC</Text>
           </View>
           <View style={styles.buttonFreezer}>
+          <TouchableOpacity onPress={handleCongeloPress}>
           <Image
             source={require("../assets/congelo.png")}
             style={styles.freezerLogo}
           />
+           </TouchableOpacity>
         </View>
         </View>
         <View style={styles.ProductLineContainer}>
@@ -44,10 +42,12 @@ const FridgeScreen = () => {
           <Text style={styles.DlcText}>DLC</Text>
           </View>
           <View style={styles.buttonFreezer}>
+          <TouchableOpacity onPress={handleCongeloPress}>
           <Image
             source={require("../assets/congelo.png")}
             style={styles.freezerLogo}
           />
+           </TouchableOpacity>
         </View>
         </View>
         <View style={styles.ProductLineContainer}>
@@ -56,21 +56,23 @@ const FridgeScreen = () => {
           <Text style={styles.DlcText}>DLC</Text>
           </View>
           <View style={styles.buttonFreezer}>
+          <TouchableOpacity onPress={handleCongeloPress}>
           <Image
             source={require("../assets/congelo.png")}
             style={styles.freezerLogo}
           />
+           </TouchableOpacity>
         </View>
         </View>
       </View>
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleFreezerPress}>
+        <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
           <Text style={styles.buttonText}>Mon Congélo</Text>
         </TouchableOpacity>
         {/* Boutons d'accès aux placards */}
-        <TouchableOpacity style={styles.button} onPress={handleCeboardPress}>
+        <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
           <Text style={styles.buttonText}>Mes Placards</Text>
         </TouchableOpacity>
       </View>
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
   },
   productContainer: {
     borderWidth: 1,
-    backgroundColor: "#FAF9F3",
+    backgroundColor: '#A77B5A',
     borderColor: "#A77B5A",
     width: "85%",
     height: "65%",
@@ -114,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 2,
-    width: 200,
+    width: 170,
     height: 50,
     borderRadius: 10,
     padding: 10,
@@ -136,17 +138,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 2,
-    width: 50,
+    width: 80,
     height: 50,
     top:-11,
     borderRadius: 10,
     padding: 10,
     fontSize: 16,
-    marginLeft: 125,
+    marginLeft: 95,
     
   },
   DlcText: {
-
+fontSize: 15
   },
   buttonFreezer:{
     justifyContent: "center",
