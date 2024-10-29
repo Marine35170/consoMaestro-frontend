@@ -20,13 +20,16 @@ export default function ProfileScreen() {
       })
         .then((response) => response.json())
         .then((data) => {
+            console.log(data);
           // Update state with user info if response is successful
           setUserInfo({
-            email: data.email || 'Non disponible',
-            username: data.username || 'Non disponible',
-            password: data.password ? '********' : 'Non disponible',
+            email: data.user.email || 'Non disponible',
+            username: data.user.username || 'Non disponible',
           });
         })
+        .catch((error) => {
+          console.error(error);
+        });
     };
 
     fetchUserInfo(); // Calls fetchUserInfo function
@@ -47,7 +50,6 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Mes informations personnelles</Text>
           <Text style={styles.infoText}>e-mail: {userInfo.email}</Text>
           <Text style={styles.infoText}>Nom d'utilisateur: {userInfo.username}</Text>
-          <Text style={styles.infoText}>Mot de passe: {userInfo.password}</Text>
         </View>
 
         {/* Additional Options Section */}
