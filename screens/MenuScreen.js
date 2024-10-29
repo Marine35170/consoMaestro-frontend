@@ -1,14 +1,15 @@
-import react from 'react';
-import { Button, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import {Button, Image,ImageBackground,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TouchableOpacity,View, } from 'react-native';
 
 
 
 const MenuScreen = () => {
-    return (
-        <ImageBackground 
-        source={require('../assets/Menu/Ananas.png')} // Remplace par ton image de fond
-        style={styles.background}
-    >
+    const navigation = useNavigation();
+    const handleFridgePress = () => {
+        {/* Naviguer vers la page du frigo */}
+        navigation.navigate('FridgeScreen');
+      };
+    return ( <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>
         <View style={styles.container}>
             <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
             <View style={styles.container}>
@@ -21,21 +22,21 @@ const MenuScreen = () => {
                 </View>
 
                 <View style={styles.stockageContainer}>
-                    <TouchableOpacity style={styles.stockageItem}>
+                    <TouchableOpacity style={styles.stockageItem}onPress= {handleFridgePress}>
                         <View style={styles.imageContainer}>
-                            <Image source={require('../assets/Menu/FRIGO.png')} style={styles.iconImage} />
+                            <Image source={require('../assets/FRIGO.png')} style={styles.iconImage} />
                         </View>
                         <Text style={styles.stockageText}>FRIGO</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.stockageItem}>
                         <View style={styles.imageContainer}>
-                            <Image source={require('../assets/Menu/congelo.png')} style={styles.iconImage} />
+                            <Image source={require('../assets/congelo.png')} style={styles.iconImage} />
                         </View>
                         <Text style={styles.stockageText}>CONGÉLO</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.stockageItem}>
                         <View style={styles.imageContainer}>
-                            <Image source={require('../assets/Menu/Placard.png')} style={styles.iconImage} />
+                            <Image source={require('../assets/Placard.png')} style={styles.iconImage} />
                         </View>
                         <Text style={styles.stockageText}>PLACARDS</Text>
                     </TouchableOpacity>
@@ -59,13 +60,10 @@ export default MenuScreen;
 
 const styles = StyleSheet.create({
     background: {
-        flex: 1, // Prendre toute la surface disponible
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor:'#EFE5D8',
-    },
-
-    container: {
+        flex: 1,
+        resizeMode: 'cover',
+      },
+      container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start', // Alignement en haut
@@ -85,10 +83,14 @@ const styles = StyleSheet.create({
     },
 
     alertBanner: {
-        backgroundColor: '#b07f5e',
+        backgroundColor: '#A77B5A',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 5,
+        borderRadius: 10,
+        marginBottom: 40,
+        width: 300,
+        alignItems: 'center', // Centre horizontalement le texte
+        justifyContent: 'center', // Centre verticalement le texte
     },
 
     alertText: {
@@ -101,10 +103,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 20,
         marginHorizontal: 20,
-        marginBottom: 70,
+        marginBottom: 50,
         marginTop: 50,
         justifyContent: 'space-between',
-
     },
 
     stockageItem: {
@@ -115,12 +116,14 @@ const styles = StyleSheet.create({
     },
 
     imageContainer: {
-        backgroundColor: '#b07f5e', // Couleur marron
-        padding: 5, // Espacement intérieur
-        borderRadius: 10, // Bords arrondis
-        alignItems: 'center', // Centrer le contenu
-        justifyContent: 'center', // Centrer le contenu
-        marginBottom: 5, // Espacement en bas pour le texte
+        backgroundColor: '#A77B5A', // Couleur marron
+        padding: 5,                 // Espacement intérieur
+        borderRadius: 10,           // Bords arrondis
+        alignItems: 'center',       // Centrer le contenu
+        justifyContent: 'center',   // Centrer le contenu
+        marginBottom: 5,            // Espacement en bas pour le texte
+        borderWidth: 2,             // Épaisseur de la bordure
+        borderColor: '#FAF9F3',     // Couleur de la bordure
     },
 
     iconImage: {
@@ -130,26 +133,28 @@ const styles = StyleSheet.create({
     },
 
     stockageText: {
-        color: '#b07f5e',
+        color: '#664C25',
         fontWeight: 'bold',
     },
 
     actionButtons: {
 
         marginBottom: 20,
-        marginTop: 30,
+        marginTop: 60,
         width: 300,  // Taille du bouton 
+       
        
     },
 
     button: {
-        backgroundColor: '#b07f5e',
+        backgroundColor: '#A77B5A',
         paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
+        paddingHorizontal: 40,
+        borderRadius: 10,
         marginVertical: 10,
         alignItems: 'center', // Centre horizontalement le texte
         justifyContent: 'center', // Centre verticalement le texte
+
     },
 
     buttonText: {
