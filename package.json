@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
+<<<<<<< HEAD
+    "@react-native-async-storage/async-storage": "^2.0.0",
+=======
     "@react-native-community/datetimepicker": "^8.2.0",
+>>>>>>> ba4e9689faf9a08cfb78874fc0c8c9530cf93e7a
     "@react-navigation/bottom-tabs": "6",
     "@react-navigation/native": "6",
     "@react-navigation/native-stack": "6",
