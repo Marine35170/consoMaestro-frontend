@@ -1,10 +1,10 @@
-import React from "react";
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 
 
 
 const FridgeScreen = () => {
-
+  const navigation = useNavigation();
     const handleFreezerPress = () => {
         {/* Naviguer vers la page du congélateur */}
         navigation.navigate('FreezerScreen');

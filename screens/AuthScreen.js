@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 export default function AuthScreen() {
@@ -18,7 +19,9 @@ export default function AuthScreen() {
   const [signupUsername, setSignupUsername] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
 
+  // logique de connexion
   const handleSignIn = async () => {
+     console.log('In signIn')
     try {
       const response = await fetch('https://conso-maestro-backend.vercel.app/users/signin', {
         method: 'POST',
@@ -26,15 +29,17 @@ export default function AuthScreen() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: loginUsername,
-          password: loginPassword,
+          //.trim() retire les espaces en trop mis par inadvertance
+          username: loginUsername.trim(),
+          password: loginPassword.trim(),
         }),
       });
       const data = await response.json();
+      console.log(data)
       if (data.result) {
-        Alert.alert('Connexion réussie !', data.message);
+        Alert.alert('Connexion réussie ! ', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
-        navigation.navigate('TabNavigator') // Rediriger vers la page d'accueil
+        navigation.navigate('TabNavigator'); // Rediriger vers la page d'accueil
       } else {
         Alert.alert('Erreur', data.error);
       }
@@ -43,8 +48,10 @@ export default function AuthScreen() {
       Alert.alert('Erreur de connexion', 'Veuillez réessayer.');
     }
   };
-
+  
+  // logique d'inscription
   const handleSignUp = async () => {
+    console.log('handleSignUp')
     try {
       const response = await fetch('https://conso-maestro-backend.vercel.app/users/signup', {
         method: 'POST',
@@ -52,9 +59,9 @@ export default function AuthScreen() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: signupEmail,
-          username: signupUsername,
-          password: signupPassword,
+          email: signupEmail.trim(),
+          username: signupUsername.trim(),
+          password: signupPassword.trim(),
         }),
       });
       const data = await response.json();
@@ -94,12 +101,14 @@ export default function AuthScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Nom d'utilisateur"
+                placeholderTextColor="black"
                 value={loginUsername}
                 onChangeText={setLoginUsername}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Mot de passe"
+                placeholderTextColor="black"
                 value={loginPassword}
                 onChangeText={setLoginPassword}
                 secureTextEntry
@@ -122,6 +131,7 @@ export default function AuthScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Email"
+                placeholderTextColor="black"
                 value={signupEmail}
                 onChangeText={setSignupEmail}
                 keyboardType="email-address"
@@ -129,12 +139,14 @@ export default function AuthScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Nom d'utilisateur"
+                 placeholderTextColor="black"
                 value={signupUsername}
                 onChangeText={setSignupUsername}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Mot de passe"
+                placeholderTextColor="black"
                 value={signupPassword}
                 onChangeText={setSignupPassword}
                 secureTextEntry
@@ -151,9 +163,15 @@ export default function AuthScreen() {
 
         {/* Boutons SSO */}
         <View style={styles.socialContainer}>
-          <Image source={require('../assets/facebook.png')} style={styles.socialIcon} />
-          <Image source={require('../assets/google.png')} style={styles.socialIcon} />
-          <Image source={require('../assets/apple.png')} style={styles.socialIcon} />
+          <TouchableOpacity style={styles.socialButton}>
+            <FontAwesome name="facebook" size={24} color="#4267B2" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <AntDesign name="google" size={24} color="#DB4437" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <MaterialCommunityIcons name="apple" size={24} color="#000000" />
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -232,8 +250,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 40, 
   },
-  socialIcon: {
-    width: 40,
-    height: 40,
+  socialButton: {
+    backgroundColor: '#F5F5F5',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
+    height: 50,
   },
 });

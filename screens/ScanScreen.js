@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, StyleSheet, TextInput, TouchableOpacity  } from "react-native";
+import { Text, View, Button, StyleSheet, TextInput, TouchableOpacity, ImageBackground } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 
 export default function ScanScreen() {
@@ -29,7 +29,8 @@ export default function ScanScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
+   <View style={styles.container}>
       <Text style= {styles.text}>Scannez votre produit</Text>
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
@@ -49,26 +50,30 @@ export default function ScanScreen() {
       </TouchableOpacity>
     
     </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
-    alignItems: "center",
-    paddingTop: 50,
-    backgroundColor: "#EFE5D8",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   camera: {
     width: 300,
-    height: 300,
+    height: 350,
     borderRadius: 10,
     marginBottom: 20,
   },
   text: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginTop: 30,
     backgroundColor: "#B19276",
     width: 300,
     textAlign: "center",
@@ -76,28 +81,32 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     borderRadius: 10,
     marginBottom: 40,
-    color: "#EFE5D8",
+    color: '#fff',
   },
   ou: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 10,
+    color:'#E56400',
+    marginBottom: 20,
   },
   input: {
-       
+    backgroundColor: '#FAF9F3',   
     borderWidth: 1,
     width: '85%',
     height: '10%',
     borderRadius: 10,
+    borderColor: '#A77B5A',
     padding: 10,
     marginTop: 10,
 },
 fin: {
-  marginTop: 50,
+  backgroundColor: '#FAF9F3',
+  marginTop: 20,
   borderWidth: 1,
   width: '40%',
   height: '5%',
   borderRadius: 10,
+  borderColor: '#A77B5A',
   textAlign: 'center',
   justifyContent: 'center',
   alignItems: 'center',
