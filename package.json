@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
+<<<<<<< HEAD
     "@react-native-async-storage/async-storage": "^2.0.0",
+=======
+    "@react-native-community/datetimepicker": "^8.2.0",
+>>>>>>> ba4e9689faf9a08cfb78874fc0c8c9530cf93e7a
     "@react-navigation/bottom-tabs": "6",
     "@react-navigation/native": "6",
     "@react-navigation/native-stack": "6",
@@ -22,10 +26,12 @@
     "react": "18.2.0",
     "react-native": "0.74.5",
     "react-native-linear-gradient": "^2.8.3",
+    "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-safe-area-context": "4.10.5",
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.8.0",
-    "react-redux": "^9.1.2"
+    "react-redux": "^9.1.2",
+    "redux": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

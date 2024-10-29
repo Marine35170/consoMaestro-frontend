@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button, StyleSheet, TextInput, TouchableOpacity, ImageBackground } from "react-native";
+import { Text, View, Button, StyleSheet, TextInput, TouchableOpacity, ImageBackground, Modal, Alert } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useSelector } from 'react-redux';
 
 export default function ScanScreen() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [barcodeData, setBarcodeData] = useState(null);
-
+  const [product, setProduct] = useState(null);
+  const [showModal, setShowModal] = useState(false); 
+  const [dlc, setDlc] = useState(null);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const userId = useSelector((state) => state.user.id);
+{/*Permission camera */}
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -14,11 +21,66 @@ export default function ScanScreen() {
     };
     getBarCodeScannerPermissions();
   }, []);
-
-  const handleBarCodeScanned = ({ type, data }) => {
+{/*Recuperation de l'UPC */}
+  const handleBarCodeScanned = ({ data }) => {
+    console.log("Code-barres scanné : ", data);
     setScanned(true);
     setBarcodeData(data);
-    alert(`Votre produit a bien été scanner: ${data}`);
+    try {
+      fetch(`https://conso-maestro-backend.vercel.app/products/${userId}/${data}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Données récupérées : ", data); 
+          setProduct(data.product);
+          setShowModal(true);
+          console.log(data);
+        });
+    }
+    catch (error) {
+      console.error(error);
+    }
+  };
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    setDlc(date); 
+    hideDatePicker();
+  };
+
+  const saveProduct = async () => {
+    if (!dlc) {
+      Alert.alert('Erreur', 'Veuillez sélectionner une DLC');
+      return;
+    }
+    
+    const formattedDlc = dlc.toISOString().split('T')[0];
+    try {
+      const response = await fetch(`https://conso-maestro-backend.vercel.app/products/${formattedDlc}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ upc: barcodeData, dlc: formattedDlc, user: userId }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        Alert.alert('Succès', data.message);
+        setShowModal(false);
+      } else {
+        Alert.alert('Erreur', data.message || 'Échec de l\'enregistrement de la DLC');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erreur', 'Erreur de connexion au serveur');
+    }
   };
 
   if (hasPermission === null) {
@@ -36,18 +98,38 @@ export default function ScanScreen() {
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={styles.camera}
       />
+      {/*Si scanned est true donc si un produit a été scanner, pouvoir scanner a nouveau */}
       {scanned && (
         <Button title={"Scanner à nouveau"} onPress={() => setScanned(false)} />
       )}
       <Text style={styles.ou}>OU</Text>
+      {/* Champ de saisie pour le code-barres */}
       <TextInput
         style={styles.input}
         placeholder="Je saisis mon code-barre..."
         keyboardType="numeric"
       />
+      {/* Bouton pour valider les produits */}
       <TouchableOpacity style={styles.fin} >
         <Text style={styles.buttonText}>C'est tout bon</Text>
       </TouchableOpacity>
+      <Modal visible={showModal} animationType="slide">
+          <View style={styles.modalContainer}>
+            <Text>Produit: {product?.name}</Text>
+            <TouchableOpacity onPress={showDatePicker}>
+              <Text style={styles.input}>
+                {dlc ? dlc.toLocaleDateString() : "Sélectionner la DLC"}
+              </Text>
+            </TouchableOpacity>
+            <Button title="Enregistrer" onPress={saveProduct} />
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
+          </View>
+        </Modal>
     
     </View>
     </ImageBackground>
@@ -110,5 +192,8 @@ fin: {
   textAlign: 'center',
   justifyContent: 'center',
   alignItems: 'center',
-}
+},
+modalContainer: {
+  flex:1,
+},
 });
