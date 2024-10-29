@@ -1,40 +1,60 @@
 import { useNavigation } from '@react-navigation/native';
-import {Button, Image,ImageBackground,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TouchableOpacity,View, } from 'react-native';
+import { Button, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 
 
 
-const MenuScreen = () => {
+const MenuScreen = () => {                              
     const navigation = useNavigation();
-    const handleFridgePress = () => {
-        {/* Naviguer vers la page du frigo */}
+
+    const handleFridgePress = () => {                       // Permet d'aller vers la page frigo
         navigation.navigate('FridgeScreen');
-      };
-    return ( <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>
+    };
+
+    const handleCongeloPress = () => {                      // Permet d'aller vers la page Congelo 
+        navigation.navigate('CongeloScreen')
+    };
+
+    const handlePlacardPress = () => {                      // Permet d'aller vers la page Placard
+        navigation.navigate('PlacardScreen')
+    };
+
+    const handleQuickConsumePress = () => {                 // Permet d'aller vers la page " A consommer rapidement"
+        navigation.navigate('QuickConsoScreen');
+    };
+
+    const handleRecipePress = () => {                       // Permet d'aller ver la plage "Idées recettes"
+        navigation.navigate('RecetteScreen');
+    };
+    const handleRappelConsoPress = () => {                  // Permet d'aller à la page "rappel conso"
+        navigation.navigate('RappelConsoScreen');
+    };
+
+    return (<ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>  
         <View style={styles.container}>
             <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
             <View style={styles.container}>
 
                 <View style={styles.limitConso}>
 
-                    <TouchableOpacity style={styles.alertBanner} onPress={() => navigation.navigate('QuickConsume')}>
+                    <TouchableOpacity style={styles.alertBanner} onPress={handleQuickConsumePress}>
                         <Text style={styles.alertText}>A consommer rapidement !</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.stockageContainer}>
-                    <TouchableOpacity style={styles.stockageItem}onPress= {handleFridgePress}>
+                    <TouchableOpacity style={styles.stockageItem} onPress={handleFridgePress}>
                         <View style={styles.imageContainer}>
                             <Image source={require('../assets/FRIGO.png')} style={styles.iconImage} />
                         </View>
                         <Text style={styles.stockageText}>FRIGO</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.stockageItem}>
+                    <TouchableOpacity style={styles.stockageItem}onPress={handleCongeloPress}>
                         <View style={styles.imageContainer}>
                             <Image source={require('../assets/congelo.png')} style={styles.iconImage} />
                         </View>
                         <Text style={styles.stockageText}>CONGÉLO</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.stockageItem}>
+                    <TouchableOpacity style={styles.stockageItem}onPress={handlePlacardPress}>
                         <View style={styles.imageContainer}>
                             <Image source={require('../assets/Placard.png')} style={styles.iconImage} />
                         </View>
@@ -43,32 +63,41 @@ const MenuScreen = () => {
                 </View>
 
                 <View style={styles.actionButtons}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.buttonRecipe} onPress={handleRecipePress}>
                         <Text style={styles.buttonText}>Idées recettes</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.buttonDGCCRF} onPress={handleRappelConsoPress}>
                         <Text style={styles.buttonText}>Mes rappels conso (DGCCRF)</Text>
                     </TouchableOpacity>
                 </View>
             </View>
         </View>
-        </ImageBackground>
+    </ImageBackground>
     );
 };
 
 export default MenuScreen;
 
 const styles = StyleSheet.create({
+
+    // Background     
+
     background: {
         flex: 1,
         resizeMode: 'cover',
-      },
-      container: {
+    },
+
+    // Container global 
+
+    container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start', // Alignement en haut
         paddingTop: 50, // Pour éviter que l'écureuil soit collé en haut
     },
+
+    // Icone écurreil 
+
     squirrel: {
         width: 60,
         height: 60,
@@ -76,11 +105,8 @@ const styles = StyleSheet.create({
         marginRight: 230,
     },
 
-    limitConso: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
+
+    // Style du bouton " a consommer rapidement !" 
 
     alertBanner: {
         backgroundColor: '#A77B5A',
@@ -93,10 +119,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center', // Centre verticalement le texte
     },
 
+    // Texte du bouton " a consommer rapidement !" 
+
     alertText: {
         color: '#fff',
         fontWeight: 'bold',
     },
+
+    // Container des images des stockages (frigo congelo placards)
 
     stockageContainer: {
         flexDirection: 'row',
@@ -108,6 +138,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
 
+    // Dispositions des images des stockages (frigo congelo placards)
+
     stockageItem: {
 
         alignItems: 'center',
@@ -115,6 +147,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
 
+    // Petits carrés marron autour des images 
     imageContainer: {
         backgroundColor: '#A77B5A', // Couleur marron
         padding: 5,                 // Espacement intérieur
@@ -126,36 +159,46 @@ const styles = StyleSheet.create({
         borderColor: '#FAF9F3',     // Couleur de la bordure
     },
 
+    // Format des images de stockage (frigo congelo placards)
+
     iconImage: {
         width: 80,
         height: 80,
         marginBottom: 5,
     },
+    // Texte des stockage (frigo congelo placards)
 
     stockageText: {
         color: '#664C25',
         fontWeight: 'bold',
     },
 
-    actionButtons: {
+    // Bouton "idées recettes"
 
-        marginBottom: 20,
-        marginTop: 60,
-        width: 300,  // Taille du bouton 
-       
-       
+    buttonRecipe: {
+        backgroundColor: '#A77B5A',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        alignSelf: 'flex-start', // Ajuste le bouton à la largeur de son contenu
+        marginVertical: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 80,
     },
+    // Bouton "mes rappels conso DGCCRF"
 
-    button: {
+    buttonDGCCRF: {
         backgroundColor: '#A77B5A',
         paddingVertical: 10,
         paddingHorizontal: 40,
         borderRadius: 10,
-        marginVertical: 10,
-        alignItems: 'center', // Centre horizontalement le texte
-        justifyContent: 'center', // Centre verticalement le texte
-
+        marginTop: 50,          //Eloigne du dessus 
+        width: 300,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
+    // Texte des boutons
 
     buttonText: {
         color: '#fff',

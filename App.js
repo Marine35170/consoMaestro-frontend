@@ -9,7 +9,12 @@ import MenuScreen from './screens/MenuScreen';
 import { Ionicons } from '@expo/vector-icons';
 import ScanScreen from './screens/ScanScreen';
 import AuthScreen from './screens/AuthScreen';
+import QuickConsoScreen from './screens/QuickconsoScreen';
 import FridgeScreen from './screens/FridgeScreen';
+import CongeloScreen from './screens/CongeloScreen';
+import PlacardScreen from './screens/PlacardScreen';
+import RecetteScreen from './screens/RecetteScreen';
+import RappelConsoScreen from './screens/RappelconsoScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -52,7 +57,12 @@ export default function App() {
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />
+       <Stack.Screen name="QuickConsoScreen" component={QuickConsoScreen} />
        <Stack.Screen name="FridgeScreen" component={FridgeScreen} />
+       <Stack.Screen name="CongeloScreen" component={CongeloScreen}/>
+       <Stack.Screen name="PlacardScreen" component={PlacardScreen}/>
+       <Stack.Screen name="RecetteScreen" component={RecetteScreen} />
+       <Stack.Screen name="RappelConsoScreen" component={RappelConsoScreen} />
      </Stack.Navigator>
    </NavigationContainer>
  );
