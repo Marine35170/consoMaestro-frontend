@@ -1,14 +1,15 @@
-
+import { useNavigation } from '@react-navigation/native';
 import {Button, Image,ImageBackground,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TouchableOpacity,View, } from 'react-native';
 
 
 
 const MenuScreen = () => {
+    const navigation = useNavigation();
     const handleFridgePress = () => {
         {/* Naviguer vers la page du frigo */}
         navigation.navigate('FridgeScreen');
       };
-    return (
+    return ( <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>
         <View style={styles.container}>
         <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel}/>
         <View style={styles.container}>
@@ -45,18 +46,22 @@ const MenuScreen = () => {
             </View>
         </View>
         </View>
+        </ImageBackground>
     );
 };
 
 export default MenuScreen;
 
 const styles = StyleSheet.create({
-    container: {
+    background: {
         flex: 1,
-        backgroundColor: '#f5e8d9',
-        padding: 20,
-    },
-
+        resizeMode: 'cover',
+      },
+      container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
     squirrel: {
         position: 'absolute',
         width: 50,

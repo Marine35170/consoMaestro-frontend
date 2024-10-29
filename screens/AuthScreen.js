@@ -19,8 +19,9 @@ export default function AuthScreen() {
   const [signupPassword, setSignupPassword] = useState('');
 
   const handleSignIn = async () => {
+     console.log('In signIn')
     try {
-      const response = await fetch('https://conso-maestro-backend.vercel.app//users/signin', {
+      const response = await fetch('https://conso-maestro-backend.vercel.app/users/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,6 +32,7 @@ export default function AuthScreen() {
         }),
       });
       const data = await response.json();
+      console.log(data)
       if (data.result) {
         Alert.alert('Connexion réussie !', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
@@ -45,8 +47,9 @@ export default function AuthScreen() {
   };
 
   const handleSignUp = async () => {
+    console.log('handleSignUp')
     try {
-      const response = await fetch('https://conso-maestro-backend.vercel.app//users/signup', {
+      const response = await fetch('https://conso-maestro-backend.vercel.app/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,12 +97,14 @@ export default function AuthScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Nom d'utilisateur"
+                placeholderTextColor="black"
                 value={loginUsername}
                 onChangeText={setLoginUsername}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Mot de passe"
+                placeholderTextColor="black"
                 value={loginPassword}
                 onChangeText={setLoginPassword}
                 secureTextEntry
@@ -122,6 +127,7 @@ export default function AuthScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Email"
+                placeholderTextColor="black"
                 value={signupEmail}
                 onChangeText={setSignupEmail}
                 keyboardType="email-address"
@@ -129,12 +135,14 @@ export default function AuthScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Nom d'utilisateur"
+                 placeholderTextColor="black"
                 value={signupUsername}
                 onChangeText={setSignupUsername}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Mot de passe"
+                placeholderTextColor="black"
                 value={signupPassword}
                 onChangeText={setSignupPassword}
                 secureTextEntry

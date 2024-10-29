@@ -9,7 +9,7 @@ import MenuScreen from './screens/MenuScreen';
 import { Ionicons } from '@expo/vector-icons';
 import ScanScreen from './screens/ScanScreen';
 import AuthScreen from './screens/AuthScreen';
-import FridgeScreen from './screens/FrigoScreen';
+import FridgeScreen from './screens/FridgeScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -52,6 +52,7 @@ export default function App() {
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />
+       <Stack.Screen name="FridgeScreen" component={FridgeScreen} />
      </Stack.Navigator>
    </NavigationContainer>
  );
