@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
+import { addUserIdToStore } from '../reducers/userReducer';
 
 
 export default function AuthScreen() {
+  const dispatch = useDispatch();
   // États pour gérer la modale de connexion et d'inscription
   const navigation = useNavigation();
   const [isLoginModalVisible, setLoginModalVisible] = useState(false);
@@ -37,6 +40,8 @@ export default function AuthScreen() {
       const data = await response.json();
       console.log(data)
       if (data.result) {
+        dispatch(addUserIdToStore(data.userId));
+        console.log(data.userId)
         Alert.alert('Connexion réussie ! ', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
         navigation.navigate('TabNavigator'); // Rediriger vers la page d'accueil
