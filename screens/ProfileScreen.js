@@ -16,17 +16,22 @@ export default function ProfileScreen() {
 
       // Fetch user data from the backend
       fetch('https://conso-maestro-backend.vercel.app/users/profile', {
-        headers: { Authorization: `Bearer ${token}` }, // Send token in Authorization header
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` ,
+            'contentType': 'application/json'}, // Send token in Authorization header
       })
         .then((response) => response.json())
         .then((data) => {
+            console.log('data from fetch', data);
           // Update state with user info if response is successful
           setUserInfo({
             email: data.email || 'Non disponible',
             username: data.username || 'Non disponible',
-            password: data.password ? '********' : 'Non disponible',
           });
         })
+        .catch((error) => {
+          console.error(error);
+        });
     };
 
     fetchUserInfo(); // Calls fetchUserInfo function
@@ -47,7 +52,6 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Mes informations personnelles</Text>
           <Text style={styles.infoText}>e-mail: {userInfo.email}</Text>
           <Text style={styles.infoText}>Nom d'utilisateur: {userInfo.username}</Text>
-          <Text style={styles.infoText}>Mot de passe: {userInfo.password}</Text>
         </View>
 
         {/* Additional Options Section */}
