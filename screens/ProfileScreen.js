@@ -119,14 +119,14 @@ const styles = StyleSheet.create({
       paddingVertical: 40,
     },
     infoContainer: {
-      backgroundColor: '#E0E0E0',
+      backgroundColor: '#69914a',
       padding: 20,
       borderRadius: 10,
       marginBottom: 20,
       marginTop: 116, 
     },
     optionsContainer: {
-      backgroundColor: '#E0E0E0',
+      backgroundColor: '#69914a',
       padding: 20,
       borderRadius: 10,
       marginBottom: 20,
