@@ -13,6 +13,7 @@ export default function HomeScreen({navigation}) {
         };
 
     return (
+        <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
         <View style={styles.container}>
         <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel}/>
 
@@ -33,7 +34,7 @@ export default function HomeScreen({navigation}) {
         keyboardType="numeric"
       />
     </View>
-
+    </ImageBackground>
     );
     }
 
@@ -41,10 +42,13 @@ export default function HomeScreen({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EFE5D8',
         alignItems: 'center',
         justifyContent: 'center',
     },
+    background: {
+        flex: 1,
+        resizeMode: 'cover',
+      },
     squirrel: {
        
         width: 60,

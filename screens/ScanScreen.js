@@ -127,10 +127,7 @@ export default function ScanScreen() {
   }
 
   return (
-    <ImageBackground
-      source={require("../assets/backgroundScanne.png")}
-      style={styles.background}
-    >
+    <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
       <View style={styles.container}>
         <Text style={styles.text}>Scannez votre produit</Text>
         <BarCodeScanner
@@ -156,7 +153,8 @@ export default function ScanScreen() {
           <Text style={styles.buttonText}>C'est tout bon</Text>
         </TouchableOpacity>
         {/* Modal pour ajouter la DLC et l'endroit ou on stocke le produit */}
-        <Modal style={styles.modal} visible={showModal} animationType="slide" transparent={true}>
+        <Modal style={styles.modal} visible={showModal} animationType="slide" >
+        <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
           <View style={styles.modalContainer}>
             <Text style={styles.productName}>{product?.name}</Text>
              {/* Sélecteur pour le lieu de stockage */}
@@ -182,7 +180,9 @@ export default function ScanScreen() {
               {dlc ? dlc.toLocaleDateString() : "Sélectionner la DLC"} 
               </Text>
             </TouchableOpacity>
-            <Button style={styles.enregistrerButtun} title="Enregistrer" onPress={saveProduct} />
+            <TouchableOpacity style={styles.enregistrerButtun} onPress={saveProduct} >
+              <Text style={styles.buttonText}>Enregistrer</Text>
+            </TouchableOpacity>
             {/* Calendrier pour choisir la date */}
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
@@ -191,6 +191,7 @@ export default function ScanScreen() {
               onCancel={hideDatePicker}
             />
           </View>
+          </ImageBackground>
         </Modal>
       </View>
     </ImageBackground>
@@ -200,7 +201,7 @@ export default function ScanScreen() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: "cover",
+    resizeMode: 'cover',
   },
   container: {
     flex: 1,
@@ -259,12 +260,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FAF9F3",
   },
   productName: {
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: "bold",
     top: -80,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
   },
   storageOptions: {
     flexDirection: "row",
@@ -281,24 +284,17 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E56400",
     borderBottomWidth: 2,
   },
-  inputDate: {
+  inputDate: {   
     fontSize: 20,
-    fontWeight: "bold",
     color: "#E56400",
-    marginBottom: 80,
-    borderWidth: 1,
-    borderRadius: 10,
-    height: 40,
-    width: 200,
-    textAlign: "center",
-    marginTop: 20,
   },
   enregistrerButtun: {
     backgroundColor: "#E56400",
-    color: "#fff",
-    width: 200,
+    width: 150,
     height: 40,
     borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   optionImage: {
     width: 50,
@@ -306,7 +302,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
-  modal: {
-    backgroundColor: "#FAF9F3",
+  buttonText: {
+    fontSize: 20,
+    color: "#FFFFFF",
+  },
+  date: {
+    backgroundColor: "#FFFFFF",
+    width: 200,
+    height: 40,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 40,
+    marginTop: 50,  
   },
 });
