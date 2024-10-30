@@ -14,6 +14,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useSelector } from "react-redux";
 
+
 export default function ScanScreen() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -23,6 +24,7 @@ export default function ScanScreen() {
   const [dlc, setDlc] = useState(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const userId = useSelector((state) => state.user.id);
+  const [storagePlace, setStoragePlace] = useState("");
   {/*Permission camera */}
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -70,10 +72,15 @@ export default function ScanScreen() {
       Alert.alert("Erreur", "Veuillez sélectionner une DLC");
       return;
     }
+    if (!storagePlace) {
+      Alert.alert("Erreur", "Veuillez sélectionner un lieu de stockage");
+      return;
+    }
 
     const formattedDlc = dlc.toISOString().split("T")[0];
     try {
       {/*Ajout de la DLC au produit en BDD */}
+      
       const response = await fetch(
         `https://conso-maestro-backend.vercel.app/products/${formattedDlc}`,
         {
@@ -85,6 +92,7 @@ export default function ScanScreen() {
             upc: barcodeData,
             dlc: formattedDlc,
             user: userId,
+            storagePlace,
           }),
         }
       );
@@ -142,15 +150,29 @@ export default function ScanScreen() {
         <TouchableOpacity style={styles.fin}>
           <Text style={styles.buttonText}>C'est tout bon</Text>
         </TouchableOpacity>
+        {/* Modal pour ajouter la DLC et l'endroit ou on stocke le produit */}
         <Modal visible={showModal} animationType="slide">
           <View style={styles.modalContainer}>
             <Text>Produit: {product?.name}</Text>
+             {/* Sélecteur pour le lieu de stockage */}
+            <Text>Lieu de stockage:</Text>
+            <View style={styles.storageOptions}>
+            {["Frigo", "Congelo", "Placard"].map((place) => (
+             <TouchableOpacity
+             key={place}
+             onPress={() => setStoragePlace(place)}
+             >
+             <Text style={styles.buttonText}>{place}</Text>
+             </TouchableOpacity>
+             ))}
+             </View>
             <TouchableOpacity onPress={showDatePicker}>
               <Text style={styles.input}>
-                {dlc ? dlc.toLocaleDateString() : "Sélectionner la DLC"}
+              {dlc ? dlc.toLocaleDateString() : "Sélectionner la DLC"} 
               </Text>
             </TouchableOpacity>
             <Button title="Enregistrer" onPress={saveProduct} />
+            {/* Calendrier pour choisir la date */}
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
               mode="date"
@@ -223,5 +245,10 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
