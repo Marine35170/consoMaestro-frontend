@@ -268,6 +268,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
+    backgroundColor: "#69914a",
+    color: "#fff",
   },
   storageOptions: {
     flexDirection: "row",
@@ -286,10 +288,10 @@ const styles = StyleSheet.create({
   },
   inputDate: {   
     fontSize: 20,
-    color: "#E56400",
+    color: "#B19276",
   },
   enregistrerButtun: {
-    backgroundColor: "#E56400",
+    backgroundColor: "#B19276",
     width: 150,
     height: 40,
     borderRadius: 10,
