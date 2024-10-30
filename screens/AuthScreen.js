@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import { addUserIdToStore } from '../reducers/userReducer';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AuthScreen() {
   const dispatch = useDispatch();
@@ -41,7 +41,8 @@ export default function AuthScreen() {
       console.log(data)
       if (data.result) {
         dispatch(addUserIdToStore(data.userId));
-        console.log(data.userId)
+        await AsyncStorage.setItem('userToken', data.token);
+        console.log(data.token)
         Alert.alert('Connexion réussie ! ', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
         navigation.navigate('TabNavigator'); // Rediriger vers la page d'accueil
@@ -72,7 +73,10 @@ export default function AuthScreen() {
       const data = await response.json();
       if (data.result) {
         Alert.alert('Succès', data.message);
+        await AsyncStorage.setItem('userToken', data.token);
+        dispatch(addUserIdToStore(data.userId)); // Save user ID
         setSignupModalVisible(false); // Fermer la modale après inscription
+        navigation.navigate('TabNavigator');
       } else {
         Alert.alert('Erreur', data.error);
       }

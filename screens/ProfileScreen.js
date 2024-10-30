@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20, paddingVertical: 40 },
   infoContainer: { backgroundColor: '#69914a', padding: 20, borderRadius: 10, marginBottom: 20, marginTop: 116 },
   sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFF', marginBottom: 10, textAlign: 'center' },
-  infoText: { fontSize: 16, marginBottom: 5 },
+  infoText: { fontSize: 16, marginBottom: 5, color: '#FFF'},
   successMessage: { fontSize: 16, color: 'green', textAlign: 'center', marginTop: 10 },
   editButton: { backgroundColor: '#A77B5A', padding: 10, borderRadius: 10, marginTop: 10, borderWidth: 1, borderColor: '#FFF'},
   editButtonText: { color: '#FFF', fontSize: 16, textAlign: 'center' },
