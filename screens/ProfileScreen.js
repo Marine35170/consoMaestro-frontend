@@ -31,8 +31,8 @@ export default function ProfileScreen() {
             console.log('data from fetch', data);
           // Update state with user info if response is successful
           setUserInfo({
-            email: data.email || 'Non disponible',
-            username: data.username || 'Non disponible',
+            email: data.user.email || 'Non disponible',
+            username: data.user.username || 'Non disponible',
           });
         })
         .catch((error) => {
@@ -48,36 +48,48 @@ export default function ProfileScreen() {
     console.log("Email à mettre à jour:", editedEmail);
     console.log("Nom d'utilisateur à mettre à jour:", editedUsername);
 
+    const updateData = {};
+    if (editedEmail && editedEmail !== userInfo.email) {
+      updateData.email = editedEmail;
+    }
+    if (editedUsername && editedUsername !== userInfo.username) {
+      updateData.username = editedUsername;
+    }
+  
+    // Check if there are fields to update
+    if (Object.keys(updateData).length === 0) {
+      setSuccessMessage("Aucune modification détectée.");
+      setTimeout(() => setSuccessMessage(''), 3000);
+      return;
+    }
     // Fetch user data from the backend
     fetch('https://conso-maestro-backend.vercel.app/users/update', {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email: editedEmail,
-        username: editedUsername
+      body: JSON.stringify(updateData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Réponse de l'API:", data);
+  
+        // Update only the fields that were modified
+        setUserInfo((prevInfo) => ({
+          ...prevInfo,
+          ...updateData, // Merge updated fields with existing state
+        }));
+        
+        setEditModalVisible(false);
+        setSuccessMessage("Informations mises à jour avec succès !");
+        setTimeout(() => setSuccessMessage(''), 3000);
       })
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Réponse de l'API:", data);
-
-      // Updates state with edited user info
-      setUserInfo({
-        email: editedEmail,
-        username: editedUsername
+      .catch((error) => {
+        console.error("Erreur de mise à jour :", error);
+        setSuccessMessage("Erreur de mise à jour.");
+        setTimeout(() => setSuccessMessage(''), 3000);
       });
-      setEditModalVisible(false); // closes the edition modal
-      setSuccessMessage("Informations mises à jour avec succès !");
-
-      // Delete the success message after 3''
-      setTimeout(() => setSuccessMessage(''), 3000);
-    })
-    .catch((error) => {
-      console.error("Erreur de mise à jour :", error);
-    });
   };
 
   // Function to handle user sign-out
