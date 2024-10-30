@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { addUserIdToStore } from '../reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export default function AuthScreen() {
   const dispatch = useDispatch();
   // États pour gérer la modale de connexion et d'inscription

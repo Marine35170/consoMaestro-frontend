@@ -14,6 +14,7 @@ import {
 import { BarCodeScanner } from "expo-barcode-scanner";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 
 export default function ScanScreen() {
@@ -29,6 +30,7 @@ export default function ScanScreen() {
   const fridgeImage = require("../assets/FRIGO.png");
   const freezerImage = require("../assets/congelo.png");
   const cupboardImage = require("../assets/Placard.png");
+  const navigation = useNavigation();
   
   {/*Permission camera */}
   useEffect(() => {
@@ -126,6 +128,10 @@ export default function ScanScreen() {
     return <Text>Pas d'accès à la caméra</Text>;
   }
 
+  const handleFinish = () => {
+    navigation.navigate('Menu'); 
+  };
+
   return (
     <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
       <View style={styles.container}>
@@ -149,8 +155,8 @@ export default function ScanScreen() {
           keyboardType="numeric"
         />
         {/* Bouton pour valider les produits */}
-        <TouchableOpacity style={styles.fin}>
-          <Text style={styles.buttonText}>C'est tout bon</Text>
+        <TouchableOpacity style={styles.fin} onPress={handleFinish}>
+          <Text style={styles.buttonFinish}>C'est tout bon</Text>
         </TouchableOpacity>
         {/* Modal pour ajouter la DLC et l'endroit ou on stocke le produit */}
         <Modal style={styles.modal} visible={showModal} animationType="slide" >
@@ -218,13 +224,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginTop: 30,
-    backgroundColor: "#B19276",
     width: 300,
     textAlign: "center",
     height: 40,
     paddingTop: 5,
     borderRadius: 10,
     marginBottom: 40,
+    backgroundColor: "#B19276",
     color: "#fff",
   },
   ou: {
@@ -244,7 +250,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   fin: {
-    backgroundColor: "#FAF9F3",
+    backgroundColor: "#69914a",
     marginTop: 20,
     borderWidth: 1,
     width: "40%",
@@ -317,5 +323,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
     marginTop: 50,  
+  },
+  buttonFinish: {
+    color: "#fff",
   },
 });
