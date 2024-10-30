@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Modal,
   Alert,
+  Image,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -25,6 +26,10 @@ export default function ScanScreen() {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const userId = useSelector((state) => state.user.id);
   const [storagePlace, setStoragePlace] = useState("");
+  const fridgeImage = require("../assets/FRIGO.png");
+  const freezerImage = require("../assets/congelo.png");
+  const cupboardImage = require("../assets/Placard.png");
+  
   {/*Permission camera */}
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -151,27 +156,33 @@ export default function ScanScreen() {
           <Text style={styles.buttonText}>C'est tout bon</Text>
         </TouchableOpacity>
         {/* Modal pour ajouter la DLC et l'endroit ou on stocke le produit */}
-        <Modal visible={showModal} animationType="slide">
+        <Modal style={styles.modal} visible={showModal} animationType="slide" transparent={true}>
           <View style={styles.modalContainer}>
-            <Text>Produit: {product?.name}</Text>
+            <Text style={styles.productName}>{product?.name}</Text>
              {/* Sélecteur pour le lieu de stockage */}
-            <Text>Lieu de stockage:</Text>
+            <Text style={styles.textStockage}>Lieu de stockage:</Text>
             <View style={styles.storageOptions}>
-            {["Frigo", "Congelo", "Placard"].map((place) => (
+            {[
+              { label: 'Frigo', image: fridgeImage },
+              { label: 'Congelo', image: freezerImage },
+              { label: 'Placard', image: cupboardImage },
+            ].map((place) => (
              <TouchableOpacity
-             key={place}
-             onPress={() => setStoragePlace(place)}
+             key={place.label}
+             onPress={() => setStoragePlace(place.label)}
              >
-             <Text style={styles.buttonText}>{place}</Text>
+             <View style={storagePlace === place.label ? styles.selectedOptionImage : {}}>
+             <Image source={place.image} style={styles.optionImage} />
+             </View>
              </TouchableOpacity>
              ))}
              </View>
-            <TouchableOpacity onPress={showDatePicker}>
-              <Text style={styles.input}>
+            <TouchableOpacity style={styles.date} onPress={showDatePicker}>
+              <Text style={styles.inputDate}>
               {dlc ? dlc.toLocaleDateString() : "Sélectionner la DLC"} 
               </Text>
             </TouchableOpacity>
-            <Button title="Enregistrer" onPress={saveProduct} />
+            <Button style={styles.enregistrerButtun} title="Enregistrer" onPress={saveProduct} />
             {/* Calendrier pour choisir la date */}
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
@@ -243,12 +254,59 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  modalContainer: {
-    flex: 1,
-  },
+ 
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#FAF9F3",
+  },
+  productName: {
+    fontSize: 40,
+    fontWeight: "bold",
+    top: -80,
+  },
+  storageOptions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "80%",
+    marginBottom: 20,
+  },
+  textStockage: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  selectedOptionImage: {
+    borderBottomColor: "#E56400",
+    borderBottomWidth: 2,
+  },
+  inputDate: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#E56400",
+    marginBottom: 80,
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 40,
+    width: 200,
+    textAlign: "center",
+    marginTop: 20,
+  },
+  enregistrerButtun: {
+    backgroundColor: "#E56400",
+    color: "#fff",
+    width: 200,
+    height: 40,
+    borderRadius: 10,
+  },
+  optionImage: {
+    width: 50,
+    height: 50,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  modal: {
+    backgroundColor: "#FAF9F3",
   },
 });
