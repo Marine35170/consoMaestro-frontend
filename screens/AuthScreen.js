@@ -214,11 +214,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   button: {
-    backgroundColor: '#A77B5A',
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderRadius: 20,
-    marginVertical: 10,
+  backgroundColor: '#A77B5A',
+  paddingVertical: 10,
+  width: 250, 
+  borderRadius: 20,
+  marginVertical: 10,
+  alignItems: 'center',
   },
   buttonText: {
     color: '#FFF',
