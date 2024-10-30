@@ -156,8 +156,8 @@ export default function ScanScreen() {
           <Text style={styles.buttonText}>C'est tout bon</Text>
         </TouchableOpacity>
         {/* Modal pour ajouter la DLC et l'endroit ou on stocke le produit */}
-        <Modal visible={showModal} animationType="slide" transparent={true}>
-          <View >
+        <Modal style={styles.modal} visible={showModal} animationType="slide" transparent={true}>
+          <View style={styles.modalContainer}>
             <Text style={styles.productName}>{product?.name}</Text>
              {/* Sélecteur pour le lieu de stockage */}
             <Text style={styles.textStockage}>Choisissez votre lieu de stockage:</Text>
