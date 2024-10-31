@@ -112,7 +112,7 @@ export default function AuthScreen() {
           {/* Bouton Inscription */}
           <TouchableOpacity style={styles.button} onPress={() => setSignupModalVisible(true)}>
           <Text style={styles.buttonText}>Créer mon compte</Text>
-          <MaterialIcons name="eco" size={16} color="#008000" style={styles.iconRight} />
+          <MaterialIcons name="eco" size={16} color="#faf9f3" style={styles.iconRight} />
           </TouchableOpacity>
         </View>
 
@@ -283,7 +283,8 @@ const styles = StyleSheet.create({
     width: 140,
     height: 120,
     borderRadius: 75,
-    backgroundColor: '#FFFFFF',
+    paddingBottom: 25,
+    backgroundColor: '#faf9f3',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 5,
@@ -303,11 +304,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: '#FFFFFF',
+    borderTopColor: '#faf9f3',
   },
   speechText: {
-    color: '#008000',
-    fontSize: 14,
+    color: '#92b63c',
+    fontSize: 15,
     textAlign: 'center',
   },
   socialContainer: {
