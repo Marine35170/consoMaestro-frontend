@@ -13,10 +13,12 @@ export const userSlice = createSlice({
  reducers: {
    addUserIdToStore: (state, action) => {
     state.id = action.payload;
-    state.username = action.payload.username;
+   },
+   addUsernameToStore: (state, action) => {
+    state.username = action.payload;
    },
  },
 });
 
-export const { addUserIdToStore } = userSlice.actions;
+export const { addUserIdToStore, addUsernameToStore} = userSlice.actions;
 export default userSlice.reducer;

@@ -31,6 +31,7 @@ export default function ScanScreen() {
   const freezerImage = require("../assets/congelo.png");
   const cupboardImage = require("../assets/Placard.png");
   const navigation = useNavigation();
+  const [productId, setProductId] = useState(null);
   
   {/*Permission camera */}
   useEffect(() => {
@@ -45,19 +46,29 @@ export default function ScanScreen() {
     console.log("Code-barres scanné : ", data);
     setScanned(true);
     setBarcodeData(data);
+    console.log(userId);
+    fetchProductData(userId, barcodeData);
+  };
+  {/*Recuperation de l'UPC  via la saisie */}
+  const handleBarCodeWrite = () => {
+    setScanned(true);
+    console.log(userId);
+    fetchProductData(userId, barcodeData);
+  };
+  {/*function pour l'etape de recherche du produit via l'UPC */}
+  const fetchProductData = async (userId, data) => {
     try {
-      fetch(
+      const response = await fetch(
         `https://conso-maestro-backend.vercel.app/products/${userId}/${data}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Données récupérées : ", data);
-          setProduct(data.product);
-          setShowModal(true);
-          console.log(data);
-        });
+      );
+      const result = await response.json();
+      console.log("Données récupérées : ", result);
+      setProduct(result.product);
+      setShowModal(true);
+      setProductId(result.product._id);
+      console.log(result);
     } catch (error) {
-      console.error(error);
+      console.error("Erreur lors de la récupération des données : ", error);
     }
   };
   {/*Afficher le calendrier */}
@@ -99,6 +110,7 @@ export default function ScanScreen() {
             upc: barcodeData,
             dlc: formattedDlc,
             user: userId,
+            _id: productId,
             storagePlace,
           }),
         }
@@ -109,6 +121,8 @@ export default function ScanScreen() {
       if (response.ok) {
         Alert.alert("Succès", data.message);
         setShowModal(false);
+        setBarcodeData('');
+        setProductId(null);
       } else {
         Alert.alert(
           "Erreur",
@@ -153,7 +167,12 @@ export default function ScanScreen() {
           style={styles.input}
           placeholder="Je saisis mon code-barre..."
           keyboardType="numeric"
+          value={barcodeData}
+          onChangeText={setBarcodeData}
         />
+        <TouchableOpacity onPress={handleBarCodeWrite}>
+          <Text style={styles.buttonFinish}>Valider</Text>
+        </TouchableOpacity>
         {/* Bouton pour valider les produits */}
         <TouchableOpacity style={styles.fin} onPress={handleFinish}>
           <Text style={styles.buttonFinish}>C'est tout bon</Text>
