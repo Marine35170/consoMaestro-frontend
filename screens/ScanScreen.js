@@ -195,7 +195,9 @@ export default function ScanScreen() {
         <Modal style={styles.modal} visible={showModal} animationType="slide" >
         <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
           <View style={styles.modalContainer}>
+            <View style={styles.productNameContainer}>
             <Text style={styles.productName}>{product?.name}</Text>
+            </View>
              {/* Sélecteur pour le lieu de stockage */}
             <Text style={styles.textStockage}>Choisissez votre lieu de stockage:</Text>
             <View style={styles.storageOptions}>
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
-    borderColor : "#FFFFFF",
+    borderColor : "#B19276",
   },
  
   modalContainer: {
@@ -306,12 +308,13 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 30,
     fontWeight: "bold",
-    top: -80,
-    borderWidth: 1,
+    color: "#fff",
+  },
+  productNameContainer: {
     padding: 10,
     borderRadius: 10,
     backgroundColor: "#69914a",
-    color: "#fff",
+    top: -80,
   },
   storageOptions: {
     flexDirection: "row",
@@ -330,7 +333,7 @@ const styles = StyleSheet.create({
   },
   inputDate: {   
     fontSize: 20,
-    color: "#B19276",
+    color: "#E56400",
   },
   enregistrerButtun: {
     backgroundColor: "#B19276",
