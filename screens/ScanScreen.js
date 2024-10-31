@@ -178,6 +178,7 @@ export default function ScanScreen() {
         <TextInput
           style={styles.input}
           placeholder="Je saisis mon code-barre..."
+          placeholderTextColor="#664C25"
           keyboardType="numeric"
           value={barcodeData}
           onChangeText={setBarcodeData}
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
     borderColor: "#A77B5A",
     padding: 10,
     marginTop: 10,
-    color: "#B19276",
+    color: "#E56400",
   },
   fin: {
     backgroundColor: "#69914a",
@@ -294,6 +295,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
+    borderColor : "#FFFFFF",
   },
  
   modalContainer: {
