@@ -37,6 +37,7 @@ const FridgeScreen = () => {
       return styles.greenDlcContainer;
     }
   };
+  
     // Fonction pour gérer l'affichage des modals selon les jours restants
   const handleDlcPress = (dlcDate) => {
     const today = moment();
