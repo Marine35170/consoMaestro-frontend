@@ -20,17 +20,17 @@ const RappelConsoScreen = () => {
 
     const fetchRecalls = async () => {
         try {
-            const response = await fetch('http://https://data.economie.gouv.fr/api/v2/catalog/datasets/rappelconso0/records?where=categorie_de_produit="Alimentation"&limit=${limit}&offset=${offset}/fetch-recalls'); 
+            const response = await fetch('http://conso-maestro-backend.vercel.app/rappels/fetch-recalls');
+    
             const data = await response.json();
-
             if (data.result) {
-                setSearchResults(data.data); // Assurez-vous que 'data' est le bon champ
+                setSearchResults(data.data);
             } else {
                 setError(data.message || 'Aucun rappel trouvé.');
             }
         } catch (err) {
             setError('Erreur lors de la récupération des données.');
-            console.error(err);
+            console.error("Détails de l'erreur :", err);
         }
     };
 
