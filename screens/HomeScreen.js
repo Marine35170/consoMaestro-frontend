@@ -83,13 +83,6 @@ export default function HomeScreen({}) {
             style={styles.scanImage}
           />
         </TouchableOpacity>
-        <Text style={styles.ou}>OU</Text>
-        {/* Champ de saisie pour le code-barres */}
-        <TextInput
-          style={styles.input}
-          placeholder="Je saisis mon code-barre..."
-          keyboardType="numeric"
-        />
       </View>
     </ImageBackground>
   );
@@ -99,7 +92,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    height: "100%",
   },
   background: {
     flex: 1,
@@ -108,9 +103,8 @@ const styles = StyleSheet.create({
   squirrel: {
     width: 60,
     height: 60,
-    marginBottom: 10,
-    marginRight: 250,
-    marginTop: -55,
+    marginTop: 50,
+    right: 125,
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",
@@ -123,6 +117,7 @@ const styles = StyleSheet.create({
     height: "25%",
     marginBottom: 5,
     overflow: "hidden",
+    top: -50,
   },
   scan: {
     backgroundColor: "#FAF9F3",
@@ -137,6 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     overflow: "hidden",
+    top: -100,
   },
   ou: {
     fontSize: 20,
@@ -145,30 +141,23 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
-  input: {
-    backgroundColor: "#FAF9F3",
-    borderWidth: 1,
-    width: "85%",
-    height: "10%",
-    borderRadius: 10,
-    borderColor: "#A77B5A",
-    padding: 10,
-  },
+ 
   buttonText: {
-    color: "#664C25",
     position: "absolute",
     marginTop: 20,
     textAlign: "center",
-    fontSize: 20,
+    color: "#E56400",
+    fontWeight: "bold",
+    fontSize: 24,
     top: 0,
   },
   tipsMainTitle: {
     color: "#E56400",
     fontWeight: "bold",
-    marginTop: 10,
     fontSize: 24,
     textAlign: "center",
     marginBottom: 5,
+    marginTop: 10,
   },
   tipsTitle: {
     color: "#664C25",
