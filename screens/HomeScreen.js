@@ -13,10 +13,10 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
-
-export default function HomeScreen({ navigation }) {
- 
+export default function HomeScreen({}) {
+ const navigation = useNavigation();
   const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
@@ -48,7 +48,7 @@ export default function HomeScreen({ navigation }) {
         });
     };
     fetchAdvice(); // Calls fetchAdvice function
-  }, []);
+  }, [navigation]);
 
   const handleScanPress = () => {
     {
@@ -116,12 +116,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF9F3",
     marginTop: 10,
     borderWidth: 1,
-    padding: 10,
+    padding: 5,
     borderRadius: 10,
-    borderColor: "#A77B5A",
+    borderColor: "#E56400",
     width: "85%",
     height: "25%",
-    marginBottom: 20,
+    marginBottom: 5,
     overflow: "hidden",
   },
   scan: {
@@ -168,14 +168,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 24,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 5,
   },
   tipsTitle: {
     color: "#664C25",
     marginTop: 10,
     fontSize: 20,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   tipsText: {
     color: "#B19276",
