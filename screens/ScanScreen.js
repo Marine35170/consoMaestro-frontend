@@ -31,8 +31,6 @@ export default function ScanScreen() {
   const freezerImage = require("../assets/congelo.png");
   const cupboardImage = require("../assets/Placard.png");
   const navigation = useNavigation();
-  const [barcodeInput, setBarcodeInput] = useState("");
-  
   
   {/*Permission camera */}
   useEffect(() => {
@@ -47,30 +45,21 @@ export default function ScanScreen() {
     console.log("Code-barres scanné : ", data);
     setScanned(true);
     setBarcodeData(data);
-    ScanData(userId, data);
-  };
-  {/* Recuperation de l'UPC  via le scan*/}
-  const handleBarCodeWrite =(data) => {
-    console.log("Code-barres saisi : ", data);
-    setBarcodeData(barcodeInput);
-    ScanData(userId, barcodeInput); 
-  };
-  {/*Recuperation des données du produit via l'UPC */} 
-  const ScanData = async (userId, data) => {
     try {
-      const response = await fetch(
+      fetch(
         `https://conso-maestro-backend.vercel.app/products/${userId}/${data}`
-      );
-      const result = await response.json();
-      console.log("Données récupérées : ", result);
-      setProduct(result.product);
-      setShowModal(true);
-      console.log(result);
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Données récupérées : ", data);
+          setProduct(data.product);
+          setShowModal(true);
+          console.log(data);
+        });
     } catch (error) {
-      console.error("Erreur lors de la récupération des données : ", error);
+      console.error(error);
     }
   };
-
   {/*Afficher le calendrier */}
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -164,12 +153,7 @@ export default function ScanScreen() {
           style={styles.input}
           placeholder="Je saisis mon code-barre..."
           keyboardType="numeric"
-          value={barcodeInput} 
-          onChangeText={setBarcodeInput}
         />
-        <TouchableOpacity style={styles.fin} onPress={handleBarCodeWrite}>
-          <Text style={styles.buttonFinish}>Valider</Text>
-        </TouchableOpacity>
         {/* Bouton pour valider les produits */}
         <TouchableOpacity style={styles.fin} onPress={handleFinish}>
           <Text style={styles.buttonFinish}>C'est tout bon</Text>
