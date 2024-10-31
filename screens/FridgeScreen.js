@@ -35,7 +35,7 @@ const FridgeScreen = () => {
           console.error(error);
         });
     };
-    fetchAdvice(); // Calls fetchAdvice function
+    fetchProducts(); // Calls ffetchProducts function
   }, [navigation]);
 
   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
