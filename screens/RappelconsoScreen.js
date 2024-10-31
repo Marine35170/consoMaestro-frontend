@@ -1,24 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
 
 const RappelConsoScreen = () => {
     const [productName, setProductName] = useState('');
-    const [searchResults, setSearchResults] = useState([
-        {
-            categorie_de_produit: "Alimentaire",
-            nom_de_la_marque_du_produit: "Produit 1",
-            noms_des_modeles_ou_references: "Modèle A",
-            identification_des_produits: "Code 123",
-            motif_du_rappel: "Motif de sécurité",
-            risques_encourus_par_le_consommateur: "Risque de contamination",
-            preconisations_sanitaires: "Ne pas consommer",
-            description_complementaire_du_risque: "Risque de bactéries",
-            conduites_a_tenir_par_le_consommateur: "Retour en magasin",
-            date_de_fin_de_la_procedure_de_rappel: new Date("2024-12-31"),
-            date_debut_fin_de_commercialisation: new Date("2023-05-01"),
-        },
-        // Ajoutez plus de produits si nécessaire pour tester
-    ]);
+    const [searchResults, setSearchResults] = useState([]);
     const [error, setError] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
@@ -33,6 +18,26 @@ const RappelConsoScreen = () => {
         setModalVisible(false);
     };
 
+    const fetchRecalls = async () => {
+        try {
+            const response = await fetch('http://https://data.economie.gouv.fr/api/v2/catalog/datasets/rappelconso0/records?where=categorie_de_produit="Alimentation"&limit=${limit}&offset=${offset}/fetch-recalls'); 
+            const data = await response.json();
+
+            if (data.result) {
+                setSearchResults(data.data); // Assurez-vous que 'data' est le bon champ
+            } else {
+                setError(data.message || 'Aucun rappel trouvé.');
+            }
+        } catch (err) {
+            setError('Erreur lors de la récupération des données.');
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        fetchRecalls();
+    }, []); // Le tableau vide [] signifie que cela s'exécute une fois lorsque le composant est monté
+
     return (
         <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>
             <View style={styles.container}>
@@ -45,7 +50,7 @@ const RappelConsoScreen = () => {
                     value={productName}
                     onChangeText={setProductName}
                 />
-                <Button title="Rechercher" onPress={() => {}} />
+                <Button title="Rechercher" onPress={() => { /* Ajoute ta logique de recherche ici */ }} />
 
                 {error ? <Text style={styles.error}>{error}</Text> : null}
 
