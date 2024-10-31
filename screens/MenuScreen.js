@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { Button, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 
 
@@ -29,7 +30,7 @@ const MenuScreen = () => {
         navigation.navigate('RappelConsoScreen');
     };
 
-    return (<ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>  
+    return (<ImageBackground source={require('../assets/backgroundMenuv2.png')} style={styles.background}>  
         <View style={styles.container}>
             <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
             <View style={styles.container}>
@@ -64,7 +65,10 @@ const MenuScreen = () => {
 
                 <View style={styles.actionButtons}>
                     <TouchableOpacity style={styles.buttonRecipe} onPress={handleRecipePress}>
-                        <Text style={styles.buttonText}>Idées recettes</Text>
+                            <View style={styles.iconAndText}>
+                                <Ionicons name="ice-cream-outline" size={20} color="#FFF" style={styles.icon} />
+                                <Text style={styles.buttonText}>Idées recettes</Text>
+                            </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.buttonDGCCRF} onPress={handleRappelConsoPress}>
                         <Text style={styles.buttonText}>Mes rappels conso (DGCCRF)</Text>
@@ -123,7 +127,7 @@ const styles = StyleSheet.create({
 
     alertText: {
         color: '#fff',
-        fontWeight: 'bold',
+        fontSize: 16, 
     },
 
     // Container des images des stockages (frigo congelo placards)
@@ -171,6 +175,7 @@ const styles = StyleSheet.create({
     stockageText: {
         color: '#664C25',
         fontWeight: 'bold',
+        fontSize: 16,
     },
 
     // Bouton "idées recettes"
@@ -184,7 +189,8 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: 80,
+        marginLeft: 70,
+        flexDirection: 'row',
     },
     // Bouton "mes rappels conso DGCCRF"
 
@@ -197,15 +203,23 @@ const styles = StyleSheet.create({
         width: 300,
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: 'row',
     },
     // Texte des boutons
 
     buttonText: {
         color: '#fff',
-        fontWeight: 'bold',
-        direction: 'flex',
+        fontSize: 16,
+
+      
+    },
+    iconAndText: {
+        flexDirection: 'row',
         alignItems: 'center',
-        alignContent: 'center',
+    },
+
+    icon: {
+        marginRight: 10, // Ajout de cette ligne pour espacer l'icône et le texte
     },
 
 });
