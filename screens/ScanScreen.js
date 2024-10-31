@@ -156,7 +156,7 @@ export default function ScanScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "height" : "height"}
         
     >
     <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
