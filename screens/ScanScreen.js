@@ -47,7 +47,7 @@ export default function ScanScreen() {
     setScanned(true);
     setBarcodeData(data);
     console.log(userId);
-    fetchProductData(userId, barcodeData);
+    fetchProductData(userId, data);
   };
   {/*Recuperation de l'UPC  via la saisie */}
   const handleBarCodeWrite = () => {
@@ -57,6 +57,7 @@ export default function ScanScreen() {
   };
   {/*function pour l'etape de recherche du produit via l'UPC */}
   const fetchProductData = async (userId, data) => {
+    console.log("Recherche du produit avec l'UPC : ", data);
     try {
       const response = await fetch(
         `https://conso-maestro-backend.vercel.app/products/${userId}/${data}`
