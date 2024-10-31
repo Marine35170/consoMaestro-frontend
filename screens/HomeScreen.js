@@ -13,10 +13,10 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+
 
 export default function HomeScreen({ navigation }) {
-  const navigation = useNavigation(); // Hook to navigate between screens
+ 
   const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
@@ -70,7 +70,7 @@ export default function HomeScreen({ navigation }) {
 
         {/* Trucs et astuces */}
         <View style={styles.tipsContainer}>
-          <Text style={styles.tipsTitle}>Trucs et Astuces</Text>
+          <Text style={styles.tipsMainTitle}>Trucs et Astuces</Text>
           <Text style={styles.tipsTitle}>{advicesInfo.titre}</Text>
           <Text style={styles.tipsText}>
           {advicesInfo.description}
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   ou: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#E56400",
     marginTop: 10,
@@ -161,6 +161,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
     top: 0,
+  },
+  tipsMainTitle: {
+    color: "#E56400",
+    fontWeight: "bold",
+    marginTop: 10,
+    fontSize: 24,
+    textAlign: "center",
+    marginBottom: 20,
   },
   tipsTitle: {
     color: "#664C25",
