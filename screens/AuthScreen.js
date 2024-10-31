@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import { addUserIdToStore, addUsernameToStore } from '../reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -72,6 +72,7 @@ export default function AuthScreen() {
           password: signupPassword.trim(),
         }),
       });
+      
       const data = await response.json();
       if (data.result) {
         Alert.alert('Succès', data.message);
@@ -92,6 +93,16 @@ export default function AuthScreen() {
     <ImageBackground source={require('../assets/backgroundAuth.png')} style={styles.background}>
       <View style={styles.container}>
 
+        {/* Bulle de texte squiky */}
+        <View style={styles.speechBubbleContainer}>
+          <View style={styles.speechBubbleTail} />
+          <View style={styles.speechBubble}>
+            <Text style={styles.speechText}>
+              Fais comme moi : organise-toi facilement, aide la planète, et fais des économies !
+            </Text>
+          </View>
+        </View>
+
         <View style={styles.buttonContainer}>
           {/* Bouton Connexion */}
           <TouchableOpacity style={styles.button} onPress={() => setLoginModalVisible(true)}>
@@ -100,7 +111,8 @@ export default function AuthScreen() {
 
           {/* Bouton Inscription */}
           <TouchableOpacity style={styles.button} onPress={() => setSignupModalVisible(true)}>
-            <Text style={styles.buttonText}>Créer mon compte</Text>
+          <Text style={styles.buttonText}>Créer mon compte</Text>
+          <MaterialIcons name="eco" size={16} color="#008000" style={styles.iconRight} />
           </TouchableOpacity>
         </View>
 
@@ -220,16 +232,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   button: {
+  flexDirection: 'row',
   backgroundColor: '#A77B5A',
   paddingVertical: 10,
+  paddingHorizontal: 20,
   width: 250, 
   borderRadius: 20,
   marginVertical: 10,
   alignItems: 'center',
+  justifyContent: 'center',
   },
   buttonText: {
     color: '#FFF',
     fontSize: 16,
+  },
+  iconRight: {
+    marginLeft: 10, 
   },
   modalContainer: {
     flex: 1,
@@ -254,6 +272,43 @@ const styles = StyleSheet.create({
     color: '#E7734B',
     fontSize: 16,
     marginTop: 10,
+  },
+  speechBubbleContainer: {
+    position: 'absolute',
+    top: '39%',
+    left: '25%',
+    alignItems: 'center',
+  },
+  speechBubble: {
+    width: 140,
+    height: 120,
+    borderRadius: 75,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+  },
+  speechBubbleTail: {
+    position: 'absolute',
+    bottom: -10,
+    left: '35%',
+    width: 0,
+    height: 1,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderTopWidth: 10,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: '#FFFFFF',
+  },
+  speechText: {
+    color: '#008000',
+    fontSize: 14,
+    textAlign: 'center',
   },
   socialContainer: {
     flexDirection: 'row',
