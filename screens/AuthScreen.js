@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Aler
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
-import { addUserIdToStore } from '../reducers/userReducer';
+import { addUserIdToStore, addUsernameToStore } from '../reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -41,7 +41,8 @@ export default function AuthScreen() {
       const data = await response.json();
       console.log(data)
       if (data.result) {
-        dispatch(addUserIdToStore({ id: data.id, username: data.username }));
+        dispatch(addUserIdToStore(data.userId));
+        dispatch(addUsernameToStore(data.username));
         await AsyncStorage.setItem('userToken', data.token);
         console.log(data.token)
         Alert.alert('Connexion réussie ! ', data.message);
