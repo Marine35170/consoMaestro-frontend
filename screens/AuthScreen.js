@@ -71,6 +71,7 @@ export default function AuthScreen() {
           password: signupPassword.trim(),
         }),
       });
+      
       const data = await response.json();
       if (data.result) {
         Alert.alert('Succès', data.message);
