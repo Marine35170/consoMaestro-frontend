@@ -33,6 +33,7 @@ export default function ScanScreen() {
   const navigation = useNavigation();
   const [barcodeInput, setBarcodeInput] = useState("");
   
+  
   {/*Permission camera */}
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {

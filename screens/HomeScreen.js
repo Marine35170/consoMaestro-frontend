@@ -14,10 +14,12 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 export default function HomeScreen({}) {
  const navigation = useNavigation();
-  const [advicesInfo, setAdvicesInfo] = useState({
+ const username = useSelector((state) => state.user.username);
+ const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
   }); // State to store advice info
@@ -63,10 +65,13 @@ export default function HomeScreen({}) {
       style={styles.background}
     >
       <View style={styles.container}>
+        <View style={styles.header}>
         <Image
           source={require("../assets/Squirrel/Heureux.png")}
           style={styles.squirrel}
         />
+        <Text style={styles.username}>Bonjour {username}</Text>
+        </View>
 
         {/* Trucs et astuces */}
         <View style={styles.tipsContainer}>
@@ -103,8 +108,7 @@ const styles = StyleSheet.create({
   squirrel: {
     width: 60,
     height: 60,
-    marginTop: 50,
-    right: 125,
+    
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",
@@ -176,5 +180,17 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
     top: 0,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 50,
+    width: "85%",
+    justifyContent: "space-between",
+  },
+  username: {
+    color: "#B19276",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
