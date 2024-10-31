@@ -12,7 +12,7 @@ const RappelConsoScreen = () => {
         setSelectedProduct(product);
         setModalVisible(true);
     };
-
+    
     const closeModal = () => {
         setSelectedProduct(null);
         setModalVisible(false);
@@ -20,17 +20,26 @@ const RappelConsoScreen = () => {
 
     const fetchRecalls = async () => {
         try {
-            const response = await fetch('http://https://data.economie.gouv.fr/api/v2/catalog/datasets/rappelconso0/records?where=categorie_de_produit="Alimentation"&limit=${limit}&offset=${offset}/fetch-recalls'); 
-            const data = await response.json();
-
-            if (data.result) {
-                setSearchResults(data.data); // Assurez-vous que 'data' est le bon champ
+            const response = await fetch('https://conso-maestro-backend.vercel.app/fetch-recalls');
+            
+            console.log("Statut de la réponse :", response.status); // Affiche le statut (par ex. 200, 404, etc.)
+            
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const data = await response.json();
+                if (data.result) {
+                    setSearchResults(data.data); 
+                } else {
+                    setError(data.message || 'Aucun rappel trouvé.');
+                }
             } else {
-                setError(data.message || 'Aucun rappel trouvé.');
+                const text = await response.text(); // Affiche le contenu brut de la réponse pour débogage
+                console.error("Réponse inattendue :", text);
+                setError("Réponse inattendue du serveur.");
             }
         } catch (err) {
             setError('Erreur lors de la récupération des données.');
-            console.error(err);
+            console.error("Erreur lors de la récupération des données :", err);
         }
     };
 
@@ -50,7 +59,7 @@ const RappelConsoScreen = () => {
                     value={productName}
                     onChangeText={setProductName}
                 />
-                <Button title="Rechercher" onPress={() => { /* Ajoute ta logique de recherche ici */ }} />
+                <Button title="Rechercher" onPress={() => { }} />
 
                 {error ? <Text style={styles.error}>{error}</Text> : null}
 
