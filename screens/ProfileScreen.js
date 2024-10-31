@@ -15,6 +15,8 @@ export default function ProfileScreen() {
   const [editedUsername, setEditedUsername] = useState('');
   // State to display a success message once the update's successful
   const [successMessage, setSuccessMessage] = useState('');
+ // State to display a message when there are no changes
+  const [noChangesMessage, setNoChangesMessage] = useState('');
   
   // useEffect hook to fetch user data when the component loads
   useEffect(() => {
@@ -58,10 +60,11 @@ export default function ProfileScreen() {
   
     // Check if there are fields to update
     if (Object.keys(updateData).length === 0) {
-      setSuccessMessage("Aucune modification détectée.");
-      setTimeout(() => setSuccessMessage(''), 3000);
-      return;
+      setNoChangesMessage("Aucune modification détectée."); 
+      setTimeout(() => setNoChangesMessage(''), 3000);
+      return; 
     }
+    
     // Fetch user data from the backend
     fetch('https://conso-maestro-backend.vercel.app/users/update', {
       method: 'PUT',
@@ -179,6 +182,9 @@ export default function ProfileScreen() {
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Modifier les informations</Text>
 
+            {/* Display the no changes message in red */}
+            {noChangesMessage ? <Text style={styles.noChangesMessage}>{noChangesMessage}</Text> : null}
+
             {/* Champ de saisie pour l'email */}
             <TextInput
               style={styles.input}
@@ -232,6 +238,7 @@ const styles = StyleSheet.create({
     borderColor: '#FFF'},
   optionButtonText: { color: '#FFF', fontSize: 16, textAlign: 'center' },
   modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 20 },
+  noChangesMessage: { fontSize: 16, color: 'red', textAlign: 'center', marginBottom: 10 }, 
   modalTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFF', marginBottom: 20 },
   input: { width: '80%', backgroundColor: '#FFF', padding: 10, marginVertical: 5, borderRadius: 8 },
   saveButton: { backgroundColor: '#69914a', padding: 10, borderRadius: 10, marginTop: 10 },
