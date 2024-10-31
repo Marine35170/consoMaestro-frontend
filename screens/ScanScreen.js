@@ -121,7 +121,7 @@ export default function ScanScreen() {
       if (response.ok) {
         Alert.alert("Succès", data.message);
         setShowModal(false);
-        setBarcodeData('');
+        setBarcodeData(null);
         setProductId(null);
       } else {
         Alert.alert(
