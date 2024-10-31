@@ -157,7 +157,7 @@ export default function ScanScreen() {
     <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} 
+        
     >
     <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
       <View style={styles.container}>
