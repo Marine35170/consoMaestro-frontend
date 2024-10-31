@@ -10,6 +10,10 @@ import {
   Modal,
   Alert,
   Image,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -148,6 +152,12 @@ export default function ScanScreen() {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} 
+    >
     <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
       <View style={styles.container}>
         <Text style={styles.text}>Scannez votre produit</Text>
@@ -164,6 +174,7 @@ export default function ScanScreen() {
         )}
         <Text style={styles.ou}>OU</Text>
         {/* Champ de saisie pour le code-barres */}
+        
         <TextInput
           style={styles.input}
           placeholder="Je saisis mon code-barre..."
@@ -171,9 +182,10 @@ export default function ScanScreen() {
           value={barcodeData}
           onChangeText={setBarcodeData}
         />
-        <TouchableOpacity onPress={handleBarCodeWrite}>
-          <Text style={styles.buttonFinish}>Valider</Text>
+        <TouchableOpacity onPress={handleBarCodeWrite} style={styles.valider}>
+          <Text style={styles.buttonFinish}>Valider mon code-barre</Text>
         </TouchableOpacity>
+        
         {/* Bouton pour valider les produits */}
         <TouchableOpacity style={styles.fin} onPress={handleFinish}>
           <Text style={styles.buttonFinish}>C'est tout bon</Text>
@@ -221,6 +233,8 @@ export default function ScanScreen() {
         </Modal>
       </View>
     </ImageBackground>
+    </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -257,13 +271,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#E56400",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   input: {
     backgroundColor: "#FAF9F3",
     borderWidth: 1,
     width: "85%",
-    height: "10%",
+    height: "8%",
     borderRadius: 10,
     borderColor: "#A77B5A",
     padding: 10,
@@ -347,4 +361,14 @@ const styles = StyleSheet.create({
   buttonFinish: {
     color: "#fff",
   },
+  valider: {
+    backgroundColor: "#B19276",
+    width: 200,
+    height: 40,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  
 });

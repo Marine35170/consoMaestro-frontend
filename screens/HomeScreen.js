@@ -177,8 +177,8 @@ const styles = StyleSheet.create({
   scanImage: {
     position: "absolute",
     width: 250,
-    height: 250,
-    top: 0,
+    height: 300,
+    top: -10,
   },
   header: {
     flexDirection: "row",
