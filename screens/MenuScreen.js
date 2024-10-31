@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: 80,
+        marginLeft: 70,
         flexDirection: 'row',
     },
     // Bouton "mes rappels conso DGCCRF"
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     },
 
     icon: {
-        marginRight: 50, // Ajout de cette ligne pour espacer l'icône et le texte
+        marginRight: 10, // Ajout de cette ligne pour espacer l'icône et le texte
     },
 
 });
