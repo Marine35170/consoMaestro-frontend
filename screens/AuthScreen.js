@@ -93,16 +93,6 @@ export default function AuthScreen() {
     <ImageBackground source={require('../assets/backgroundAuth.png')} style={styles.background}>
       <View style={styles.container}>
 
-        {/* Bulle de texte squiky */}
-        <View style={styles.speechBubbleContainer}>
-          <View style={styles.speechBubbleTail} />
-          <View style={styles.speechBubble}>
-            <Text style={styles.speechText}>
-              Fais comme moi : organise-toi facilement, aide la planète, et fais des économies !
-            </Text>
-          </View>
-        </View>
-
         <View style={styles.buttonContainer}>
           {/* Bouton Connexion */}
           <TouchableOpacity style={styles.button} onPress={() => setLoginModalVisible(true)}>
@@ -272,44 +262,6 @@ const styles = StyleSheet.create({
     color: '#E7734B',
     fontSize: 16,
     marginTop: 10,
-  },
-  speechBubbleContainer: {
-    position: 'absolute',
-    top: '39%',
-    left: '25%',
-    alignItems: 'center',
-  },
-  speechBubble: {
-    width: 140,
-    height: 120,
-    borderRadius: 75,
-    paddingBottom: 25,
-    backgroundColor: '#faf9f3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  speechBubbleTail: {
-    position: 'absolute',
-    bottom: -10,
-    left: '35%',
-    width: 0,
-    height: 1,
-    borderLeftWidth: 10,
-    borderRightWidth: 10,
-    borderTopWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: '#faf9f3',
-  },
-  speechText: {
-    color: '#92b63c',
-    fontSize: 15,
-    textAlign: 'center',
   },
   socialContainer: {
     flexDirection: 'row',
