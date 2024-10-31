@@ -36,7 +36,6 @@ export default function ScanScreen() {
   const cupboardImage = require("../assets/Placard.png");
   const navigation = useNavigation();
   const [productId, setProductId] = useState(null);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   
   {/*Permission camera */}
   useEffect(() => {
@@ -46,22 +45,7 @@ export default function ScanScreen() {
     };
     getBarCodeScannerPermissions();
   }, []);
-
-  {/*Afficher le clavier (probleme iphone) */}
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardVisible(false);
-    });
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
-
+  
   {/*Recuperation de l'UPC  via le scan */}
   const handleBarCodeScanned = ({ data }) => {
     console.log("Code-barres scanné : ", data);
@@ -172,7 +156,8 @@ export default function ScanScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "position" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} 
     >
     <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
       <View style={styles.container}>
