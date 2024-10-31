@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cameraKeyboardVisible: {
-    width: 300,
+    width: 150,
     height: 150,
     borderRadius: 10,
     marginBottom: 20,
