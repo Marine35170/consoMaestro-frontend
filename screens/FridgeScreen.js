@@ -6,8 +6,38 @@ import moment from "moment"; // Utilisation de moment.js pour manipuler les date
 const FridgeScreen = () => {
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
-
+  const [productsInfo, setProductsInfo] = useState(false); // État pour les produits enregistrer par le user
  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const token = await AsyncStorage.getItem("userToken"); // Retrieve the stored token
+
+      // Fetch advice data from the backend
+      fetch("https://conso-maestro-backend.vercel.app/advices", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          contentType: "application/json",
+        }, // Send token in Authorization header
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("data from fetch", data);
+          // Update state with user info if response is successful
+          setProductsInfo({
+            name: data.name,
+            image: data.iamge,
+            dlc: data.dlc,
+            storagePlace: data.storagePlace,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    };
+    fetchAdvice(); // Calls fetchAdvice function
+  }, [navigation]);
+
   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
   const navigation = useNavigation();
 
