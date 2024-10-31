@@ -6,11 +6,13 @@ const initialState = {
 
 export const userSlice = createSlice({
  name: 'user',
+ username: '',
 
   initialState,
  reducers: {
    addUserIdToStore: (state, action) => {
     state.id = action.payload;
+    state.username = action.payload.username;
    },
  },
 });

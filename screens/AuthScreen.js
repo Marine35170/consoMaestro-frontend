@@ -41,7 +41,7 @@ export default function AuthScreen() {
       const data = await response.json();
       console.log(data)
       if (data.result) {
-        dispatch(addUserIdToStore(data.userId));
+        dispatch(addUserIdToStore({ id: data.id, username: data.username }));
         await AsyncStorage.setItem('userToken', data.token);
         console.log(data.token)
         Alert.alert('Connexion réussie ! ', data.message);
