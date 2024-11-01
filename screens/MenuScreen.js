@@ -13,7 +13,8 @@ const MenuScreen = () => {
 
     const handleCongeloPress = () => {                      // Permet d'aller vers la page Congelo 
         navigation.navigate('CongeloScreen')
-    };
+    }
+    
 
     const handlePlacardPress = () => {                      // Permet d'aller vers la page Placard
         navigation.navigate('PlacardScreen')
