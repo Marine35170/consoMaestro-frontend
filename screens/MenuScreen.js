@@ -24,7 +24,7 @@ const MenuScreen = () => {
     };
 
     const handleRecipePress = () => {                       // Permet d'aller ver la plage "Idées recettes"
-        navigation.navigate('RecetteScreen');
+        navigation.navigate('RecipesScreen');
     };
     const handleRappelConsoPress = () => {                  // Permet d'aller à la page "rappel conso"
         navigation.navigate('RappelConsoScreen');
