@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
-import { View, Text, StyleSheet, TouchableOpacity, Image,Modal } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image,Modal,ScrollView } from "react-native";
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 import { useSelector } from "react-redux";
 
@@ -115,10 +115,12 @@ const CongeloScreen = () => {
        {/* Titre de la page */}  
       <Text style={styles.PageTitle}>Mon Congélo</Text>
       {/* Conteneur des produits dans le frigo */}
-      <View style={styles.productContainer}>
+      <View  style={styles.productContainer}>
         {/* Affichage des produits */}
-       {products}
-       </View>
+        <ScrollView Style={{ flexGrow: 1 }}>
+        {products}
+        </ScrollView>
+      </View >
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>

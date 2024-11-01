@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal,ScrollView} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 import { useSelector } from "react-redux";
@@ -117,9 +117,12 @@ const PlacardScreen = () => {
       <Text style={styles.PageTitle}>Mes Placards</Text>
 
       {/* Conteneur des produits dans le Placard */}
-      <ScrollView style={styles.productContainer} contentContainerStyle={{ paddingVertical: 10 }}>
+      <View  style={styles.productContainer}>
+        {/* Affichage des produits */}
+        <ScrollView Style={{ flexGrow: 1 }}>
         {products}
-      </ScrollView>
+        </ScrollView>
+      </View >
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>

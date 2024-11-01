@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView} from "react-native";
 import { useSelector } from "react-redux";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -98,7 +98,14 @@ const FridgeScreen = () => {
     <View style={styles.container}>
       <Image source={require("../assets/Squirrel/Heureux.png")} style={styles.squirrel} />
       <Text style={styles.PageTitle}>Mon Frigo</Text>
-      <View style={styles.productContainer}>{products}</View>
+
+      {/* Conteneur des produits dans le frigo */}
+      <View style={styles.productContainer}>
+        {/* Affichage des produits */}
+        {products}
+      </View>
+
+      {/* Boutons d'accès au congélateur et au placard */}
       <View style={styles.stocksButtonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
           <Text style={styles.buttonText}>Mon Congélo</Text>
