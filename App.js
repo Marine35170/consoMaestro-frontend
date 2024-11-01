@@ -13,7 +13,7 @@ import QuickConsoScreen from './screens/QuickconsoScreen';
 import FridgeScreen from './screens/FridgeScreen';
 import CongeloScreen from './screens/CongeloScreen';
 import PlacardScreen from './screens/PlacardScreen';
-import RecetteScreen from './screens/RecetteScreen';
+import RecipesScreen from './screens/RecipesScreen';
 import RappelConsoScreen from './screens/RappelconsoScreen';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -72,7 +72,7 @@ export default function App() {
        <Stack.Screen name="FridgeScreen" component={FridgeScreen} />
        <Stack.Screen name="CongeloScreen" component={CongeloScreen}/>
        <Stack.Screen name="PlacardScreen" component={PlacardScreen}/>
-       <Stack.Screen name="RecetteScreen" component={RecetteScreen} />
+       <Stack.Screen name="RecipesScreen" component={RecipesScreen} />
        <Stack.Screen name="RappelConsoScreen" component={RappelConsoScreen} />
      </Stack.Navigator>
    </NavigationContainer>
