@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 import { useSelector } from "react-redux";
@@ -117,10 +117,9 @@ const PlacardScreen = () => {
       <Text style={styles.PageTitle}>Mes Placards</Text>
 
       {/* Conteneur des produits dans le Placard */}
-      <View style={styles.productContainer}>
-        {/* Affichage des produits */}
+      <ScrollView style={styles.productContainer} contentContainerStyle={{ paddingVertical: 10 }}>
         {products}
-        </View>
+      </ScrollView>
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>
@@ -190,33 +189,30 @@ const PlacardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EFE5D8", // Couleur de fond de la page
+    backgroundColor: "#EFE5D8",
     alignItems: "center",
-    justifyContent: "center",
+
   },
   squirrel: {
-    position: "absolute",
     width: 50,
     height: 50,
-    top: 65,
-    left: 30,
+    marginTop: 65,
+    marginBottom: 10,
   },
   PageTitle: {
-    color: "#E56400", // Couleur du titre
+    color: "#E56400",
     fontWeight: "bold",
     fontSize: 20,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   productContainer: {
-    borderWidth: 1,
+    flex: 1,
+    width: "85%",
     backgroundColor: "#A77B5A",
-    borderColor: "#A77B5A",
-    width: "85%", // Largeur relative à l'écran
-    height: "65%", // Hauteur relative à l'écran
     borderRadius: 10,
-    padding: 10,
-    marginBottom: 20,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   
   ProductLineContainer: {
@@ -305,23 +301,27 @@ const styles = StyleSheet.create({
   },
   
   stocksButtonsContainer: {
-    flexDirection: "row", // Aligne les boutons d'accès en ligne
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "85%",
+    paddingVertical: 10,
+    backgroundColor: "#EFE5D8",
+    
+   
   },
   button: {
     justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 1,
     width: 150,
-    height: 70,
+    height: 60,
     borderRadius: 10,
-    padding: 10,
-    marginRight: 16,
-    marginLeft: 16,
+    marginHorizontal: 10,
   },
   buttonText: {
     fontWeight: "bold",
-    textAlign: "center",
     color: "#E56400",
   },
   //couleurs DLC dynamiques
