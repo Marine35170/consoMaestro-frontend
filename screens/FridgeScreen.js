@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native"; // Importation du hook de navigation pour naviguer entre les écrans
-import {View,Text,StyleSheet,TouchableOpacity,Image,Modal,} from "react-native"; // Import des composants nécessaires de React Native
+import {View,Text,StyleSheet,TouchableOpacity,Image,Modal,ScrollView} from "react-native"; // Import des composants nécessaires de React Native
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
@@ -120,10 +120,12 @@ const products = productsInfo ? productsInfo.map((data, i) => {
       <Text style={styles.PageTitle}>Mon Frigo</Text>
 
       {/* Conteneur des produits dans le frigo */}
-      <View style={styles.productContainer}>
+      <View  style={styles.productContainer}>
         {/* Affichage des produits */}
+        <ScrollView Style={{ flexGrow: 1 }}>
         {products}
-      </View>
+        </ScrollView>
+      </View >
 
       {/* Boutons d'accès au congélateur et au placard */}
       <View style={styles.stocksButtonsContainer}>
