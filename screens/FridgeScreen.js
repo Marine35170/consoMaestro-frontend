@@ -88,6 +88,7 @@ const products = productsInfo ? productsInfo.map((data, i) => {
           <Text style={styles.ProductTitle}>{data.name}</Text>
           
           {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
+          <View style={styles.DlcButtonContainer}>
           <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
           <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
             <Text style={styles.DlcText}>{data.dlc}</Text>
@@ -95,8 +96,7 @@ const products = productsInfo ? productsInfo.map((data, i) => {
           </TouchableOpacity>
 
           {/* Bouton pour ajouter le produit au congélateur */}
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleCongeloPress}>
+            <TouchableOpacity style={styles.buttonFreezer} onPress={handleCongeloPress}>
               <Image
                 source={require("../assets/congelo.png")} // Icône de congélateur
                 style={styles.freezerLogo}
@@ -121,7 +121,7 @@ const products = productsInfo ? productsInfo.map((data, i) => {
 
       {/* Conteneur des produits dans le frigo */}
       <View style={styles.productContainer}>
-        {/* Affichage de la ligne pour le produit 1 */}
+        {/* Affichage des produits */}
         {products}
       </View>
 
@@ -221,40 +221,58 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
   },
+  
   ProductLineContainer: {
-    flexDirection: "row", // Disposition en ligne pour aligner les éléments
+    flexDirection: "row",
+    justifyContent: "space-between", // Pour espacer les éléments
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 2,
-    width: 170,
-    height: 50,
+    width: '100%',
+    height: 52,
     borderRadius: 10,
     padding: 10,
-    alignContent: "space-between",
+    alignItems: "center", // Centrer verticalement
     marginTop: 5,
     marginBottom: 5,
   },
   ProductTitle: {
+    flex: 1,
     fontSize: 15,
-    textAlign: "center",
     fontWeight: "bold",
     color: "#E56400",
   },
+  DlcButtonContainer: {
+    flexDirection: "row", // Aligne les deux éléments horizontalement
+    alignItems: "center",
+  },
   DlcContainer: {
     justifyContent: "center",
-    backgroundColor: "#FAF9F3",
-    borderColor: "#A77B5A",
-    borderWidth: 2,
-    width: 93,
-    height: 50,
-    top: -11,
+    width: 94,
+    height: 47,
     borderRadius: 10,
     padding: 10,
-    marginLeft: 91,
+    marginRight: 2, // Espace entre DlcContainer et buttonFreezer
+    right: -7,
   },
   DlcText: {
     fontSize: 12,
     fontWeight: "bold",
+  },
+  buttonFreezer: {
+    justifyContent: "center",
+    backgroundColor: "#FAF9F3",
+    borderColor: "#A77B5A",
+    borderWidth: 1,
+    width: 50,
+    height: 47,
+    borderRadius: 10,
+    alignItems: "center",
+    right: -7,
+  },
+  freezerLogo: {
+    width: 30,
+    height: 30,
   },
   modalContainer: {
     flex: 1,
@@ -288,21 +306,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
   },
-  buttonFreezer: {
-    justifyContent: "center",
-    backgroundColor: "#FAF9F3",
-    borderColor: "#A77B5A",
-    borderWidth: 2,
-    width: 50,
-    height: 50,
-    top: -11,
-    borderRadius: 10,
-    padding: 10,
-  },
-  freezerLogo: {
-    width: 30,
-    height: 30,
-  },
+  
   stocksButtonsContainer: {
     flexDirection: "row", // Aligne les boutons d'accès en ligne
   },
@@ -331,7 +335,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFA500", // Orange
   },
   greenDlcContainer: {
-    backgroundColor: "#32CD32", // Vert
+    backgroundColor: "#69914a", // Vert
   },
 });
 

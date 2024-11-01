@@ -51,7 +51,7 @@ const CongeloScreen = () => {
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
   const handleDlcColor = (dlcDate) => {
     const today = moment(); // Date actuelle
-    const expirationDate = moment(dlcDate, "DD/MM/YYYY"); // Date de limite de consommation
+    const expirationDate = moment(dlcDate); // Date de limite de consommation
 
     const daysRemaining = expirationDate.diff(today, "days"); // Différence en jours entre la date d'aujourd'hui et la DLC
 
@@ -184,10 +184,11 @@ const CongeloScreen = () => {
   );
 };
 
+// Styles pour les différents éléments du composant
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EFE5D8",
+    backgroundColor: "#EFE5D8", // Couleur de fond de la page
     alignItems: "center",
     justifyContent: "center",
   },
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     left: 30,
   },
   PageTitle: {
-    color: "#E56400",
+    color: "#E56400", // Couleur du titre
     fontWeight: "bold",
     fontSize: 20,
     textAlign: "center",
@@ -209,45 +210,45 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "#A77B5A",
     borderColor: "#A77B5A",
-    width: "85%",
-    height: "65%",
+    width: "85%", // Largeur relative à l'écran
+    height: "65%", // Hauteur relative à l'écran
     borderRadius: 10,
     padding: 10,
     marginBottom: 20,
   },
+  
   ProductLineContainer: {
     flexDirection: "row",
+    justifyContent: "space-between", // Pour espacer les éléments
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 2,
-    width: 170,
-    height: 50,
+    width: '100%',
+    height: 52,
     borderRadius: 10,
     padding: 10,
-    fontSize: 16,
-    alignContent: "space-between",
+    alignItems: "center", // Centrer verticalement
     marginTop: 5,
     marginBottom: 5,
   },
   ProductTitle: {
-    justifyContent: "center",
+    flex: 1,
     fontSize: 15,
-    textAlign: "center",
     fontWeight: "bold",
     color: "#E56400",
   },
+  DlcButtonContainer: {
+    flexDirection: "row", // Aligne les deux éléments horizontalement
+    alignItems: "center",
+  },
   DlcContainer: {
     justifyContent: "center",
-    backgroundColor: "#FAF9F3",
-    borderColor: "#A77B5A",
-    borderWidth: 2,
-    width: 93,
-    height: 50,
-    top: -11,
+    width: 94,
+    height: 47,
     borderRadius: 10,
     padding: 10,
-    fontSize: 16,
-    marginLeft: 91,
+    marginRight: 2, // Espace entre DlcContainer et buttonFreezer
+    right: -7,
   },
   DlcText: {
     fontSize: 12,
@@ -257,33 +258,64 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
-    borderWidth: 2,
+    borderWidth: 1,
     width: 50,
-    height: 50,
-    top: -11,
+    height: 47,
     borderRadius: 10,
-    padding: 10,
-    fontSize: 16,
+    alignItems: "center",
+    right: -7,
   },
   freezerLogo: {
     width: 30,
     height: 30,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 20,
+  },
+  squirrelModal:{
+    justifyContent: 'center',
+    width: 95,
+    height: 90,
+    marginBottom: 30,
+    padding: 10,
+    
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFF",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  closeButton: {
+    backgroundColor: "#A77B5A",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  closeButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+  
   stocksButtonsContainer: {
-    flexDirection: "row",
+    flexDirection: "row", // Aligne les boutons d'accès en ligne
   },
   button: {
     justifyContent: "center",
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
-    borderWidth: 2,
+    borderWidth: 1,
     width: 150,
     height: 70,
     borderRadius: 10,
     padding: 10,
     marginRight: 16,
     marginLeft: 16,
-    fontSize: 16,
   },
   buttonText: {
     fontWeight: "bold",
@@ -298,8 +330,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFA500", // Orange
   },
   greenDlcContainer: {
-    backgroundColor: "#32CD32", // Vert
+    backgroundColor: "#69914a", // Vert
   },
 });
+
+
 
 export default CongeloScreen;
