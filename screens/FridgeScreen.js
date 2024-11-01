@@ -12,8 +12,8 @@ const FridgeScreen = () => {
     const fetchProducts = async () => {
       const token = await AsyncStorage.getItem("userToken"); // Retrieve the stored token
 
-      // Fetch advice data from the backend
-      fetch("https://conso-maestro-backend.vercel.app/advices", {
+      // Fetch product data from the backend
+      fetch("https://conso-maestro-backend.vercel.app/products", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
