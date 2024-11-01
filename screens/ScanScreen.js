@@ -10,6 +10,10 @@ import {
   Modal,
   Alert,
   Image,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -31,7 +35,8 @@ export default function ScanScreen() {
   const freezerImage = require("../assets/congelo.png");
   const cupboardImage = require("../assets/Placard.png");
   const navigation = useNavigation();
-  const [barcodeInput, setBarcodeInput] = useState("");
+  const [productId, setProductId] = useState(null);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   
   {/*Permission camera */}
   useEffect(() => {
@@ -41,21 +46,39 @@ export default function ScanScreen() {
     };
     getBarCodeScannerPermissions();
   }, []);
+
+  {/* Masquer la camera  */}
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setIsKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setIsKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   {/*Recuperation de l'UPC  via le scan */}
   const handleBarCodeScanned = ({ data }) => {
     console.log("Code-barres scanné : ", data);
     setScanned(true);
     setBarcodeData(data);
-    ScanData(userId, data);
+    console.log(userId);
+    fetchProductData(userId, data);
   };
-  {/* Recuperation de l'UPC  via le scan*/}
-  const handleBarCodeWrite =(data) => {
-    console.log("Code-barres saisi : ", data);
-    setBarcodeData(barcodeInput);
-    ScanData(userId, barcodeInput); 
+  {/*Recuperation de l'UPC  via la saisie */}
+  const handleBarCodeWrite = () => {
+    setScanned(true);
+    console.log(userId);
+    fetchProductData(userId, barcodeData);
   };
-  {/*Recuperation des données du produit via l'UPC */} 
-  const ScanData = async (userId, data) => {
+  {/*function pour l'etape de recherche du produit via l'UPC */}
+  const fetchProductData = async (userId, data) => {
+    console.log("Recherche du produit avec l'UPC : ", data);
     try {
       const response = await fetch(
         `https://conso-maestro-backend.vercel.app/products/${userId}/${data}`
@@ -64,12 +87,12 @@ export default function ScanScreen() {
       console.log("Données récupérées : ", result);
       setProduct(result.product);
       setShowModal(true);
+      setProductId(result.product._id);
       console.log(result);
     } catch (error) {
       console.error("Erreur lors de la récupération des données : ", error);
     }
   };
-
   {/*Afficher le calendrier */}
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -109,6 +132,7 @@ export default function ScanScreen() {
             upc: barcodeData,
             dlc: formattedDlc,
             user: userId,
+            _id: productId,
             storagePlace,
           }),
         }
@@ -119,6 +143,8 @@ export default function ScanScreen() {
       if (response.ok) {
         Alert.alert("Succès", data.message);
         setShowModal(false);
+        setBarcodeData(null);
+        setProductId(null);
       } else {
         Alert.alert(
           "Erreur",
@@ -143,12 +169,18 @@ export default function ScanScreen() {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "height" : "height"}
+        
+    >
     <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
       <View style={styles.container}>
         <Text style={styles.text}>Scannez votre produit</Text>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={styles.camera}
+          style={[styles.camera, isKeyboardVisible && styles.cameraKeyboardVisible]}
         />
         {/*Si scanned est true donc si un produit a été scanner, pouvoir scanner a nouveau */}
         {scanned && (
@@ -159,16 +191,19 @@ export default function ScanScreen() {
         )}
         <Text style={styles.ou}>OU</Text>
         {/* Champ de saisie pour le code-barres */}
+        
         <TextInput
           style={styles.input}
           placeholder="Je saisis mon code-barre..."
+          placeholderTextColor="#664C25"
           keyboardType="numeric"
-          value={barcodeInput} 
-          onChangeText={setBarcodeInput}
+          value={barcodeData}
+          onChangeText={setBarcodeData}
         />
-        <TouchableOpacity style={styles.fin} onPress={handleBarCodeWrite}>
-          <Text style={styles.buttonFinish}>Valider</Text>
+        <TouchableOpacity onPress={handleBarCodeWrite} style={styles.valider}>
+          <Text style={styles.buttonFinish}>Valider mon code-barre</Text>
         </TouchableOpacity>
+        
         {/* Bouton pour valider les produits */}
         <TouchableOpacity style={styles.fin} onPress={handleFinish}>
           <Text style={styles.buttonFinish}>C'est tout bon</Text>
@@ -177,7 +212,9 @@ export default function ScanScreen() {
         <Modal style={styles.modal} visible={showModal} animationType="slide" >
         <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
           <View style={styles.modalContainer}>
+            <View style={styles.productNameContainer}>
             <Text style={styles.productName}>{product?.name}</Text>
+            </View>
              {/* Sélecteur pour le lieu de stockage */}
             <Text style={styles.textStockage}>Choisissez votre lieu de stockage:</Text>
             <View style={styles.storageOptions}>
@@ -216,6 +253,8 @@ export default function ScanScreen() {
         </Modal>
       </View>
     </ImageBackground>
+    </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -232,6 +271,12 @@ const styles = StyleSheet.create({
   camera: {
     width: 300,
     height: 350,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  cameraKeyboardVisible: {
+    width: 150,
+    height: 150,
     borderRadius: 10,
     marginBottom: 20,
   },
@@ -252,18 +297,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#E56400",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   input: {
     backgroundColor: "#FAF9F3",
     borderWidth: 1,
     width: "85%",
-    height: "10%",
+    height: "8%",
     borderRadius: 10,
     borderColor: "#A77B5A",
     padding: 10,
     marginTop: 10,
-    color: "#B19276",
+    color: "#E56400",
   },
   fin: {
     backgroundColor: "#69914a",
@@ -275,6 +320,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
+    borderColor : "#B19276",
   },
  
   modalContainer: {
@@ -285,12 +331,13 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 30,
     fontWeight: "bold",
-    top: -80,
-    borderWidth: 1,
+    color: "#fff",
+  },
+  productNameContainer: {
     padding: 10,
     borderRadius: 10,
     backgroundColor: "#69914a",
-    color: "#fff",
+    top: -80,
   },
   storageOptions: {
     flexDirection: "row",
@@ -309,7 +356,7 @@ const styles = StyleSheet.create({
   },
   inputDate: {   
     fontSize: 20,
-    color: "#B19276",
+    color: "#E56400",
   },
   enregistrerButtun: {
     backgroundColor: "#B19276",
@@ -342,4 +389,14 @@ const styles = StyleSheet.create({
   buttonFinish: {
     color: "#fff",
   },
+  valider: {
+    backgroundColor: "#B19276",
+    width: 200,
+    height: 40,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  
 });

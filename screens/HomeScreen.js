@@ -14,10 +14,12 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 export default function HomeScreen({}) {
  const navigation = useNavigation();
-  const [advicesInfo, setAdvicesInfo] = useState({
+ const username = useSelector((state) => state.user.username);
+ const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
   }); // State to store advice info
@@ -63,10 +65,13 @@ export default function HomeScreen({}) {
       style={styles.background}
     >
       <View style={styles.container}>
+        <View style={styles.header}>
         <Image
           source={require("../assets/Squirrel/Heureux.png")}
           style={styles.squirrel}
         />
+        <Text style={styles.username}>Bonjour {username}</Text>
+        </View>
 
         {/* Trucs et astuces */}
         <View style={styles.tipsContainer}>
@@ -103,45 +108,35 @@ const styles = StyleSheet.create({
   squirrel: {
     width: 60,
     height: 60,
-    marginTop: 50,
-    right: 125,
+    
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",
-    marginTop: 10,
+    marginTop: 20,
     borderWidth: 1,
     padding: 5,
+    paddingBottom: 20,
     borderRadius: 10,
     borderColor: "#E56400",
     width: "85%",
     height: "25%",
-    marginBottom: 5,
     overflow: "hidden",
-    top: -50,
+    top: -80,
   },
   scan: {
     backgroundColor: "#FAF9F3",
     position: "relative",
     borderWidth: 1,
     width: "85%",
-    height: "25%",
+    height: "30%",
     borderRadius: 10,
-    borderColor: "#A77B5A",
-    marginBottom: 20,
+    borderColor: "#E56400",
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
     overflow: "hidden",
-    top: -100,
-  },
-  ou: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#E56400",
-    marginTop: 10,
-    marginBottom: 20,
-  },
- 
+    top: -95,
+  }, 
   buttonText: {
     position: "absolute",
     marginTop: 20,
@@ -174,7 +169,19 @@ const styles = StyleSheet.create({
   scanImage: {
     position: "absolute",
     width: 250,
-    height: 250,
-    top: 0,
+    height: 300,
+    top: -10,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 50,
+    width: "85%",
+    justifyContent: "space-between",
+  },
+  username: {
+    color: "#B19276",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });

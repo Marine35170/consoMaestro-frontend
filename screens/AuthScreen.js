@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, AntDesign, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
-import { addUserIdToStore } from '../reducers/userReducer';
+import { addUserIdToStore, addUsernameToStore } from '../reducers/userReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -42,6 +42,7 @@ export default function AuthScreen() {
       console.log(data)
       if (data.result) {
         dispatch(addUserIdToStore(data.userId));
+        dispatch(addUsernameToStore(data.username));
         await AsyncStorage.setItem('userToken', data.token);
         console.log(data.token)
         Alert.alert('Connexion réussie ! ', data.message);
@@ -71,6 +72,7 @@ export default function AuthScreen() {
           password: signupPassword.trim(),
         }),
       });
+      
       const data = await response.json();
       if (data.result) {
         Alert.alert('Succès', data.message);
@@ -99,7 +101,8 @@ export default function AuthScreen() {
 
           {/* Bouton Inscription */}
           <TouchableOpacity style={styles.button} onPress={() => setSignupModalVisible(true)}>
-            <Text style={styles.buttonText}>Créer mon compte</Text>
+          <Text style={styles.buttonText}>Créer mon compte</Text>
+          <MaterialIcons name="eco" size={16} color="#faf9f3" style={styles.iconRight} />
           </TouchableOpacity>
         </View>
 
@@ -219,16 +222,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   button: {
+  flexDirection: 'row',
   backgroundColor: '#A77B5A',
   paddingVertical: 10,
+  paddingHorizontal: 20,
   width: 250, 
   borderRadius: 20,
   marginVertical: 10,
   alignItems: 'center',
+  justifyContent: 'center',
   },
   buttonText: {
     color: '#FFF',
     fontSize: 16,
+  },
+  iconRight: {
+    marginLeft: 10, 
   },
   modalContainer: {
     flex: 1,
