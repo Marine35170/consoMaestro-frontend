@@ -1,9 +1,12 @@
 import { useNavigation } from "@react-navigation/native"; // Importation du hook de navigation pour naviguer entre les écrans
 import {View,Text,StyleSheet,TouchableOpacity,Image,Modal,} from "react-native"; // Import des composants nécessaires de React Native
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 
 const FridgeScreen = () => {
+  // Utilisation du hook de navigation pour gérer la navigation entre les écrans
+  const navigation = useNavigation();
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
   const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
@@ -23,7 +26,7 @@ const FridgeScreen = () => {
         .then((response) => response.json())
         .then((data) => {
             if (data.result) {
-                console.log("data from fetch", data);
+                console.log("data from ", data);
                 setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
             } else {
                 console.error("Erreur lors de la récupération des produits:", data.message);
@@ -38,8 +41,6 @@ const FridgeScreen = () => {
 }, [navigation]);
 
 
-  // Utilisation du hook de navigation pour gérer la navigation entre les écrans
-  const navigation = useNavigation();
 
   // Fonction pour naviguer vers l'écran PlacardScreen
   const handlePlacardPress = () => {
@@ -54,9 +55,9 @@ const FridgeScreen = () => {
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
   const handleDlcColor = (dlcDate) => {
     const today = moment(); // Date actuelle
-    const expirationDate = moment(dlcDate, productsInfo.dlc); // Date de limite de consommation
+    const expirationDate = moment(dlcDate); // Date de limite de consommation
 
-    const daysRemaining = expirationDate.diff(today, productsInfo.dlc); // Différence en jours entre la date d'aujourd'hui et la DLC
+    const daysRemaining = expirationDate.diff(today, "days"); // Différence en jours entre la date d'aujourd'hui et la DLC
 
     // Logique de couleur : Rouge si la DLC est à 2 jours ou moins, Orange si entre 2 et 4 jours, Vert sinon
     if (daysRemaining <= 2) {
@@ -71,8 +72,8 @@ const FridgeScreen = () => {
     // Fonction pour gérer l'affichage des modals selon les jours restants
   const handleDlcPress = (dlcDate) => {
     const today = moment();
-    const expirationDate = moment(dlcDate, productsInfo.dlc);
-    const daysRemaining = expirationDate.diff(today, productsInfo.dlc);
+    const expirationDate = moment(dlcDate);
+    const daysRemaining = expirationDate.diff(today, "days");
 
     if (daysRemaining <= 4) {
       setShortDlcModalVisible(true);
@@ -81,7 +82,7 @@ const FridgeScreen = () => {
     }
   };
   
-const products = productsInfo && productsInfo.map((data, i) => {
+const products = productsInfo ? productsInfo.map((data, i) => {
   console.log('productsInfo', productsInfo)
   return ( 
     <View style={styles.ProductLineContainer} key = {i} >
@@ -105,7 +106,7 @@ const products = productsInfo && productsInfo.map((data, i) => {
           </View>
         </View>
   )
-})
+}) : null;
   return (
     // Conteneur principal
     <View style={styles.container}>
@@ -121,43 +122,7 @@ const products = productsInfo && productsInfo.map((data, i) => {
       {/* Conteneur des produits dans le frigo */}
       <View style={styles.productContainer}>
         {/* Affichage de la ligne pour le produit 1 */}
-        {products};
-
-    {/*    
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 2</Text>
-
-          <View style={[styles.DlcContainer, handleDlcColor("03/11/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleCongeloPress}>
-              <Image
-                source={require("../assets/congelo.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 3</Text>
-
-          <View style={[styles.DlcContainer, handleDlcColor("30/10/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleCongeloPress}>
-              <Image
-                source={require("../assets/congelo.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View> */}
+        {products}
       </View>
 
       {/* Boutons d'accès au congélateur et au placard */}
