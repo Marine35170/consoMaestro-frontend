@@ -3,6 +3,7 @@ import {View,Text,StyleSheet,TouchableOpacity,Image,Modal,} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
+import { useSelector } from "react-redux";
 
 const FridgeScreen = () => {
   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
@@ -10,16 +11,16 @@ const FridgeScreen = () => {
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
   const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
- 
+  const userId = useSelector((state) => state.user.id);
+
   useEffect(() => {
     const fetchProducts = async () => {
-        const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
-        const userId = await AsyncStorage.getItem("userId"); // Récupérer le userId stocké
+        // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
         
-        fetch(`https://conso-maestro-backend.vercel.app/products/${userId}`, {
+        fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`,
+                // Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
         })
@@ -40,16 +41,14 @@ const FridgeScreen = () => {
     fetchProducts();
 }, [navigation]);
 
-
-
   // Fonction pour naviguer vers l'écran PlacardScreen
   const handlePlacardPress = () => {
-    navigation.navigate("PlacardScreen"); // Navigue vers la page "Placard"
+    navigation.navigate("PlacardScreen"); 
   };
 
   // Fonction pour naviguer vers l'écran CongeloScreen
   const handleCongeloPress = () => {
-    navigation.navigate("CongeloScreen"); // Navigue vers la page "Congélateur"
+    navigation.navigate("CongeloScreen");
   };
 
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
@@ -107,6 +106,7 @@ const products = productsInfo ? productsInfo.map((data, i) => {
         </View>
   )
 }) : null;
+
   return (
     // Conteneur principal
     <View style={styles.container}>

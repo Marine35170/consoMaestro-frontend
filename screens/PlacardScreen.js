@@ -3,14 +3,48 @@ import { useNavigation } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
+import { useSelector } from "react-redux";
 
 const PlacardScreen = () => {
-  const [dlcModalVisible, setDlcModalVisible] = useState(false); // State to control Rewards modal visibility
+   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
   const navigation = useNavigation();
+  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
+  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
+  const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
+  const userId = useSelector((state) => state.user.id);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+        // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
+        
+        fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
+            method: "GET",
+            headers: {
+                // Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.result) {
+                console.log("data from ", data);
+                setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
+            } else {
+                console.error("Erreur lors de la récupération des produits:", data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la récupération des produits:", error);
+        });
+    };
+
+    fetchProducts();
+}, [navigation]);
 
   const handleCongeloPress = () => {
     navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Congelo
   };
+
   const handleFridgePress = () => {
     navigation.navigate("FridgeScreen"); // Naviguer vers la page frigo
   };
@@ -42,14 +76,45 @@ const PlacardScreen = () => {
     }
   };
 
+  const products = productsInfo ? productsInfo.map((data, i) => {
+    console.log('productsInfo', productsInfo)
+  return ( 
+    <View style={styles.ProductLineContainer} key = {i} >
+          <Text style={styles.ProductTitle}>{data.name}</Text>
+          
+          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
+          <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
+          <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
+            <Text style={styles.DlcText}>{data.dlc}</Text>
+          </View>
+          </TouchableOpacity>
+
+          {/* Bouton pour ajouter le produit au congélateur */}
+          <View style={styles.buttonFreezer}>
+            <TouchableOpacity onPress={handleCongeloPress}>
+              <Image
+                source={require("../assets/congelo.png")} // Icône de congélateur
+                style={styles.freezerLogo}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+  )
+}) : null;
+
+
   return (
+    // Conteneur principal
     <View style={styles.container}>
+      {/* Image d'un écureuil, positionnée en haut à gauche */}
       <Image
         source={require("../assets/Squirrel/Heureux.png")}
         style={styles.squirrel}
       />
-
+      {/* Titre de la page */}
       <Text style={styles.PageTitle}>Mes Placards</Text>
+
+      {/* Conteneur des produits dans le Placard */}
       <View style={styles.productContainer}>
         {/* Affichage des produits */}
         <View style={styles.ProductLineContainer}>

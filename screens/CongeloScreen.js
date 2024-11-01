@@ -1,10 +1,45 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
+import { View, Text, StyleSheet, TouchableOpacity, Image,Modal } from "react-native";
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
+import { useSelector } from "react-redux";
 
 const CongeloScreen = () => {
+   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
   const navigation = useNavigation();
+  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
+  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
+  const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
+  const userId = useSelector((state) => state.user.id);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+        // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
+        
+        fetch(`https://conso-maestro-backend.vercel.app/congelo/${userId}`, {
+            method: "GET",
+            headers: {
+                // Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.result) {
+                console.log("data from ", data);
+                setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
+            } else {
+                console.error("Erreur lors de la récupération des produits:", data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la récupération des produits:", error);
+        });
+    };
+
+    fetchProducts();
+}, [navigation]);
 
   const handlePlacardPress = () => {
     navigation.navigate("PlacardScreen"); // Permet d'aller vers la page Placard
@@ -30,68 +65,60 @@ const CongeloScreen = () => {
     }
   };
 
+   // Fonction pour gérer l'affichage des modals selon les jours restants
+   const handleDlcPress = (dlcDate) => {
+    const today = moment();
+    const expirationDate = moment(dlcDate);
+    const daysRemaining = expirationDate.diff(today, "days");
+
+    if (daysRemaining <= 4) {
+      setShortDlcModalVisible(true);
+    } else {
+      setLongDlcModalVisible(true);
+    }
+  };
+
+  const products = productsInfo ? productsInfo.map((data, i) => {
+    console.log('productsInfo', productsInfo)
+    return ( 
+      <View style={styles.ProductLineContainer} key = {i} >
+            <Text style={styles.ProductTitle}>{data.name}</Text>
+            
+            {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
+            <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
+            <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
+              <Text style={styles.DlcText}>{data.dlc}</Text>
+            </View>
+            </TouchableOpacity>
+  
+            {/* Bouton pour ajouter le produit au congélateur */}
+            <View style={styles.buttonFreezer}>
+              <TouchableOpacity onPress={handleFridgePress}>
+                <Image
+                  source={require("../assets/congelo.png")} // Icône de congélateur
+                  style={styles.freezerLogo}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+    )
+  }) : null;
+
+
   return (
+     // Conteneur principal
     <View style={styles.container}>
       <Image
         source={require("../assets/Squirrel/Heureux.png")}
         style={styles.squirrel}
       />
-
+       {/* Titre de la page */}  
       <Text style={styles.PageTitle}>Mon Congélo</Text>
+      {/* Conteneur des produits dans le frigo */}
       <View style={styles.productContainer}>
         {/* Affichage des produits */}
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 1</Text>
-
-          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          <View style={[styles.DlcContainer, handleDlcColor("30/10/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleFridgePress}>
-              <Image
-                source={require("../assets/FRIGO.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 2</Text>
-
-          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          <View style={[styles.DlcContainer, handleDlcColor("03/11/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleFridgePress}>
-              <Image
-                source={require("../assets/FRIGO.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 3</Text>
-
-          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          <View style={[styles.DlcContainer, handleDlcColor("04/11/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleFridgePress}>
-              <Image
-                source={require("../assets/FRIGO.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+       {products}
+       </View>
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>
@@ -103,6 +130,56 @@ const CongeloScreen = () => {
           <Text style={styles.buttonText}>Mon Frigo</Text>
         </TouchableOpacity>
       </View>
+  
+      {/* DLC courte Modal */}
+      <Modal
+        transparent={true}
+        visible={shortDlcModalVisible}
+        animationType="slide"
+        onRequestClose={() => setShortDlcModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+        <Image
+        source={require("../assets/Squirrel/Triste.png")} // Chemin de l'image de l'écureuil
+        style={styles.squirrelModal}
+      />
+          <Text style={styles.modalTitle}>
+            Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
+            porte-monnaie et la Planète te diront MERCI ! 
+          </Text>
+          {/* Display rewards here */}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setShortDlcModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+       {/* DLC Longue Modal */}
+       <Modal
+        transparent={true}
+        visible={longDlcModalVisible}
+        animationType="slide"
+        onRequestClose={() => setLongDlcModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+        <Image
+        source={require("../assets/Squirrel/Heureux.png")} // Chemin de l'image de l'écureuil
+        style={styles.squirrelModal}
+      />
+          <Text style={styles.modalTitle}>
+            Tout va bien, il te reste encore quelques temps avant que ton produit ne se périme. Privilégie les produits ayant des dates plus courtes !
+          </Text>
+          {/* Display rewards here */}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setLongDlcModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
