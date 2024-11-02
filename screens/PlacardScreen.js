@@ -1,9 +1,9 @@
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal,ScrollView} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
-import { useSelector } from "react-redux";
+import { useSelector} from "react-redux";
 
 const PlacardScreen = () => {
    // Utilisation du hook de navigation pour gérer la navigation entre les écrans
@@ -12,6 +12,7 @@ const PlacardScreen = () => {
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
   const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
   const userId = useSelector((state) => state.user.id);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -39,7 +40,7 @@ const PlacardScreen = () => {
     };
 
     fetchProducts();
-}, [navigation]);
+}, [isFocused]);
 
   const handleCongeloPress = () => {
     navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Placard
