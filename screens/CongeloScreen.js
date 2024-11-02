@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 const CongeloScreen = () => {
    // Utilisation du hook de navigation pour gérer la navigation entre les écrans
-  const navigation = useNavigation();
+   const navigation = useNavigation();
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
   const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
@@ -41,11 +41,11 @@ const CongeloScreen = () => {
     fetchProducts();
 }, [navigation]);
 
-  const handlePlacardPress = () => {
-    navigation.navigate("PlacardScreen"); // Permet d'aller vers la page Placard
-  };
   const handleFridgePress = () => {
-    navigation.navigate("FridgeScreen"); // Naviguer vers la page frigo
+    navigation.navigate("FridgeScreen"); // Permet d'aller vers la page Placard
+  };
+  const handlePlacardPress = () => {
+    navigation.navigate("PlacardScreen"); // Naviguer vers la page frigo
   };
 
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
@@ -113,8 +113,8 @@ const CongeloScreen = () => {
         style={styles.squirrel}
       />
        {/* Titre de la page */}  
-      <Text style={styles.PageTitle}>Mon Congélo</Text>
-      {/* Conteneur des produits dans le frigo */}
+      <Text style={styles.PageTitle}>Mon Congelo</Text>
+      {/* Conteneur des produits dans le congelo */}
       <View  style={styles.productContainer}>
         {/* Affichage des produits */}
         <ScrollView Style={{ flexGrow: 1 }}>
@@ -124,12 +124,12 @@ const CongeloScreen = () => {
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
-          <Text style={styles.buttonText}>Mes Placards</Text>
-        </TouchableOpacity>
-        {/* Boutons d'accès aux placards */}
         <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
           <Text style={styles.buttonText}>Mon Frigo</Text>
+        </TouchableOpacity>
+        {/* Boutons d'accès aux placards */}
+        <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
+          <Text style={styles.buttonText}>Mes Placards</Text>
         </TouchableOpacity>
       </View>
   
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 50,
     height: 50,
-    top: 65,
+    top: 50,
     left: 30,
   },
   PageTitle: {
@@ -335,7 +335,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#69914a", // Vert
   },
 });
-
 
 
 export default CongeloScreen;
