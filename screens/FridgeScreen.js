@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from "react-native";
 import { useSelector } from "react-redux";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,19 +12,26 @@ import MenuScreen from './MenuScreen';
 
 const Tab = createBottomTabNavigator();
 
-
-
 const FridgeTabNavigator = () => {
   return (
+
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
+        tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if (route.name === 'Home') iconName = 'home';
-          else if (route.name === 'Profile') iconName = 'person';
-          else if (route.name === 'Menu') iconName = 'menu';
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          } else if (route.name === 'Menu') {
+            iconName = focused ? 'menu' : 'menu-outline';
+          }
+          // Retourne l'icône correspondante
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+        tabBarLabelStyle: styles.tabBarLabel,
+        tabBarStyle: styles.tabBar,
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
       })}
@@ -98,14 +105,7 @@ const FridgeScreen = () => {
     <View style={styles.container}>
       <Image source={require("../assets/Squirrel/Heureux.png")} style={styles.squirrel} />
       <Text style={styles.PageTitle}>Mon Frigo</Text>
-
-      {/* Conteneur des produits dans le frigo */}
-      <View style={styles.productContainer}>
-        {/* Affichage des produits */}
-        {products}
-      </View>
-
-      {/* Boutons d'accès au congélateur et au placard */}
+      <View style={styles.productContainer}>{products}</View>
       <View style={styles.stocksButtonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
           <Text style={styles.buttonText}>Mon Congélo</Text>
@@ -146,23 +146,162 @@ const FridgeScreen = () => {
   );
 };
 
+// Styles pour les différents éléments du composant
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EFE5D8",
+    backgroundColor: "#EFE5D8", // Couleur de fond de la page
     alignItems: "center",
     justifyContent: "center",
   },
-  squirrel: { position: "absolute", width: 50, height: 50, top: 65, left: 30 },
-  PageTitle: { color: "#E56400", fontWeight: "bold", fontSize: 20, marginBottom: 20 },
-  productContainer: { borderWidth: 1, backgroundColor: "#A77B5A", borderRadius: 10, padding: 10, marginBottom: 20 },
-  stocksButtonsContainer: { flexDirection: "row" },
-  button: { backgroundColor: "#FAF9F3", borderColor: "#A77B5A", borderWidth: 1, width: 150, borderRadius: 10 },
-  buttonText: { fontWeight: "bold", textAlign: "center", color: "#E56400" },
-  // styles for DLC colors
-  redDlcContainer: { backgroundColor: "#FF6347" },
-  orangeDlcContainer: { backgroundColor: "#FFA500" },
-  greenDlcContainer: { backgroundColor: "#69914a" },
+  squirrel: {
+    position: "absolute",
+    width: 50,
+    height: 50,
+    top: 65,
+    left: 30,
+  },
+  PageTitle: {
+    color: "#E56400", // Couleur du titre
+    fontWeight: "bold",
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  productContainer: {
+    borderWidth: 1,
+    backgroundColor: "#A77B5A",
+    borderColor: "#A77B5A",
+    width: "85%", // Largeur relative à l'écran
+    height: "65%", // Hauteur relative à l'écran
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 20,
+  },
+  ProductLineContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between", // Pour espacer les éléments
+    backgroundColor: "#FAF9F3",
+    borderColor: "#A77B5A",
+    borderWidth: 2,
+    width: '100%',
+    height: 52,
+    borderRadius: 10,
+    padding: 10,
+    alignItems: "center", // Centrer verticalement
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  ProductTitle: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#E56400",
+  },
+  DlcButtonContainer: {
+    flexDirection: "row", // Aligne les deux éléments horizontalement
+    alignItems: "center",
+  },
+  DlcContainer: {
+    justifyContent: "center",
+    width: 94,
+    height: 47,
+    borderRadius: 10,
+    padding: 10,
+    marginRight: 2, // Espace entre DlcContainer et buttonFreezer
+    right: -7,
+  },
+  DlcText: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  buttonFreezer: {
+    justifyContent: "center",
+    backgroundColor: "#FAF9F3",
+    borderColor: "#A77B5A",
+    borderWidth: 1,
+    width: 50,
+    height: 47,
+    borderRadius: 10,
+    alignItems: "center",
+    right: -7,
+  },
+  freezerLogo: {
+    width: 30,
+    height: 30,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 20,
+  },
+  squirrelModal: {
+    justifyContent: 'center',
+    width: 95,
+    height: 90,
+    marginBottom: 30,
+    padding: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFF",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  closeButton: {
+    backgroundColor: "#A77B5A",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  closeButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+  },
+  stocksButtonsContainer: {
+    flexDirection: "row", // Aligne les boutons d'accès en ligne
+  },
+  button: {
+    justifyContent: "center",
+    backgroundColor: "#FAF9F3",
+    borderColor: "#A77B5A",
+    borderWidth: 1,
+    width: 150,
+    height: 70,
+    borderRadius: 10,
+    padding: 10,
+    marginRight: 16,
+    marginLeft: 16,
+  },
+  buttonText: {
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#E56400",
+  },
+  // couleurs DLC dynamiques
+  redDlcContainer: {
+    backgroundColor: "#FF6347", // Rouge
+  },
+  orangeDlcContainer: {
+    backgroundColor: "#FFA500", // Orange
+  },
+  greenDlcContainer: {
+    backgroundColor: "#69914a", // Vert
+  },
+  tabBar: {
+    backgroundColor: '#EFE5D8', // Couleur de fond de la tab bar
+    height: 60, // Hauteur de la tab bar
+    paddingBottom: 5, // Espacement en bas
+    paddingTop: 5
+  },
+  tabBarLabel: {
+    fontSize: 12, // Taille de la police
+    paddingBottom: 5, // Espacement en bas pour le texte
+  },
 });
+
 
 export default FridgeScreen;
