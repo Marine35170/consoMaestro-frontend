@@ -1,56 +1,9 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from "react-native";
-import { useSelector } from "react-redux";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import moment from "moment";
-import HomeScreen from './HomeScreen';
-import ProfileScreen from './ProfileScreen';
-import MenuScreen from './MenuScreen';
-
-const Tab = createBottomTabNavigator();
-
-const FridgeTabNavigator = () => {
-  return (
-
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'Menu') {
-            iconName = focused ? 'menu' : 'menu-outline';
-          }
-          // Retourne l'icône correspondante
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarLabelStyle: styles.tabBarLabel,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
-      })}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Menu" component={MenuScreen} />
-    </Tab.Navigator>
-  );
-};
-=======
 import React from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import { View, Text, StyleSheet, TouchableOpacity, Image,Modal,ScrollView } from "react-native";
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 import { useSelector} from "react-redux";
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
 
 const FridgeScreen = () => {
    // Utilisation du hook de navigation pour gérer la navigation entre les écrans
@@ -162,9 +115,6 @@ const FridgeScreen = () => {
       />
        {/* Titre de la page */}  
       <Text style={styles.PageTitle}>Mon Frigo</Text>
-<<<<<<< HEAD
-      <View style={styles.productContainer}>{products}</View>
-=======
       {/* Conteneur des produits dans le frigo */}
       <View  style={styles.productContainer}>
         {/* Affichage des produits */}
@@ -174,7 +124,6 @@ const FridgeScreen = () => {
       </View >
 
       {/* Boutons d'accès au congélateur */}
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
       <View style={styles.stocksButtonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
           <Text style={styles.buttonText}>Mes Placards</Text>
@@ -250,11 +199,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 50,
     height: 50,
-<<<<<<< HEAD
-    top: 65,
-=======
     top: 50,
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
     left: 30,
   },
   PageTitle: {
@@ -274,10 +219,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
   },
-<<<<<<< HEAD
-=======
   
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
   ProductLineContainer: {
     flexDirection: "row",
     justifyContent: "space-between", // Pour espacer les éléments
@@ -337,20 +279,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
   },
-<<<<<<< HEAD
-  squirrelModal: {
-=======
   squirrelModal:{
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
     justifyContent: 'center',
     width: 95,
     height: 90,
     marginBottom: 30,
     padding: 10,
-<<<<<<< HEAD
-=======
     
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
   },
   modalTitle: {
     fontSize: 20,
@@ -369,10 +304,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
   },
-<<<<<<< HEAD
-=======
   
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
   stocksButtonsContainer: {
     flexDirection: "row", // Aligne les boutons d'accès en ligne
   },
@@ -393,11 +325,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#E56400",
   },
-<<<<<<< HEAD
-  // couleurs DLC dynamiques
-=======
   //couleurs DLC dynamiques
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
   redDlcContainer: {
     backgroundColor: "#FF6347", // Rouge
   },
@@ -407,24 +335,8 @@ const styles = StyleSheet.create({
   greenDlcContainer: {
     backgroundColor: "#69914a", // Vert
   },
-<<<<<<< HEAD
-  tabBar: {
-    backgroundColor: '#EFE5D8', // Couleur de fond de la tab bar
-    height: 60, // Hauteur de la tab bar
-    paddingBottom: 5, // Espacement en bas
-    paddingTop: 5
-  },
-  tabBarLabel: {
-    fontSize: 12, // Taille de la police
-    paddingBottom: 5, // Espacement en bas pour le texte
-  },
-});
-
-
-=======
 });
 
 
 
->>>>>>> 55f75b19e3993ffeeffc0073f9a99bdea0f108c0
 export default FridgeScreen;
