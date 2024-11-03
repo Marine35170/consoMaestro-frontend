@@ -1,23 +1,24 @@
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal,ScrollView} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
-import { useSelector } from "react-redux";
+import { useSelector} from "react-redux";
 
 const PlacardScreen = () => {
    // Utilisation du hook de navigation pour gérer la navigation entre les écrans
-  const navigation = useNavigation();
+   const navigation = useNavigation();
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
   const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
   const userId = useSelector((state) => state.user.id);
-  
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     const fetchProducts = async () => {
         // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
         
-        fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
+        fetch(`https://conso-maestro-backend.vercel.app/placard/${userId}`, {
             method: "GET",
             headers: {
                 // Authorization: `Bearer ${token}`,
@@ -39,19 +40,19 @@ const PlacardScreen = () => {
     };
 
     fetchProducts();
-}, [navigation]);
+}, [isFocused]);
 
   const handleCongeloPress = () => {
-    navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Congelo
+    navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Placard
   };
-
   const handleFridgePress = () => {
     navigation.navigate("FridgeScreen"); // Naviguer vers la page frigo
   };
+
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
   const handleDlcColor = (dlcDate) => {
     const today = moment(); // Date actuelle
-    const expirationDate = moment(dlcDate, "DD/MM/YYYY"); // Date de limite de consommation
+    const expirationDate = moment(dlcDate); // Date de limite de consommation
 
     const daysRemaining = expirationDate.diff(today, "days"); // Différence en jours entre la date d'aujourd'hui et la DLC
 
@@ -65,10 +66,10 @@ const PlacardScreen = () => {
     }
   };
 
-  // Fonction pour afficher la modal si la couleur de DLC est rouge ou orange
-  const handleDlcPress = (dlcDate) => { // Nouvelle fonction ajoutée
-    const today = moment();             // Date actuelle
-    const expirationDate = moment(dlcDate, "DD/MM/YYYY"); // Date de limite de consommation
+   // Fonction pour gérer l'affichage des modals selon les jours restants
+   const handleDlcPress = (dlcDate) => {
+    const today = moment();
+    const expirationDate = moment(dlcDate);
     const daysRemaining = expirationDate.diff(today, "days");
 
     if (daysRemaining <= 4) {
@@ -80,43 +81,41 @@ const PlacardScreen = () => {
 
   const products = productsInfo ? productsInfo.map((data, i) => {
     console.log('productsInfo', productsInfo)
-  return ( 
-    <View style={styles.ProductLineContainer} key = {i} >
-          <Text style={styles.ProductTitle}>{data.name}</Text>
-          
-          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
-          <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
-            <Text style={styles.DlcText}>{data.dlc}</Text>
-          </View>
-          </TouchableOpacity>
-
-          {/* Bouton pour ajouter le produit au congélateur */}
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleCongeloPress}>
-              <Image
-                source={require("../assets/congelo.png")} // Icône de congélateur
-                style={styles.freezerLogo}
-              />
+    return ( 
+      <View style={styles.ProductLineContainer} key = {i} >
+            <Text style={styles.ProductTitle}>{data.name}</Text>
+            
+            {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
+            <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
+            <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
+              <Text style={styles.DlcText}>{data.dlc}</Text>
+            </View>
             </TouchableOpacity>
+  
+            {/* Bouton pour ajouter le produit au congélateur */}
+            <View style={styles.buttonFreezer}>
+              <TouchableOpacity onPress={handleFridgePress}>
+                <Image
+                  source={require("../assets/congelo.png")} // Icône de congélateur
+                  style={styles.freezerLogo}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-  )
-}) : null;
+    )
+  }) : null;
 
 
   return (
-    // Conteneur principal
+     // Conteneur principal
     <View style={styles.container}>
-      {/* Image d'un écureuil, positionnée en haut à gauche */}
       <Image
         source={require("../assets/Squirrel/Heureux.png")}
         style={styles.squirrel}
       />
-      {/* Titre de la page */}
-      <Text style={styles.PageTitle}>Mes Placards</Text>
-
-      {/* Conteneur des produits dans le Placard */}
+       {/* Titre de la page */}  
+      <Text style={styles.PageTitle}>Mon Placard</Text>
+      {/* Conteneur des produits dans le placard */}
       <View  style={styles.productContainer}>
         {/* Affichage des produits */}
         <ScrollView Style={{ flexGrow: 1 }}>
@@ -127,14 +126,14 @@ const PlacardScreen = () => {
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
-          <Text style={styles.buttonText}>Mon Congélo</Text>
+          <Text style={styles.buttonText}>Mon Congelo</Text>
         </TouchableOpacity>
         {/* Boutons d'accès aux placards */}
         <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
-          <Text style={styles.buttonText}>Mon Frigo</Text>
+          <Text style={styles.buttonText}>Mes Frigo</Text>
         </TouchableOpacity>
       </View>
-
+  
       {/* DLC courte Modal */}
       <Modal
         transparent={true}
@@ -149,7 +148,7 @@ const PlacardScreen = () => {
       />
           <Text style={styles.modalTitle}>
             Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
-            porte-monnaie et la Planète te diront MERCI ! !
+            porte-monnaie et la Planète te diront MERCI ! 
           </Text>
           {/* Display rewards here */}
           <TouchableOpacity
@@ -160,8 +159,8 @@ const PlacardScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-     {/* DLC Longue Modal */}
-     <Modal
+       {/* DLC Longue Modal */}
+       <Modal
         transparent={true}
         visible={longDlcModalVisible}
         animationType="slide"
@@ -192,30 +191,33 @@ const PlacardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EFE5D8",
+    backgroundColor: "#EFE5D8", // Couleur de fond de la page
     alignItems: "center",
-
+    justifyContent: "center",
   },
   squirrel: {
+    position: "absolute",
     width: 50,
     height: 50,
-    marginTop: 65,
-    marginBottom: 10,
+    top: 50,
+    left: 30,
   },
   PageTitle: {
-    color: "#E56400",
+    color: "#E56400", // Couleur du titre
     fontWeight: "bold",
     fontSize: 20,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   productContainer: {
-    flex: 1,
-    width: "85%",
+    borderWidth: 1,
     backgroundColor: "#A77B5A",
+    borderColor: "#A77B5A",
+    width: "85%", // Largeur relative à l'écran
+    height: "65%", // Hauteur relative à l'écran
     borderRadius: 10,
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    padding: 10,
+    marginBottom: 20,
   },
   
   ProductLineContainer: {
@@ -304,27 +306,23 @@ const styles = StyleSheet.create({
   },
   
   stocksButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "85%",
-    paddingVertical: 10,
-    backgroundColor: "#EFE5D8",
-    
-   
+    flexDirection: "row", // Aligne les boutons d'accès en ligne
   },
   button: {
     justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 1,
     width: 150,
-    height: 60,
+    height: 70,
     borderRadius: 10,
-    marginHorizontal: 10,
+    padding: 10,
+    marginRight: 16,
+    marginLeft: 16,
   },
   buttonText: {
     fontWeight: "bold",
+    textAlign: "center",
     color: "#E56400",
   },
   //couleurs DLC dynamiques
@@ -338,6 +336,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#69914a", // Vert
   },
 });
+
+
 
 
 
