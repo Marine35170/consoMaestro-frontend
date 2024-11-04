@@ -117,6 +117,7 @@ const QuickConsoScreen = () => {
     };
   
     const products = productsInfo ? productsInfo.map((data, i) => {
+        const formattedDlc = new Date(data.dlc).toLocaleDateString();  
       let imageSource;
       if (data.storagePlace === "Frigo"){
         imageSource = require('../assets/FRIGO.png');
@@ -134,7 +135,7 @@ const QuickConsoScreen = () => {
               {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
               <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
               <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
-                <Text style={styles.DlcText}>{data.dlc}</Text>
+                <Text style={styles.DlcText}>{formattedDlc}</Text>
               </View>
               </TouchableOpacity>
     
