@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"; // Importation de useState et useEf
 import { View, Text, StyleSheet, TouchableOpacity, Image,Modal,ScrollView } from "react-native";
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 import { useSelector} from "react-redux";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const CongeloScreen = () => {
    // Utilisation du hook de navigation pour gérer la navigation entre les écrans
@@ -13,6 +15,7 @@ const CongeloScreen = () => {
   const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
   const userId = useSelector((state) => state.user.id);
   const isFocused = useIsFocused();
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -40,7 +43,34 @@ const CongeloScreen = () => {
     };
 
     fetchProducts();
-}, [isFocused]);
+  }, [isFocused, refresh]);
+
+  
+  // Fonction pour supprimer l'affichage d'un produit
+  const handleProductDelete = (data) => {
+    fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.result) {
+        console.log("Produit supprimé avec succès :", data.message);
+        setProductsInfo((prevProductsInfo) =>
+          prevProductsInfo.filter(product => product._id !== data._id)
+        );
+        setRefresh((prev) => !prev); // Force le rafraîchissement
+      } else {
+        console.error("Erreur lors de la suppression du produit :", data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la suppression du produit :", error);
+    });
+  }
+
 
   const handleFridgePress = () => {
     navigation.navigate("FridgeScreen"); // Permet d'aller vers la page Placard
@@ -156,6 +186,18 @@ setProductsInfo((prevProductsInfo) =>
               />
             </TouchableOpacity>
           </View>
+          {/* Bouton pour supprimer un produit*/}
+          <View style={styles.buttonDelete}>
+                <TouchableOpacity onPress={() => handleProductDelete(data)}
+                >
+                  <FontAwesomeIcon
+                   icon={faXmark} 
+                   size={27}
+                   color="#A77B5A"
+                   style={styles.iconDelete}
+                  />
+                </TouchableOpacity>
+              </View> 
         </View>
   )
 }) : null;
@@ -273,14 +315,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
   },
-  
+
   ProductLineContainer: {
     flexDirection: "row",
     justifyContent: "space-between", // Pour espacer les éléments
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 2,
-    width: '100%',
+    width: "100%",
     height: 52,
     borderRadius: 10,
     padding: 10,
@@ -295,17 +337,17 @@ const styles = StyleSheet.create({
     color: "#E56400",
   },
   DlcButtonContainer: {
-    flexDirection: "row", // Aligne les deux éléments horizontalement
     alignItems: "center",
   },
   DlcContainer: {
     justifyContent: "center",
-    width: 94,
+    alignItems: "center",
+    width: 90,
     height: 47,
     borderRadius: 10,
     padding: 10,
     marginRight: 2, // Espace entre DlcContainer et buttonFreezer
-    right: -7,
+    right: 10,
   },
   DlcText: {
     fontSize: 12,
@@ -320,11 +362,14 @@ const styles = StyleSheet.create({
     height: 47,
     borderRadius: 10,
     alignItems: "center",
-    right: -7,
+    right: 5,
   },
   freezerLogo: {
     width: 30,
     height: 30,
+  },
+  iconDelete: {
+
   },
   modalContainer: {
     flex: 1,
@@ -333,13 +378,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
   },
-  squirrelModal:{
-    justifyContent: 'center',
+  squirrelModal: {
+    justifyContent: "center",
     width: 95,
     height: 90,
     marginBottom: 30,
     padding: 10,
-    
   },
   modalTitle: {
     fontSize: 20,
@@ -355,10 +399,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   closeButtonText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
   },
-  
+
   stocksButtonsContainer: {
     flexDirection: "row", // Aligne les boutons d'accès en ligne
   },
