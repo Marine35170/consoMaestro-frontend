@@ -2,29 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
 
 const RappelConsoScreen = () => {
-    const [productName, setProductName] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
+    const [productName, setProductName] = useState(''); // Stocke le nom du produit à rechercher
+    const [searchResults, setSearchResults] = useState([]); // Résultats de rappel récupérés depuis l'API
+    const [filteredResults, setFilteredResults] = useState([]); // Résultats de rappel filtrés
     const [error, setError] = useState('');
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedProduct, setSelectedProduct] = useState(null); // Produit sélectionné pour le modal
     const [isModalVisible, setModalVisible] = useState(false);
 
+    // Ouvre le modal avec les détails du produit
     const openModal = (product) => {
         setSelectedProduct(product);
         setModalVisible(true);
     };
 
+    // Ferme le modal
     const closeModal = () => {
         setSelectedProduct(null);
         setModalVisible(false);
     };
 
+    // Fonction pour récupérer les rappels depuis l'API
     const fetchRecalls = async () => {
         try {
             const response = await fetch('http://conso-maestro-backend.vercel.app/rappels/fetch-recalls');
-    
             const data = await response.json();
             if (data.result) {
                 setSearchResults(data.data);
+                setFilteredResults(data.data); // Initialement, tous les résultats sont affichés
             } else {
                 setError(data.message || 'Aucun rappel trouvé.');
             }
@@ -34,9 +38,18 @@ const RappelConsoScreen = () => {
         }
     };
 
+    // Exécute `fetchRecalls` une fois au montage du composant
     useEffect(() => {
         fetchRecalls();
-    }, []); // Le tableau vide [] signifie que cela s'exécute une fois lorsque le composant est monté
+    }, []);
+
+    // Filtre les rappels en fonction du nom du produit saisi
+    const handleSearch = () => {
+        const filtered = searchResults.filter(recall => 
+            recall.nom_de_la_marque_du_produit.toLowerCase().includes(productName.toLowerCase())
+        );
+        setFilteredResults(filtered);
+    };
 
     return (
         <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>
@@ -50,12 +63,12 @@ const RappelConsoScreen = () => {
                     value={productName}
                     onChangeText={setProductName}
                 />
-                <Button title="Rechercher" onPress={() => { /* Ajoute ta logique de recherche ici */ }} />
+                <Button title="Rechercher" onPress={handleSearch} />
 
                 {error ? <Text style={styles.error}>{error}</Text> : null}
 
                 <ScrollView style={styles.resultsContainer}>
-                    {searchResults.map((recall, index) => (
+                    {filteredResults.map((recall, index) => (
                         <TouchableOpacity key={index} style={styles.resultItem} onPress={() => openModal(recall)}>
                             <Text style={styles.resultTitle}>{recall.nom_de_la_marque_du_produit}</Text>
                         </TouchableOpacity>
@@ -81,9 +94,6 @@ const RappelConsoScreen = () => {
                                 <Text style={styles.modalText}>Préconisations : {selectedProduct.preconisations_sanitaires}</Text>
                                 <Text style={styles.modalText}>Description Complémentaire : {selectedProduct.description_complementaire_du_risque}</Text>
                                 <Text style={styles.modalText}>Conduite à Tenir : {selectedProduct.conduites_a_tenir_par_le_consommateur}</Text>
-                                <Text style={styles.modalText}>Fin de la Procédure : {selectedProduct.date_de_fin_de_la_procedure_de_rappel?.toLocaleDateString()}</Text>
-                                <Text style={styles.modalText}>Début de Commercialisation : {selectedProduct.date_debut_fin_de_commercialisation?.toLocaleDateString()}</Text>
-
                                 <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                                     <Text style={styles.closeButtonText}>Fermer</Text>
                                 </TouchableOpacity>
