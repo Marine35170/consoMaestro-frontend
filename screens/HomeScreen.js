@@ -13,12 +13,13 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation , useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 export default function HomeScreen({}) {
  const navigation = useNavigation();
  const username = useSelector((state) => state.user.username);
+ const isFocused = useIsFocused();
  const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
@@ -50,7 +51,7 @@ export default function HomeScreen({}) {
         });
     };
     fetchAdvice(); // Calls fetchAdvice function
-  }, [navigation]);
+  }, [isFocused]);
 
   const handleScanPress = () => {
     {
