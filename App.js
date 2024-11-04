@@ -13,7 +13,7 @@ import QuickConsoScreen from './screens/QuickconsoScreen';
 import FridgeScreen from './screens/FridgeScreen';
 import CongeloScreen from './screens/CongeloScreen';
 import PlacardScreen from './screens/PlacardScreen';
-import RecetteScreen from './screens/RecetteScreen';
+import RecipesScreen from './screens/RecipesScreen';
 import RappelConsoScreen from './screens/RappelconsoScreen';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -56,6 +56,22 @@ const TabNavigator = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Menu" component={MenuScreen} />
+      {/* Écrans cachés dans la barre de navigation */}
+      <Tab.Screen
+        name="FridgeScreen"
+        component={FridgeScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="CongeloScreen"
+        component={CongeloScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="PlacardScreen"
+        component={PlacardScreen}
+        options={{ tabBarButton: () => null }}
+      />
     </Tab.Navigator>
   );
 };
@@ -69,10 +85,7 @@ export default function App() {
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />
        <Stack.Screen name="QuickConsoScreen" component={QuickConsoScreen} />
-       <Stack.Screen name="FridgeScreen" component={FridgeScreen} />
-       <Stack.Screen name="CongeloScreen" component={CongeloScreen}/>
-       <Stack.Screen name="PlacardScreen" component={PlacardScreen}/>
-       <Stack.Screen name="RecetteScreen" component={RecetteScreen} />
+       <Stack.Screen name="RecipesScreen" component={RecipesScreen} />
        <Stack.Screen name="RappelConsoScreen" component={RappelConsoScreen} />
      </Stack.Navigator>
    </NavigationContainer>

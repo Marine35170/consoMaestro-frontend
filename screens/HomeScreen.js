@@ -13,12 +13,13 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation , useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 export default function HomeScreen({}) {
  const navigation = useNavigation();
  const username = useSelector((state) => state.user.username);
+ const isFocused = useIsFocused();
  const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
@@ -50,7 +51,7 @@ export default function HomeScreen({}) {
         });
     };
     fetchAdvice(); // Calls fetchAdvice function
-  }, [navigation]);
+  }, [isFocused]);
 
   const handleScanPress = () => {
     {
@@ -112,9 +113,10 @@ const styles = StyleSheet.create({
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",
-    marginTop: 10,
+    marginTop: 20,
     borderWidth: 1,
     padding: 5,
+    paddingBottom: 20,
     borderRadius: 10,
     borderColor: "#E56400",
     width: "85%",
@@ -130,21 +132,12 @@ const styles = StyleSheet.create({
     height: "30%",
     borderRadius: 10,
     borderColor: "#E56400",
-    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "column",
     overflow: "hidden",
-    top: -120,
-  },
-  ou: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#E56400",
-    marginTop: 10,
-    marginBottom: 20,
-  },
- 
+    top: -95,
+  }, 
   buttonText: {
     position: "absolute",
     marginTop: 20,

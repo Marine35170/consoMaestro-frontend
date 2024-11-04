@@ -1,23 +1,58 @@
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal} from "react-native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal,ScrollView} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
+import { useSelector} from "react-redux";
 
 const PlacardScreen = () => {
-  const [dlcModalVisible, setDlcModalVisible] = useState(false); // State to control Rewards modal visibility
-  const navigation = useNavigation();
+   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
+   const navigation = useNavigation();
+  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
+  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
+  const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
+  const userId = useSelector((state) => state.user.id);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+        // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
+        
+        fetch(`https://conso-maestro-backend.vercel.app/placard/${userId}`, {
+            method: "GET",
+            headers: {
+                // Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.result) {
+                console.log("data from ", data);
+                setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
+            } else {
+                console.error("Erreur lors de la récupération des produits:", data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la récupération des produits:", error);
+        });
+    };
+
+    fetchProducts();
+}, [isFocused]);
 
   const handleCongeloPress = () => {
-    navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Congelo
+    navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Placard
   };
   const handleFridgePress = () => {
     navigation.navigate("FridgeScreen"); // Naviguer vers la page frigo
   };
+
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
   const handleDlcColor = (dlcDate) => {
     const today = moment(); // Date actuelle
-    const expirationDate = moment(dlcDate, "DD/MM/YYYY"); // Date de limite de consommation
+    const expirationDate = moment(dlcDate); // Date de limite de consommation
 
     const daysRemaining = expirationDate.diff(today, "days"); // Différence en jours entre la date d'aujourd'hui et la DLC
 
@@ -30,100 +65,81 @@ const PlacardScreen = () => {
       return styles.greenDlcContainer;
     }
   };
-  // Fonction pour afficher la modal si la couleur de DLC est rouge ou orange
-  const handleDlcPress = (dlcDate) => { // Nouvelle fonction ajoutée
-    const today = moment(); // Date actuelle
-    const expirationDate = moment(dlcDate, "DD/MM/YYYY"); // Date de limite de consommation
 
+   // Fonction pour gérer l'affichage des modals selon les jours restants
+   const handleDlcPress = (dlcDate) => {
+    const today = moment();
+    const expirationDate = moment(dlcDate);
     const daysRemaining = expirationDate.diff(today, "days");
 
-    if (daysRemaining <= 2 || (daysRemaining > 2 && daysRemaining <= 4)) { // Vérifie si la DLC est rouge ou orange
-      setDlcModalVisible(true);
+    if (daysRemaining <= 4) {
+      setShortDlcModalVisible(true);
+    } else {
+      setLongDlcModalVisible(true);
     }
   };
 
+  const products = productsInfo ? productsInfo.map((data, i) => {
+    console.log('productsInfo', productsInfo)
+    return ( 
+      <View style={styles.ProductLineContainer} key = {i} >
+            <Text style={styles.ProductTitle}>{data.name}</Text>
+            
+            {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
+            <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
+            <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
+              <Text style={styles.DlcText}>{data.dlc}</Text>
+            </View>
+            </TouchableOpacity>
+  
+            {/* Bouton pour ajouter le produit au congélateur */}
+            <View style={styles.buttonFreezer}>
+              <TouchableOpacity onPress={handleFridgePress}>
+                <Image
+                  source={require("../assets/congelo.png")} // Icône de congélateur
+                  style={styles.freezerLogo}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+    )
+  }) : null;
+
+
   return (
+     // Conteneur principal
     <View style={styles.container}>
       <Image
         source={require("../assets/Squirrel/Heureux.png")}
         style={styles.squirrel}
       />
-
-      <Text style={styles.PageTitle}>Mes Placards</Text>
-      <View style={styles.productContainer}>
+       {/* Titre de la page */}  
+      <Text style={styles.PageTitle}>Mon Placard</Text>
+      {/* Conteneur des produits dans le placard */}
+      <View  style={styles.productContainer}>
         {/* Affichage des produits */}
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 1</Text>
-
-           {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          {/* Affiche la modale seulement si DLC <= à 4 jour */}
-          <TouchableOpacity onPress={() => handleDlcPress("30/10/2024")}> 
-          <View style={[styles.DlcContainer, handleDlcColor("30/10/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-          </TouchableOpacity>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleCongeloPress}>
-              <Image
-                source={require("../assets/congelo.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 2</Text>
-
-          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          <View style={[styles.DlcContainer, handleDlcColor("03/11/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleCongeloPress}>
-              <Image
-                source={require("../assets/congelo.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.ProductLineContainer}>
-          <Text style={styles.ProductTitle}>Produit 3</Text>
-
-          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          <View style={[styles.DlcContainer, handleDlcColor("04/11/2024")]}>
-            <Text style={styles.DlcText}>30/10/2024</Text>
-          </View>
-
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity onPress={handleCongeloPress}>
-              <Image
-                source={require("../assets/congelo.png")}
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        <ScrollView Style={{ flexGrow: 1 }}>
+        {products}
+        </ScrollView>
+      </View >
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
-          <Text style={styles.buttonText}>Mon Congélo</Text>
+          <Text style={styles.buttonText}>Mon Congelo</Text>
         </TouchableOpacity>
         {/* Boutons d'accès aux placards */}
         <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
-          <Text style={styles.buttonText}>Mon Frigo</Text>
+          <Text style={styles.buttonText}>Mes Frigo</Text>
         </TouchableOpacity>
       </View>
+  
       {/* DLC courte Modal */}
       <Modal
         transparent={true}
-        visible={dlcModalVisible}
+        visible={shortDlcModalVisible}
         animationType="slide"
-        onRequestClose={() => setDlcModalVisible(false)}
+        onRequestClose={() => setShortDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
         <Image
@@ -132,12 +148,36 @@ const PlacardScreen = () => {
       />
           <Text style={styles.modalTitle}>
             Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
-            porte-monnaie et la Planète te diront MERCI ! !
+            porte-monnaie et la Planète te diront MERCI ! 
           </Text>
           {/* Display rewards here */}
           <TouchableOpacity
             style={styles.closeButton}
-            onPress={() => setDlcModalVisible(false)}
+            onPress={() => setShortDlcModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+       {/* DLC Longue Modal */}
+       <Modal
+        transparent={true}
+        visible={longDlcModalVisible}
+        animationType="slide"
+        onRequestClose={() => setLongDlcModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+        <Image
+        source={require("../assets/Squirrel/Heureux.png")} // Chemin de l'image de l'écureuil
+        style={styles.squirrelModal}
+      />
+          <Text style={styles.modalTitle}>
+            Tout va bien, il te reste encore quelques temps avant que ton produit ne se périme. Privilégie les produits ayant des dates plus courtes !
+          </Text>
+          {/* Display rewards here */}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setLongDlcModalVisible(false)}
           >
             <Text style={styles.closeButtonText}>Fermer</Text>
           </TouchableOpacity>
@@ -147,10 +187,11 @@ const PlacardScreen = () => {
   );
 };
 
+// Styles pour les différents éléments du composant
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EFE5D8",
+    backgroundColor: "#EFE5D8", // Couleur de fond de la page
     alignItems: "center",
     justifyContent: "center",
   },
@@ -158,11 +199,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 50,
     height: 50,
-    top: 65,
+    top: 50,
     left: 30,
   },
   PageTitle: {
-    color: "#E56400",
+    color: "#E56400", // Couleur du titre
     fontWeight: "bold",
     fontSize: 20,
     textAlign: "center",
@@ -172,49 +213,64 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: "#A77B5A",
     borderColor: "#A77B5A",
-    width: "85%",
-    height: "65%",
+    width: "85%", // Largeur relative à l'écran
+    height: "65%", // Hauteur relative à l'écran
     borderRadius: 10,
     padding: 10,
     marginBottom: 20,
   },
+  
   ProductLineContainer: {
     flexDirection: "row",
+    justifyContent: "space-between", // Pour espacer les éléments
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 2,
-    width: 170,
-    height: 50,
+    width: '100%',
+    height: 52,
     borderRadius: 10,
     padding: 10,
-    fontSize: 16,
-    alignContent: "space-between",
+    alignItems: "center", // Centrer verticalement
     marginTop: 5,
     marginBottom: 5,
   },
   ProductTitle: {
-    justifyContent: "center",
+    flex: 1,
     fontSize: 15,
-    textAlign: "center",
     fontWeight: "bold",
     color: "#E56400",
   },
+  DlcButtonContainer: {
+    flexDirection: "row", // Aligne les deux éléments horizontalement
+    alignItems: "center",
+  },
   DlcContainer: {
     justifyContent: "center",
-    backgroundColor: "#FAF9F3",
-    borderColor: "#A77B5A",
-    borderWidth: 2,
-    width: 93,
-    height: 50,
-    top: -11,
+    width: 94,
+    height: 47,
     borderRadius: 10,
     padding: 10,
-    fontSize: 16,
-    marginLeft: 91,
+    marginRight: 2, // Espace entre DlcContainer et buttonFreezer
+    right: -7,
   },
   DlcText: {
     fontSize: 12,
     fontWeight: "bold",
+  },
+  buttonFreezer: {
+    justifyContent: "center",
+    backgroundColor: "#FAF9F3",
+    borderColor: "#A77B5A",
+    borderWidth: 1,
+    width: 50,
+    height: 47,
+    borderRadius: 10,
+    alignItems: "center",
+    right: -7,
+  },
+  freezerLogo: {
+    width: 30,
+    height: 30,
   },
   modalContainer: {
     flex: 1,
@@ -248,24 +304,9 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
   },
-  buttonFreezer: {
-    justifyContent: "center",
-    backgroundColor: "#FAF9F3",
-    borderColor: "#A77B5A",
-    borderWidth: 2,
-    width: 50,
-    height: 50,
-    top: -11,
-    borderRadius: 10,
-    padding: 10,
-    fontSize: 16,
-  },
-  freezerLogo: {
-    width: 30,
-    height: 30,
-  },
+  
   stocksButtonsContainer: {
-    flexDirection: "row",
+    flexDirection: "row", // Aligne les boutons d'accès en ligne
   },
   button: {
     justifyContent: "center",
@@ -278,23 +319,27 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 16,
     marginLeft: 16,
-    fontSize: 16,
   },
   buttonText: {
     fontWeight: "bold",
     textAlign: "center",
     color: "#E56400",
   },
-   //couleurs DLC dynamiques
-   redDlcContainer: {
+  //couleurs DLC dynamiques
+  redDlcContainer: {
     backgroundColor: "#FF6347", // Rouge
   },
   orangeDlcContainer: {
     backgroundColor: "#FFA500", // Orange
   },
   greenDlcContainer: {
-    backgroundColor: "#32CD32", // Vert
+    backgroundColor: "#69914a", // Vert
   },
 });
+
+
+
+
+
 
 export default PlacardScreen;

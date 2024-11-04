@@ -36,6 +36,7 @@ export default function ScanScreen() {
   const cupboardImage = require("../assets/Placard.png");
   const navigation = useNavigation();
   const [productId, setProductId] = useState(null);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   
   {/*Permission camera */}
   useEffect(() => {
@@ -45,7 +46,22 @@ export default function ScanScreen() {
     };
     getBarCodeScannerPermissions();
   }, []);
-  
+
+  {/* Masquer la camera  */}
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setIsKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setIsKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   {/*Recuperation de l'UPC  via le scan */}
   const handleBarCodeScanned = ({ data }) => {
     console.log("Code-barres scanné : ", data);
@@ -156,7 +172,7 @@ export default function ScanScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "height" : "height"}
         
     >
     <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
@@ -164,7 +180,7 @@ export default function ScanScreen() {
         <Text style={styles.text}>Scannez votre produit</Text>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={styles.camera}
+          style={[styles.camera, isKeyboardVisible && styles.cameraKeyboardVisible]}
         />
         {/*Si scanned est true donc si un produit a été scanner, pouvoir scanner a nouveau */}
         {scanned && (
@@ -255,6 +271,12 @@ const styles = StyleSheet.create({
   camera: {
     width: 300,
     height: 350,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  cameraKeyboardVisible: {
+    width: 150,
+    height: 150,
     borderRadius: 10,
     marginBottom: 20,
   },

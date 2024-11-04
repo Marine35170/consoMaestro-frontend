@@ -13,7 +13,8 @@ const MenuScreen = () => {
 
     const handleCongeloPress = () => {                      // Permet d'aller vers la page Congelo 
         navigation.navigate('CongeloScreen')
-    };
+    }
+    
 
     const handlePlacardPress = () => {                      // Permet d'aller vers la page Placard
         navigation.navigate('PlacardScreen')
@@ -24,7 +25,7 @@ const MenuScreen = () => {
     };
 
     const handleRecipePress = () => {                       // Permet d'aller ver la plage "Idées recettes"
-        navigation.navigate('RecetteScreen');
+        navigation.navigate('RecipesScreen');
     };
     const handleRappelConsoPress = () => {                  // Permet d'aller à la page "rappel conso"
         navigation.navigate('RappelConsoScreen');
