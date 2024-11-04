@@ -85,10 +85,17 @@ export default function ScanScreen() {
       );
       const result = await response.json();
       console.log("Données récupérées : ", result);
+
+      if (result.result === false) {
+        // Si le produit n'est pas trouvé, affichez un message d'erreur
+        Alert.alert("Erreur", result.message);
+      }
+      else {
       setProduct(result.product);
       setShowModal(true);
       setProductId(result.product._id);
       console.log(result);
+      }
     } catch (error) {
       console.error("Erreur lors de la récupération des données : ", error);
     }
@@ -206,7 +213,7 @@ export default function ScanScreen() {
         
         {/* Bouton pour valider les produits */}
         <TouchableOpacity style={styles.fin} onPress={handleFinish}>
-          <Text style={styles.buttonFinish}>C'est tout bon</Text>
+          <Text style={styles.buttonFinish}>C'est tout bon !</Text>
         </TouchableOpacity>
         {/* Modal pour ajouter la DLC et l'endroit ou on stocke le produit */}
         <Modal style={styles.modal} visible={showModal} animationType="slide" >
