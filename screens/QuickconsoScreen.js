@@ -1,25 +1,57 @@
 import React from "react";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal,ScrollView} from "react-native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 import { useSelector} from "react-redux";
 
 const QuickConsoScreen = () => {
-    const navigation = useNavigation();
     const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
     const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
     const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
     const userId = useSelector((state) => state.user.id);
     const isFocused = useIsFocused();
-  
-    const handleCongeloPress = () => {
-        navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Placard
-      };
-      const handleFridgePress = () => {
-        navigation.navigate("FridgeScreen"); // Naviguer vers la page frigo
-      };
+    
+    
 
+    
+    const changementStoragePlace = async (data, newStoragePlace) => {
+        fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
+            method: "Put",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                newStoragePlace: newStoragePlace,
+            }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.result) {
+                console.log("data from ", data);// Met à jour l'état avec les infos des produits
+            } else {
+                console.error("Erreur lors de la mise à jour du produit:", data.message);
+            }
+        })
+    }
+
+    const handleImageClick = async  (data) => {
+        let newStoragePlace;
+       if (data.storagePlace === "Frigo"){
+        newStoragePlace = "Congelo";
+      }
+      else if (data.storagePlace === "Congelo"){
+        newStoragePlace = "Placard";
+      }
+      else if (data.storagePlace === "Placard"){
+        newStoragePlace = "Frigo";
+    };
+    console.log('newStoragePlace', newStoragePlace)
+    await changementStoragePlace(data, newStoragePlace);
+
+   
+
+}
     useEffect(() => {
       const fetchProducts = async () => {
           // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
@@ -80,6 +112,17 @@ const QuickConsoScreen = () => {
   
     const products = productsInfo ? productsInfo.map((data, i) => {
       console.log('productsInfo', productsInfo)
+      console.log('storagePlace', data.storagePlace)
+      let imageSource;
+      if (data.storagePlace === "Frigo"){
+        imageSource = require('../assets/FRIGO.png');
+      }
+      else if (data.storagePlace === "Congelo"){
+        imageSource = require('../assets/congelo.png');
+      }
+      else if (data.storagePlace === "Placard"){
+        imageSource = require('../assets/Placard.png');
+      }
       return ( 
         <View style={styles.ProductLineContainer} key = {i} >
               <Text style={styles.ProductTitle}>{data.name}</Text>
@@ -93,9 +136,9 @@ const QuickConsoScreen = () => {
     
               {/* Bouton pour ajouter le produit au congélateur */}
               <View style={styles.buttonFreezer}>
-                <TouchableOpacity onPress={handleCongeloPress}>
+                <TouchableOpacity  onPress={() => handleImageClick(data)}>
                   <Image
-                    source={require("../assets/congelo.png")} // Icône de congélateur
+                    source={imageSource} // Icône de congélateur
                     style={styles.freezerLogo}
                   />
                 </TouchableOpacity>
