@@ -89,6 +89,7 @@ export default function ScanScreen() {
       if (result.result === false) {
         // Si le produit n'est pas trouvé, affichez un message d'erreur
         Alert.alert("Erreur", result.message);
+        setScanned(false);
       }
       else {
       setProduct(result.product);
@@ -152,10 +153,11 @@ export default function ScanScreen() {
         setShowModal(false);
         setBarcodeData(null);
         setProductId(null);
+        setScanned(false)
       } else {
         Alert.alert(
           "Erreur",
-          data.message || "Échec de l'enregistrement de la DLC"
+          data.message 
         );
       }
     } catch (error) {
@@ -189,13 +191,7 @@ export default function ScanScreen() {
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={[styles.camera, isKeyboardVisible && styles.cameraKeyboardVisible]}
         />
-        {/*Si scanned est true donc si un produit a été scanner, pouvoir scanner a nouveau */}
-        {scanned && (
-          <Button
-            title={"Scanner à nouveau"}
-            onPress={() => setScanned(false)}
-          />
-        )}
+       
         <Text style={styles.ou}>OU</Text>
         {/* Champ de saisie pour le code-barres */}
         
