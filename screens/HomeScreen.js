@@ -120,6 +120,8 @@ flexDirection:'row',
   },
   colorusername:{
     color: '#E56400',
+    fontSize: 24,
+    fontWeight: "bold",
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",
@@ -194,5 +196,6 @@ flexDirection:'row',
     color: "#B19276",
     fontSize: 24,
     fontWeight: "bold",
+    marginRight: 4,
   },
 });
