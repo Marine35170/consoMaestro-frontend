@@ -167,7 +167,7 @@ export default function ProfileScreen() {
         >
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Mes Parrainages</Text>
-            <Text style={styles.modalContent}>Page en cours de construction 👷🏻‍♀️</Text>
+            <Text style={styles.modalContent}>Page en cours de construction 👷🏿‍♂️</Text>
             <TouchableOpacity style={styles.closeButton} onPress={() => setSponsorshipsModalVisible(false)}>
               <Text style={styles.closeButtonText}>Fermer</Text>
             </TouchableOpacity>
