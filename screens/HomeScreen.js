@@ -71,7 +71,10 @@ export default function HomeScreen({}) {
           source={require("../assets/Squirrel/Heureux.png")}
           style={styles.squirrel}
         />
-        <Text style={styles.username}>Bonjour {username}</Text>
+        <View style={styles.usernameline}>
+        <Text style={styles.username}>Bonjour</Text>
+        <Text style={styles.colorusername}>{username}</Text>
+        </View>
         </View>
 
         {/* Trucs et astuces */}
@@ -110,6 +113,15 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     
+  },
+  usernameline:{
+flexDirection:'row',
+
+  },
+  colorusername:{
+    color: '#E56400',
+    fontSize: 24,
+    fontWeight: "bold",
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",
@@ -184,5 +196,6 @@ const styles = StyleSheet.create({
     color: "#B19276",
     fontSize: 24,
     fontWeight: "bold",
+    marginRight: 4,
   },
 });
