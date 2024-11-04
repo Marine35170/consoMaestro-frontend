@@ -45,7 +45,6 @@ export default function AuthScreen() {
         dispatch(addUsernameToStore(data.username));
         await AsyncStorage.setItem('userToken', data.token);
         console.log(data.token)
-        Alert.alert('Connexion réussie ! ', data.message);
         setLoginModalVisible(false); // Fermer la modale après connexion
         navigation.navigate('TabNavigator'); // Rediriger vers la page d'accueil
       } else {
