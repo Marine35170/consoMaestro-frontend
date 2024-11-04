@@ -151,6 +151,7 @@ export default function ProfileScreen() {
         >
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Mes Récompenses</Text>
+            <Text style={styles.modalContent}>Page en cours de construction 👷🏻‍♀️</Text>
             <TouchableOpacity style={styles.closeButton} onPress={() => setRewardsModalVisible(false)}>
               <Text style={styles.closeButtonText}>Fermer</Text>
             </TouchableOpacity>
@@ -166,6 +167,7 @@ export default function ProfileScreen() {
         >
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Mes Parrainages</Text>
+            <Text style={styles.modalContent}>Page en cours de construction 👷🏻‍♀️</Text>
             <TouchableOpacity style={styles.closeButton} onPress={() => setSponsorshipsModalVisible(false)}>
               <Text style={styles.closeButtonText}>Fermer</Text>
             </TouchableOpacity>
@@ -238,6 +240,12 @@ const styles = StyleSheet.create({
     borderColor: '#FFF'},
   optionButtonText: { color: '#FFF', fontSize: 16, textAlign: 'center' },
   modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 20 },
+  modalContent: {
+    fontSize: 16,
+    color: '#FFF',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
   noChangesMessage: { fontSize: 16, color: 'red', textAlign: 'center', marginBottom: 10 }, 
   modalTitle: { fontSize: 20, fontWeight: 'bold', color: '#FFF', marginBottom: 20 },
   input: { width: '80%', backgroundColor: '#FFF', padding: 10, marginVertical: 5, borderRadius: 8 },
