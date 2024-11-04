@@ -17,6 +17,8 @@ export default function ProfileScreen() {
   const [successMessage, setSuccessMessage] = useState('');
  // State to display a message when there are no changes
   const [noChangesMessage, setNoChangesMessage] = useState('');
+// State to control Account Deletion modal visibility
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false); 
   
   // useEffect hook to fetch user data when the component loads
   useEffect(() => {
@@ -44,6 +46,33 @@ export default function ProfileScreen() {
 
     fetchUserInfo(); // Calls fetchUserInfo function
   }, []);
+
+
+
+// Function to handle account deletion
+const handleDeleteAccount = async () => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    const response = await fetch('https://conso-maestro-backend.vercel.app/users/delete', {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      await AsyncStorage.removeItem('userToken');
+      navigation.navigate('AuthScreen');
+    } else {
+      console.error('Erreur lors de la suppression du compte');
+    }
+  } catch (error) {
+    console.error('Erreur de suppression du compte:', error);
+  }
+};
+
 
   const handleUpdateUserInfo = async () => {
     const token = await AsyncStorage.getItem('userToken'); // Retrieve the stored token
@@ -221,8 +250,34 @@ export default function ProfileScreen() {
           <Text style={styles.signOutButtonText}>Déconnexion</Text>
           <Ionicons name="exit-outline" size={24} color="#FFF" style={styles.signOutIcon} />
         </TouchableOpacity>
+
+           {/* Bouton suppression compte */}
+           <TouchableOpacity style={styles.deleteButton} onPress={() => setDeleteModalVisible(true)}>
+          <Text style={styles.deleteButtonText}>Supprimer mon compte</Text>
+        </TouchableOpacity>
+
+        {/* Modale de confirmation de suppression */}
+        <Modal
+          transparent={true}
+          visible={isDeleteModalVisible}
+          animationType="slide"
+          onRequestClose={() => setDeleteModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Êtes-vous certain de votre choix ?</Text>
+            <Text style={styles.modalContent}>Cette action est irréversible.</Text>
+            <TouchableOpacity style={styles.confirmButton} onPress={handleDeleteAccount}>
+              <Text style={styles.confirmButtonText}>Oui</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setDeleteModalVisible(false)}>
+              <Text style={styles.cancelButtonText}>Non</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
     </ImageBackground>
+
+
   );
 }
 
@@ -255,7 +310,13 @@ const styles = StyleSheet.create({
   closeButtonText: { color: '#FFF', fontSize: 16, textAlign: 'center' },
   titleWithIcon: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   icon: { marginLeft: 17, marginBottom: 10 },
-  signOutButton: { flexDirection: 'row', backgroundColor: '#FF4C4C', paddingVertical: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginTop: 60 },
+  signOutButton: { flexDirection: 'row', backgroundColor: '#F0672D', paddingVertical: 10, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginTop: 20 },
   signOutButtonText: { color: '#FFF', fontSize: 16, fontWeight: 'bold', marginRight: 8 },
-  signOutIcon: { marginBottom: -2 }
+  signOutIcon: { marginBottom: -2 },
+  deleteButton: { backgroundColor: '#FF4C4C', padding: 10, borderRadius: 10, marginTop: 20 },
+  deleteButtonText: { color: '#FFF', fontSize: 16, textAlign: 'center' },
+  confirmButton: { backgroundColor: 'green', padding: 10, borderRadius: 10, marginTop: 10 },
+  confirmButtonText: { color: '#FFF', fontSize: 16, textAlign: 'center' },
+  cancelButton: { backgroundColor: 'red', padding: 10, borderRadius: 10, marginTop: 10 },
+  cancelButtonText: { color: '#FFF', fontSize: 16, textAlign: 'center' },
 });
