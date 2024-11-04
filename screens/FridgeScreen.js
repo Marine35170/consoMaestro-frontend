@@ -1,46 +1,59 @@
 import React from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
-import { View, Text, StyleSheet, TouchableOpacity, Image,Modal,ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Modal,
+  ScrollView,
+} from "react-native";
 import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
 
 const FridgeScreen = () => {
-   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
+  // Utilisation du hook de navigation pour gérer la navigation entre les écrans
   const navigation = useNavigation();
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
+  const [deleteProduct, setDeleteProduct] = useState(); // État pour surrpimer un produit
   const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
   const userId = useSelector((state) => state.user.id);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchProducts = async () => {
-        // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
-        
-        fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
-            method: "GET",
-            headers: {
-                // Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        })
+      // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
+
+      fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
+        method: "GET",
+        headers: {
+          // Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
-            if (data.result) {
-                console.log("data from ", data);
-                setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
-            } else {
-                console.error("Erreur lors de la récupération des produits:", data.message);
-            }
+          if (data.result) {
+            console.log("data from ", data);
+            setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
+          } else {
+            console.error(
+              "Erreur lors de la récupération des produits:",
+              data.message
+            );
+          }
         })
         .catch((error) => {
-            console.error("Erreur lors de la récupération des produits:", error);
+          console.error("Erreur lors de la récupération des produits:", error);
         });
     };
 
     fetchProducts();
-}, [isFocused]);
+  }, [isFocused, deleteProduct]);
 
   const handlePlacardPress = () => {
     navigation.navigate("PlacardScreen"); // Permet d'aller vers la page Placard
@@ -66,8 +79,8 @@ const FridgeScreen = () => {
     }
   };
 
-   // Fonction pour gérer l'affichage des modals selon les jours restants
-   const handleDlcPress = (dlcDate) => {
+  // Fonction pour gérer l'affichage des modals selon les jours restants
+  const handleDlcPress = (dlcDate) => {
     const today = moment();
     const expirationDate = moment(dlcDate);
     const daysRemaining = expirationDate.diff(today, "days");
@@ -79,19 +92,35 @@ const FridgeScreen = () => {
     }
   };
 
-  const products = productsInfo ? productsInfo.map((data, i) => {
-    console.log('productsInfo', productsInfo)
-    return ( 
-      <View style={styles.ProductLineContainer} key = {i} >
+
+  // Fonction pour supprimer l'affichage d'un produit
+  const handleProductDelete = (data) => {
+    fetch(`https://conso-maestro-backend.vercel.app/frigo/${data._id}`), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+     
+  };
+setDeleteProduct(data._id)}
+
+
+
+
+  const products = productsInfo
+    ? productsInfo.map((data, i) => {
+        console.log("productsInfo", productsInfo);
+        return (
+          <View style={styles.ProductLineContainer} key={i}>
             <Text style={styles.ProductTitle}>{data.name}</Text>
-            
+
             {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-            <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
-            <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
-              <Text style={styles.DlcText}>{data.dlc}</Text>
-            </View>
+            <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}>
+              <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
+                <Text style={styles.DlcText}>{data.dlc}</Text>
+              </View>
             </TouchableOpacity>
-  
+
             {/* Bouton pour ajouter le produit au congélateur */}
             <View style={styles.buttonFreezer}>
               <TouchableOpacity onPress={handleCongeloPress}>
@@ -100,28 +129,39 @@ const FridgeScreen = () => {
                   style={styles.freezerLogo}
                 />
               </TouchableOpacity>
+
+              {/* Bouton pour supprimer un produit*/}
+              <View style={styles.buttonDelete}>
+                <TouchableOpacity onPress={() => handleProductDelete(data)}
+                >
+                  <FontAwesome
+                   icon="fa-solid fa-xmark" 
+                   size={27}
+                   color="#FFF"
+                   style={styles.iconDelete}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-    )
-  }) : null;
-
+        );
+      })
+    : null;
 
   return (
-     // Conteneur principal
+    // Conteneur principal
     <View style={styles.container}>
       <Image
         source={require("../assets/Squirrel/Heureux.png")}
         style={styles.squirrel}
       />
-       {/* Titre de la page */}  
+      {/* Titre de la page */}
       <Text style={styles.PageTitle}>Mon Frigo</Text>
       {/* Conteneur des produits dans le frigo */}
-      <View  style={styles.productContainer}>
+      <View style={styles.productContainer}>
         {/* Affichage des produits */}
-        <ScrollView Style={{ flexGrow: 1 }}>
-        {products}
-        </ScrollView>
-      </View >
+        <ScrollView Style={{ flexGrow: 1 }}>{products}</ScrollView>
+      </View>
 
       {/* Boutons d'accès au congélateur */}
       <View style={styles.stocksButtonsContainer}>
@@ -133,7 +173,7 @@ const FridgeScreen = () => {
           <Text style={styles.buttonText}>Mon Congelo</Text>
         </TouchableOpacity>
       </View>
-  
+
       {/* DLC courte Modal */}
       <Modal
         transparent={true}
@@ -142,13 +182,13 @@ const FridgeScreen = () => {
         onRequestClose={() => setShortDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-        <Image
-        source={require("../assets/Squirrel/Triste.png")} // Chemin de l'image de l'écureuil
-        style={styles.squirrelModal}
-      />
+          <Image
+            source={require("../assets/Squirrel/Triste.png")} // Chemin de l'image de l'écureuil
+            style={styles.squirrelModal}
+          />
           <Text style={styles.modalTitle}>
             Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
-            porte-monnaie et la Planète te diront MERCI ! 
+            porte-monnaie et la Planète te diront MERCI !
           </Text>
           {/* Display rewards here */}
           <TouchableOpacity
@@ -159,20 +199,22 @@ const FridgeScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-       {/* DLC Longue Modal */}
-       <Modal
+      {/* DLC Longue Modal */}
+      <Modal
         transparent={true}
         visible={longDlcModalVisible}
         animationType="slide"
         onRequestClose={() => setLongDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-        <Image
-        source={require("../assets/Squirrel/Heureux.png")} // Chemin de l'image de l'écureuil
-        style={styles.squirrelModal}
-      />
+          <Image
+            source={require("../assets/Squirrel/Heureux.png")} // Chemin de l'image de l'écureuil
+            style={styles.squirrelModal}
+          />
           <Text style={styles.modalTitle}>
-            Tout va bien, il te reste encore quelques temps avant que ton produit ne se périme. Privilégie les produits ayant des dates plus courtes !
+            Tout va bien, il te reste encore quelques temps avant que ton
+            produit ne se périme. Privilégie les produits ayant des dates plus
+            courtes !
           </Text>
           {/* Display rewards here */}
           <TouchableOpacity
@@ -219,14 +261,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
   },
-  
+
   ProductLineContainer: {
     flexDirection: "row",
     justifyContent: "space-between", // Pour espacer les éléments
     backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 2,
-    width: '100%',
+    width: "100%",
     height: 52,
     borderRadius: 10,
     padding: 10,
@@ -272,6 +314,9 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
+  iconDelete: {
+
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -279,13 +324,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
   },
-  squirrelModal:{
-    justifyContent: 'center',
+  squirrelModal: {
+    justifyContent: "center",
     width: 95,
     height: 90,
     marginBottom: 30,
     padding: 10,
-    
   },
   modalTitle: {
     fontSize: 20,
@@ -301,10 +345,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   closeButtonText: {
-    color: '#FFF',
+    color: "#FFF",
     fontSize: 16,
   },
-  
+
   stocksButtonsContainer: {
     flexDirection: "row", // Aligne les boutons d'accès en ligne
   },
@@ -336,7 +380,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#69914a", // Vert
   },
 });
-
-
 
 export default FridgeScreen;
