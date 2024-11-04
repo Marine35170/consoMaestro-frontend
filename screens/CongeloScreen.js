@@ -66,6 +66,51 @@ const CongeloScreen = () => {
     }
   };
 
+  const changementStoragePlace = async (data, newStoragePlace) => {
+    fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
+        method: "Put",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            newStoragePlace: newStoragePlace,
+        }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        if (data.result) {
+           console.log("Produit mis à jour avec succès:", data.message);
+        } else {
+            console.error("Erreur lors de la mise à jour du produit:", data.message);
+        }
+    })
+}
+
+const handleImageClick = async  (data) => {
+    let newStoragePlace;
+   if (data.storagePlace === "Frigo"){
+    newStoragePlace = "Congelo";
+  }
+  else if (data.storagePlace === "Congelo"){
+    newStoragePlace = "Placard";
+  }
+  else if (data.storagePlace === "Placard"){
+    newStoragePlace = "Frigo";
+};
+
+await changementStoragePlace(data, newStoragePlace);
+
+setProductsInfo((prevProductsInfo) =>
+    prevProductsInfo.map((product) =>
+      product._id === data._id
+        ? { ...product, storagePlace: newStoragePlace }
+        : product
+    )
+    );
+
+
+}
+
    // Fonction pour gérer l'affichage des modals selon les jours restants
    const handleDlcPress = (dlcDate) => {
     const today = moment();
@@ -80,31 +125,40 @@ const CongeloScreen = () => {
   };
 
   const products = productsInfo ? productsInfo.map((data, i) => {
-    console.log('productsInfo', productsInfo)
-    return ( 
-      <View style={styles.ProductLineContainer} key = {i} >
-            <Text style={styles.ProductTitle}>{data.name}</Text>
-            
-            {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-            <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
-            <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
-              <Text style={styles.DlcText}>{data.dlc}</Text>
-            </View>
-            </TouchableOpacity>
-  
-            {/* Bouton pour ajouter le produit au congélateur */}
-            <View style={styles.buttonFreezer}>
-              <TouchableOpacity onPress={handleFridgePress}>
-                <Image
-                  source={require("../assets/congelo.png")} // Icône de congélateur
-                  style={styles.freezerLogo}
-                />
-              </TouchableOpacity>
-            </View>
+    const formattedDlc = new Date(data.dlc).toLocaleDateString();  
+  let imageSource;
+  if (data.storagePlace === "Frigo"){
+    imageSource = require('../assets/FRIGO.png');
+  }
+  else if (data.storagePlace === "Congelo"){
+    imageSource = require('../assets/congelo.png');
+  }
+  else if (data.storagePlace === "Placard"){
+    imageSource = require('../assets/Placard.png');
+  }
+  return ( 
+    <View style={styles.ProductLineContainer} key = {i} >
+          <Text style={styles.ProductTitle}>{data.name}</Text>
+          
+          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
+          <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
+          <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
+            <Text style={styles.DlcText}>{formattedDlc}</Text>
           </View>
-    )
-  }) : null;
+          </TouchableOpacity>
 
+          {/* Bouton pour ajouter le produit au congélateur */}
+          <View style={styles.buttonFreezer}>
+            <TouchableOpacity  onPress={() => handleImageClick(data)}>
+              <Image
+                source={imageSource} // Icône de congélateur
+                style={styles.freezerLogo}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+  )
+}) : null;
 
   return (
      // Conteneur principal
