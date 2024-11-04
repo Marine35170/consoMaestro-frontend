@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
 
 const RecipesScreen = () => {
     return (
-        <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>
+        <ImageBackground source={require('../assets/backgroundRecipe.png')} style={styles.background}>
         <View style={styles.container}>
             <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
             <View>
