@@ -28,7 +28,14 @@ const QuickConsoScreen = () => {
         .then((response) => response.json())
         .then((data) => {
             if (data.result) {
-                console.log("data from ", data);// Met à jour l'état avec les infos des produits
+               // Met à jour l'état avec les infos des produits
+                setProductsInfo((prevProductsInfo) =>
+                    prevProductsInfo.map((product) =>
+                        product._id === data._id
+                            ? { ...product, storagePlace: newStoragePlace }
+                            : product
+                    )
+                );
             } else {
                 console.error("Erreur lors de la mise à jour du produit:", data.message);
             }
@@ -46,7 +53,7 @@ const QuickConsoScreen = () => {
       else if (data.storagePlace === "Placard"){
         newStoragePlace = "Frigo";
     };
-    console.log('newStoragePlace', newStoragePlace)
+   
     await changementStoragePlace(data, newStoragePlace);
 
    
@@ -66,7 +73,6 @@ const QuickConsoScreen = () => {
           .then((response) => response.json())
           .then((data) => {
               if (data.result) {
-                  console.log("data from ", data);
                   setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
               } else {
                   console.error("Erreur lors de la récupération des produits:", data.message);
@@ -78,7 +84,7 @@ const QuickConsoScreen = () => {
       };
   
       fetchProducts();
-  }, [isFocused]);
+  }, [isFocused, productsInfo]);
   
    
     const handleDlcColor = (dlcDate) => {
@@ -111,8 +117,6 @@ const QuickConsoScreen = () => {
     };
   
     const products = productsInfo ? productsInfo.map((data, i) => {
-      console.log('productsInfo', productsInfo)
-      console.log('storagePlace', data.storagePlace)
       let imageSource;
       if (data.storagePlace === "Frigo"){
         imageSource = require('../assets/FRIGO.png');
