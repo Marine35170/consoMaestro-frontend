@@ -13,6 +13,7 @@ const QuickConsoScreen = () => {
     const isFocused = useIsFocused();
     
     
+    
 
     
     const changementStoragePlace = async (data, newStoragePlace) => {
@@ -28,14 +29,7 @@ const QuickConsoScreen = () => {
         .then((response) => response.json())
         .then((data) => {
             if (data.result) {
-               // Met à jour l'état avec les infos des produits
-                setProductsInfo((prevProductsInfo) =>
-                    prevProductsInfo.map((product) =>
-                        product._id === data._id
-                            ? { ...product, storagePlace: newStoragePlace }
-                            : product
-                    )
-                );
+               console.log("Produit mis à jour avec succès:", data.message);
             } else {
                 console.error("Erreur lors de la mise à jour du produit:", data.message);
             }
@@ -56,6 +50,13 @@ const QuickConsoScreen = () => {
    
     await changementStoragePlace(data, newStoragePlace);
 
+    setProductsInfo((prevProductsInfo) =>
+        prevProductsInfo.map((product) =>
+          product._id === data._id
+            ? { ...product, storagePlace: newStoragePlace }
+            : product
+        )
+        );
    
 
 }
@@ -84,7 +85,7 @@ const QuickConsoScreen = () => {
       };
   
       fetchProducts();
-  }, [isFocused, productsInfo]);
+  }, [isFocused]);
   
    
     const handleDlcColor = (dlcDate) => {
