@@ -29,7 +29,6 @@ export default function HomeScreen() {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("data from fetch", data);
           // Mise à jour de l'état avec les informations des conseils
           setAdvicesInfo({
             titre: data.titre,

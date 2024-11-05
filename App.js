@@ -1,5 +1,3 @@
-import { StatusBar } from 'expo-status-bar'; 
-import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native'; // Importation de la bibliothèque de navigation
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; // Création d'une navigation par pile
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; // Création d'une navigation par onglets
@@ -101,6 +99,13 @@ const TabNavigator = () => {
         name="PlacardScreen"
         component={PlacardScreen}
         options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
+      
+      />
+       <Tab.Screen
+        name="RecipesScreen"
+        component={RecipesScreen}
+        options={{ tabBarButton: () => null }}
+      
       />
       <Stack.Screen 
       name="QuickConsoScreen" 
@@ -120,7 +125,6 @@ export default function App() {
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />
-       <Stack.Screen name="RecipesScreen" component={RecipesScreen} />
        <Stack.Screen name="RappelConsoScreen" component={RappelConsoScreen} />
      </Stack.Navigator>
    </NavigationContainer>
