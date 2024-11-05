@@ -159,7 +159,9 @@ export default function ScanScreen() {
       >
         <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
           <View style={styles.container}>
+            <View style={styles.textScan}>
             <Text style={styles.text}>Scannez votre produit</Text>
+            </View>
             <BarCodeScanner
               onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
               style={[styles.camera, isKeyboardVisible && styles.cameraKeyboardVisible]}
@@ -263,15 +265,18 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     fontWeight: "bold",
+    textAlign: "center",
+  
+    color: "#fff",
+  },
+  textScan: {
     marginTop: 30,
     width: 300,
-    textAlign: "center",
     height: 40,
     paddingTop: 5,
     borderRadius: 10,
     marginBottom: 40,
     backgroundColor: "#B19276",
-    color: "#fff",
   },
   ou: {
     fontSize: 20,
