@@ -57,6 +57,7 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false, // Masque l'en-tête par défaut
+        tabBarShowLabel: false, // Masque les libellés des onglets
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -72,13 +73,16 @@ const TabNavigator = () => {
           // Retourne l'icône correspondante
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'tomato', // Couleur de l'icône active
-        tabBarInactiveTintColor: 'gray', // Couleur de l'icône inactive
+        tabBarActiveTintColor: '#E56400', // Couleur de l'icône active
+        tabBarInactiveTintColor: '#FFF', // Couleur de l'icône inactive
+        tabBarStyle: {
+          backgroundColor: '#A77B5A', // Couleur de fond de la barre de navigation
+        },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Menu" component={MenuScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen}/>
+      <Tab.Screen name="Menu" component={MenuScreen}/>
       {/* Écrans cachés dans la barre de navigation */}
       <Tab.Screen
         name="FridgeScreen"
