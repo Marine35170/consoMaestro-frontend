@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import {View,Text,StyleSheet,TouchableOpacity,Image,Modal,ScrollView,} from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Modal,
+  ScrollView,
+} from "react-native";
 import moment from "moment"; // Pour la manipulation des dates
 import { useSelector } from "react-redux";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-
 
 const FridgeScreen = () => {
   // Initialisation des hooks de navigation et de l'état
@@ -21,18 +28,24 @@ const FridgeScreen = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `https://conso-maestro-backend.vercel.app/frigo/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await response.json();
         if (data.result) {
           console.log("data from ", data);
           setProductsInfo(data.data); // Met à jour l'état avec les informations des produits
         } else {
-          console.error("Erreur lors de la récupération des produits:", data.message);
+          console.error(
+            "Erreur lors de la récupération des produits:",
+            data.message
+          );
         }
       } catch (error) {
         console.error("Erreur lors de la récupération des produits:", error);
@@ -41,7 +54,7 @@ const FridgeScreen = () => {
 
     fetchProducts();
   }, [isFocused, refresh]);
-
+  
   // Navigation vers l'écran Placard
   const handlePlacardPress = () => {
     navigation.navigate("PlacardScreen");
@@ -71,20 +84,26 @@ const FridgeScreen = () => {
   // Fonction pour changer le lieu de stockage du produit
   const changementStoragePlace = async (data, newStoragePlace) => {
     try {
-      const response = await fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          newStoragePlace: newStoragePlace,
-        }),
-      });
+      const response = await fetch(
+        `https://conso-maestro-backend.vercel.app/products/${data._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            newStoragePlace: newStoragePlace,
+          }),
+        }
+      );
       const result = await response.json();
       if (result.result) {
         console.log("Produit mis à jour avec succès:", result.message);
       } else {
-        console.error("Erreur lors de la mise à jour du produit:", result.message);
+        console.error(
+          "Erreur lors de la mise à jour du produit:",
+          result.message
+        );
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour du produit:", error);
@@ -145,7 +164,10 @@ const FridgeScreen = () => {
           );
           setRefresh((prev) => !prev); // Force le rafraîchissement
         } else {
-          console.error("Erreur lors de la suppression du produit :", result.message);
+          console.error(
+            "Erreur lors de la suppression du produit :",
+            result.message
+          );
         }
       })
       .catch((error) => {
@@ -161,11 +183,11 @@ const FridgeScreen = () => {
 
         // Choix de l'image en fonction du lieu de stockage
         if (data.storagePlace === "Frigo") {
-          imageSource = require('../assets/FRIGO.png');
+          imageSource = require("../assets/FRIGO.png");
         } else if (data.storagePlace === "Congelo") {
-          imageSource = require('../assets/congelo.png');
+          imageSource = require("../assets/congelo.png");
         } else if (data.storagePlace === "Placard") {
-          imageSource = require('../assets/Placard.png');
+          imageSource = require("../assets/Placard.png");
         }
 
         return (
@@ -193,7 +215,7 @@ const FridgeScreen = () => {
             <View style={styles.buttonDelete}>
               <TouchableOpacity onPress={() => handleProductDelete(data)}>
                 <FontAwesomeIcon
-                  icon={faXmark} 
+                  icon={faXmark}
                   size={27}
                   color="#A77B5A"
                   style={styles.iconDelete}
@@ -285,7 +307,7 @@ const styles = StyleSheet.create({
     left: 30,
   },
   PageTitle: {
-    fontFamily: 'Hitchcut-Regular',
+    fontFamily: "Hitchcut-Regular",
     color: "#E56400", // Couleur du titre
     fontWeight: "bold",
     fontSize: 20,
@@ -355,9 +377,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  iconDelete: {
-
-  },
+  iconDelete: {},
   modalContainer: {
     flex: 1,
     justifyContent: "center",
