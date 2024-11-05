@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     marginBottom: 20,
-    marginTop: 116,
+    marginTop: 100,
   },
   sectionTitle: {
     fontSize: 18,
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     marginBottom: 20,
-    marginTop: 60,
+    marginTop: 30,
   },
   optionButton: {
     backgroundColor: "#A77B5A",
