@@ -51,7 +51,7 @@ const TabNavigator = () => {
           // Retourne l'icône correspondante
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#E56400', // Couleur de l'icône active
+        tabBarActiveTintColor: '#664C25', // Couleur de l'icône active
         tabBarInactiveTintColor: '#FFF', // Couleur de l'icône inactive
         tabBarStyle: {
           backgroundColor: '#A77B5A', // Couleur de fond de la barre de navigation
