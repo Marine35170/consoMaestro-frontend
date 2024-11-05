@@ -18,6 +18,28 @@ import RappelConsoScreen from './screens/RappelconsoScreen';
 import { Provider } from 'react-redux'; // Importation de Redux pour la gestion d'état
 import { configureStore } from '@reduxjs/toolkit'; // Configuration du store Redux
 import userReducer from './reducers/userReducer'; // Réducteur pour la gestion de l'utilisateur
+// import { useFonts } from 'expo-font';
+// import * as SplashScreen from 'expo-splash-screen';
+// import { useEffect } from 'react';
+
+// SplashScreen.preventAutoHideAsync();
+
+// export default function App() {
+//   const [loaded, error] = useFonts({
+//     'Hitchcut': require('./assets/fonts/Hitchcut-Regulard.ttf'),
+//     'AvenirNext': require('./assets/fonts/AvenirNextLTPro-Regular.otf')
+//   });
+
+//   useEffect(() => {
+//     if (loaded || error) {
+//       SplashScreen.hideAsync();
+//     }
+//   }, [loaded, error]);
+
+//   if (!loaded && !error) {
+//     return null;
+//   }
+// }
 
 const Stack = createNativeStackNavigator(); // Création de la pile de navigation
 const Tab = createBottomTabNavigator(); // Création de la navigation par onglets

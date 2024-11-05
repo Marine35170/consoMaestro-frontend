@@ -182,9 +182,11 @@ export default function ScanScreen() {
             </TouchableOpacity>
 
             {/* Bouton pour valider les produits */}
+            <View style={styles.enregistrement}>
             <TouchableOpacity style={styles.fin} onPress={handleFinish}>
-              <Text style={styles.buttonFinish}>C'est tout bon !</Text>
+              <Image style={styles.buttonCheck} source={require("../assets/buttonCheck.png")}/>
             </TouchableOpacity>
+            </View>
 
             {/* Modal pour ajouter la DLC et l'endroit où stocker le produit */}
             <Modal style={styles.modal} visible={showModal} animationType="slide">
@@ -296,18 +298,16 @@ const styles = StyleSheet.create({
     color: "#E56400",
   },
   fin: {
-    backgroundColor: "#69914a",
     marginTop: 20,
-    borderWidth: 1,
+    marginBottom: 20,
     width: "40%",
     height: "5%",
     borderRadius: 10,
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
-    borderColor : "#B19276",
+    
   },
- 
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -348,7 +348,6 @@ const styles = StyleSheet.create({
     borderColor: "#E56400",
     borderWidth: 1,
   },
-
   selectedOptionImage: {
     backgroundColor: '#E56400',
     padding: 5,                 
@@ -385,6 +384,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  
   optionImage: {
     width: 50,
     height: 50,
@@ -418,6 +418,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
+    marginBottom: 20,
   },
-  
+  enregistrement: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonCheck:{
+    width: 80,
+    height: 80, 
+    zIndex: 1,
+  },
+  textCkeck:{
+    zIndex: 50,
+    color: "#fff",
+  },
 });
