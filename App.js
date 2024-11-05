@@ -71,6 +71,13 @@ const TabNavigator = () => {
         name="PlacardScreen"
         component={PlacardScreen}
         options={{ tabBarButton: () => null }}
+      
+      />
+       <Tab.Screen
+        name="RecipesScreen"
+        component={RecipesScreen}
+        options={{ tabBarButton: () => null }}
+      
       />
       <Stack.Screen 
       name="QuickConsoScreen" 
@@ -89,7 +96,6 @@ export default function App() {
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />
-       <Stack.Screen name="RecipesScreen" component={RecipesScreen} />
        <Stack.Screen name="RappelConsoScreen" component={RappelConsoScreen} />
      </Stack.Navigator>
    </NavigationContainer>
