@@ -193,7 +193,9 @@ export default function ScanScreen() {
                   </View>
 
                   {/* Sélecteur pour le lieu de stockage */}
+                  <View style={styles.storageOption}>
                   <Text style={styles.textStockage}>Choisissez votre lieu de stockage:</Text>
+                  </View>
                   <View style={styles.storageOptions}>
                     {[{ label: 'Frigo', image: fridgeImage },
                       { label: 'Congelo', image: freezerImage },
@@ -326,8 +328,20 @@ const styles = StyleSheet.create({
   textStockage: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    color: "#E56400",
+    textAlign: "center",
   },
+  storageOption: {
+    marginBottom: 10,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    width: "90%",
+    height: "5%",
+    justifyContent: "center",
+    borderColor: "#E56400",
+    borderWidth: 1,
+  },
+
   selectedOptionImage: {
     backgroundColor: '#E56400',
     padding: 5,                 
@@ -336,7 +350,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',   
     marginBottom: 5,           
     borderWidth: 2,             
-    borderColor: '#FAF9F3',     
+    borderColor: '#FAF9F3', 
+    width: 80,
+    height: 80,    
   },
   noSelectedImage: {
     backgroundColor: '#A77B5A',
@@ -347,6 +363,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,           
     borderWidth: 2,             
     borderColor: '#FAF9F3',     
+    width: 80,
+    height: 80,
   },
   inputDate: {   
     fontSize: 20,
@@ -379,6 +397,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
     marginTop: 50,  
+    borderColor: "#E56400",
+    borderWidth: 1,
   },
   buttonFinish: {
     color: "#fff",
