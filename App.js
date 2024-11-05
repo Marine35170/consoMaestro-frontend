@@ -18,6 +18,9 @@ import RappelConsoScreen from './screens/RappelconsoScreen';
 import { Provider } from 'react-redux'; // Importation de Redux pour la gestion d'état
 import { configureStore } from '@reduxjs/toolkit'; // Configuration du store Redux
 import userReducer from './reducers/userReducer'; // Réducteur pour la gestion de l'utilisateur
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faUtensils } from '@fortawesome/free-solid-svg-icons';
+
 // import { useFonts } from 'expo-font';
 // import * as SplashScreen from 'expo-splash-screen';
 // import { useEffect } from 'react';
@@ -67,7 +70,7 @@ const TabNavigator = () => {
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
           } else if (route.name === 'Menu') {
-            iconName = focused ? 'menu' : 'menu-outline';
+            return <FontAwesomeIcon icon={faUtensils} size={size} color={color} />;
           }
 
           // Retourne l'icône correspondante
