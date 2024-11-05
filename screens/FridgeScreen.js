@@ -319,6 +319,7 @@ const styles = StyleSheet.create({
     left: 30,
   },
   PageTitle: {
+    fontFamily: 'Hitchcut-Regular',
     color: "#E56400", // Couleur du titre
     fontWeight: "bold",
     fontSize: 20,
