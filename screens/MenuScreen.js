@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     // Style du bouton " a consommer rapidement !" 
 
     alertBanner: {
-        backgroundColor: '#A77B5A',
+        backgroundColor: '#F0672D',
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 10,
@@ -122,6 +122,8 @@ const styles = StyleSheet.create({
         width: 300,
         alignItems: 'center', // Centre horizontalement le texte
         justifyContent: 'center', // Centre verticalement le texte
+        borderColor: '#fff',
+        borderWidth: 1,
     },
 
     // Texte du bouton " a consommer rapidement !" 
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
     // Bouton "idées recettes"
 
     buttonRecipe: {
-        backgroundColor: '#A77B5A',
+        backgroundColor: '#69914a',
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 10,
@@ -192,11 +194,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginLeft: 70,
         flexDirection: 'row',
+        borderColor: '#fff',
+        borderWidth: 1,
     },
     // Bouton "mes rappels conso DGCCRF"
 
     buttonDGCCRF: {
-        backgroundColor: '#A77B5A',
+        backgroundColor: '#FF4C4C',
         paddingVertical: 10,
         paddingHorizontal: 40,
         borderRadius: 10,
@@ -205,6 +209,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+        borderColor: '#fff',
+        borderWidth: 1,
     },
     // Texte des boutons
 
