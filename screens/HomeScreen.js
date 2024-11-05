@@ -1,63 +1,52 @@
 import React, { useState, useEffect } from "react";
-import react from "react";
-import {
-  Button,
-  Image,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import {Image,ImageBackground,StyleSheet,Text,TouchableOpacity,View,} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation , useIsFocused } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
-export default function HomeScreen({}) {
- const navigation = useNavigation();
- const username = useSelector((state) => state.user.username);
- const isFocused = useIsFocused();
- const [advicesInfo, setAdvicesInfo] = useState({
+export default function HomeScreen() {
+  // Hooks et état
+  const navigation = useNavigation();
+  const username = useSelector((state) => state.user.username); // Récupération du nom d'utilisateur depuis le store Redux
+  const isFocused = useIsFocused(); // Vérifie si l'écran est en focus
+  const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
-  }); // State to store advice info
+  }); // État pour stocker les informations des conseils
 
+  // Effet pour récupérer les conseils lorsque l'écran est en focus
   useEffect(() => {
     const fetchAdvice = async () => {
-      const token = await AsyncStorage.getItem("userToken"); // Retrieve the stored token
+      const token = await AsyncStorage.getItem("userToken"); // Récupération du token stocké
 
-      // Fetch advice data from the backend
+      // Requête pour obtenir les données de conseils depuis le backend
       fetch("https://conso-maestro-backend.vercel.app/advices", {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Envoi du token dans l'en-tête d'autorisation
           contentType: "application/json",
-        }, // Send token in Authorization header
+        },
       })
         .then((response) => response.json())
         .then((data) => {
           console.log("data from fetch", data);
-          // Update state with user info if response is successful
+          // Mise à jour de l'état avec les informations des conseils
           setAdvicesInfo({
             titre: data.titre,
             description: data.description,
           });
         })
         .catch((error) => {
-          console.error(error);
+          console.error("Erreur lors de la récupération des conseils :", error);
         });
     };
-    fetchAdvice(); // Calls fetchAdvice function
+
+    fetchAdvice(); // Appel de la fonction fetchAdvice
   }, [isFocused]);
 
+  // Fonction pour naviguer vers l'écran de scan
   const handleScanPress = () => {
-    {
-      /* Naviguer vers la page de scan de produit*/
-    }
-    navigation.navigate("ScanScreen");
+    navigation.navigate("ScanScreen"); // Navigation vers la page de scan de produit
   };
 
   return (
@@ -67,24 +56,24 @@ export default function HomeScreen({}) {
     >
       <View style={styles.container}>
         <View style={styles.header}>
-        <Image
-          source={require("../assets/Squirrel/Heureux.png")}
-          style={styles.squirrel}
-        />
-        <View style={styles.usernameline}>
-        <Text style={styles.username}>Bonjour</Text>
-        <Text style={styles.colorusername}>{username}</Text>
-        </View>
+          <Image
+            source={require("../assets/Squirrel/Heureux.png")}
+            style={styles.squirrel}
+          />
+          <View style={styles.usernameline}>
+            <Text style={styles.username}>Bonjour</Text>
+            <Text style={styles.colorusername}>{username}</Text>
+          </View>
         </View>
 
-        {/* Trucs et astuces */}
+        {/* Section des trucs et astuces */}
         <View style={styles.tipsContainer}>
           <Text style={styles.tipsMainTitle}>Trucs et Astuces</Text>
           <Text style={styles.tipsTitle}>{advicesInfo.titre}</Text>
-          <Text style={styles.tipsText}>
-          {advicesInfo.description}
-          </Text>
+          <Text style={styles.tipsText}>{advicesInfo.description}</Text>
         </View>
+
+        {/* Bouton pour scanner un produit */}
         <TouchableOpacity style={styles.scan} onPress={handleScanPress}>
           <Text style={styles.buttonText}>Je scanne mon produit</Text>
           <Image
@@ -96,6 +85,7 @@ export default function HomeScreen({}) {
     </ImageBackground>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

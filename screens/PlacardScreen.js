@@ -1,92 +1,81 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal,ScrollView} from "react-native";
-import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
-import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
-import { useSelector} from "react-redux";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView } from "react-native";
+import { useSelector } from "react-redux";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
 
 const PlacardScreen = () => {
-   // Utilisation du hook de navigation pour gérer la navigation entre les écrans
-   const navigation = useNavigation();
-  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
-  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
-  const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
-  const userId = useSelector((state) => state.user.id);
-  const isFocused = useIsFocused();
+  const navigation = useNavigation(); // Hook de navigation
+  const userId = useSelector((state) => state.user.id); // Récupérer l'ID de l'utilisateur depuis Redux
+  const isFocused = useIsFocused(); // Vérifier si l'écran est actif
+
+  // États pour gérer l'affichage des modales et des produits
+  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false);
+  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false);
+  const [productsInfo, setProductsInfo] = useState();
   const [refresh, setRefresh] = useState(false);
 
+  // Effet pour récupérer les produits lorsque l'écran devient actif ou que refresh change
   useEffect(() => {
     const fetchProducts = async () => {
-        // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
-        
-        fetch(`https://conso-maestro-backend.vercel.app/placard/${userId}`, {
-            method: "GET",
-            headers: {
-                // Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.result) {
-                console.log("data from ", data);
-                setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
-            } else {
-                console.error("Erreur lors de la récupération des produits:", data.message);
-            }
-        })
-        .catch((error) => {
-            console.error("Erreur lors de la récupération des produits:", error);
+      try {
+        const response = await fetch(`https://conso-maestro-backend.vercel.app/placard/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+        const data = await response.json();
+
+        if (data.result) {
+          setProductsInfo(data.data);
+        } else {
+          console.error("Erreur lors de la récupération des produits:", data.message);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des produits:", error);
+      }
     };
 
     fetchProducts();
   }, [isFocused, refresh]);
 
-  
-  // Fonction pour supprimer l'affichage d'un produit
-  const handleProductDelete = (data) => {
-    fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.result) {
-        console.log("Produit supprimé avec succès :", data.message);
+  // Fonction pour supprimer un produit
+  const handleProductDelete = async (data) => {
+    try {
+      const response = await fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await response.json();
+
+      if (result.result) {
         setProductsInfo((prevProductsInfo) =>
           prevProductsInfo.filter(product => product._id !== data._id)
         );
         setRefresh((prev) => !prev); // Force le rafraîchissement
       } else {
-        console.error("Erreur lors de la suppression du produit :", data.message);
+        console.error("Erreur lors de la suppression du produit:", result.message);
       }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la suppression du produit :", error);
-    });
-  }
-
-
-  const handleCongeloPress = () => {
-    navigation.navigate("CongeloScreen"); // Permet d'aller vers la page Placard
+    } catch (error) {
+      console.error("Erreur lors de la suppression du produit:", error);
+    }
   };
-  const handleFridgePress = () => {
-    navigation.navigate("FridgeScreen"); // Naviguer vers la page frigo
-  };
+
+  // Navigation vers d'autres écrans
+  const handleCongeloPress = () => navigation.navigate("CongeloScreen");
+  const handleFridgePress = () => navigation.navigate("FridgeScreen");
 
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
   const handleDlcColor = (dlcDate) => {
-    const today = moment(); // Date actuelle
-    const expirationDate = moment(dlcDate); // Date de limite de consommation
+    const today = moment();
+    const expirationDate = moment(dlcDate);
+    const daysRemaining = expirationDate.diff(today, "days");
 
-    const daysRemaining = expirationDate.diff(today, "days"); // Différence en jours entre la date d'aujourd'hui et la DLC
-
-    // Logique de couleur : Rouge si la DLC est à 2 jours ou moins, Orange si entre 2 et 4 jours, Vert sinon
     if (daysRemaining <= 2) {
       return styles.redDlcContainer;
     } else if (daysRemaining <= 4) {
@@ -96,53 +85,53 @@ const PlacardScreen = () => {
     }
   };
 
+  // Fonction pour changer l'emplacement de stockage d'un produit
   const changementStoragePlace = async (data, newStoragePlace) => {
-    fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
-        method: "Put",
+    try {
+      const response = await fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
+        method: "PUT",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            newStoragePlace: newStoragePlace,
-        }),
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        if (data.result) {
-           console.log("Produit mis à jour avec succès:", data.message);
-        } else {
-            console.error("Erreur lors de la mise à jour du produit:", data.message);
-        }
-    })
-}
+        body: JSON.stringify({ newStoragePlace }),
+      });
+      const result = await response.json();
 
-const handleImageClick = async  (data) => {
+      if (result.result) {
+        console.log("Produit mis à jour avec succès:", result.message);
+      } else {
+        console.error("Erreur lors de la mise à jour du produit:", result.message);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du produit:", error);
+    }
+  };
+
+  // Fonction pour gérer le clic sur l'image pour changer l'emplacement
+  const handleImageClick = async (data) => {
     let newStoragePlace;
-   if (data.storagePlace === "Frigo"){
-    newStoragePlace = "Congelo";
-  }
-  else if (data.storagePlace === "Congelo"){
-    newStoragePlace = "Placard";
-  }
-  else if (data.storagePlace === "Placard"){
-    newStoragePlace = "Frigo";
-};
+    if (data.storagePlace === "Frigo") {
+      newStoragePlace = "Congelo";
+    } else if (data.storagePlace === "Congelo") {
+      newStoragePlace = "Placard";
+    } else {
+      newStoragePlace = "Frigo";
+    }
 
-await changementStoragePlace(data, newStoragePlace);
+    await changementStoragePlace(data, newStoragePlace);
 
-setProductsInfo((prevProductsInfo) =>
-    prevProductsInfo.map((product) =>
-      product._id === data._id
-        ? { ...product, storagePlace: newStoragePlace }
-        : product
-    )
+    // Met à jour l'état local pour refléter le changement
+    setProductsInfo((prevProductsInfo) =>
+      prevProductsInfo.map((product) =>
+        product._id === data._id
+          ? { ...product, storagePlace: newStoragePlace }
+          : product
+      )
     );
+  };
 
-
-}
-
-   // Fonction pour gérer l'affichage des modals selon les jours restants
-   const handleDlcPress = (dlcDate) => {
+  // Fonction pour gérer l'affichage des modales selon les jours restants
+  const handleDlcPress = (dlcDate) => {
     const today = moment();
     const expirationDate = moment(dlcDate);
     const daysRemaining = expirationDate.diff(today, "days");
@@ -154,84 +143,82 @@ setProductsInfo((prevProductsInfo) =>
     }
   };
 
+  // Affichage des produits
   const products = productsInfo ? productsInfo.map((data, i) => {
-    const formattedDlc = new Date(data.dlc).toLocaleDateString();  
-  let imageSource;
-  if (data.storagePlace === "Frigo"){
-    imageSource = require('../assets/FRIGO.png');
-  }
-  else if (data.storagePlace === "Congelo"){
-    imageSource = require('../assets/congelo.png');
-  }
-  else if (data.storagePlace === "Placard"){
-    imageSource = require('../assets/Placard.png');
-  }
-  return ( 
-    <View style={styles.ProductLineContainer} key = {i} >
-          <Text style={styles.ProductTitle}>{data.name}</Text>
-          
-          {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
-          <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}> 
+    const formattedDlc = new Date(data.dlc).toLocaleDateString();
+    let imageSource;
+
+    // Détermination de l'image en fonction de l'emplacement de stockage
+    if (data.storagePlace === "Frigo") {
+      imageSource = require('../assets/FRIGO.png');
+    } else if (data.storagePlace === "Congelo") {
+      imageSource = require('../assets/congelo.png');
+    } else {
+      imageSource = require('../assets/Placard.png');
+    }
+
+    return (
+      <View style={styles.ProductLineContainer} key={i}>
+        <Text style={styles.ProductTitle}>{data.name}</Text>
+
+        {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
+        <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}>
           <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
             <Text style={styles.DlcText}>{formattedDlc}</Text>
           </View>
+        </TouchableOpacity>
+
+        {/* Bouton pour changer l'emplacement de stockage */}
+        <View style={styles.buttonFreezer}>
+          <TouchableOpacity onPress={() => handleImageClick(data)}>
+            <Image
+              source={imageSource}
+              style={styles.freezerLogo}
+            />
           </TouchableOpacity>
-
-          {/* Bouton pour ajouter le produit au congélateur */}
-          <View style={styles.buttonFreezer}>
-            <TouchableOpacity  onPress={() => handleImageClick(data)}>
-              <Image
-                source={imageSource} // Icône de congélateur
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
-          </View>
-          {/* Bouton pour supprimer un produit*/}
-          <View style={styles.buttonDelete}>
-                <TouchableOpacity onPress={() => handleProductDelete(data)}
-                >
-                  <FontAwesomeIcon
-                   icon={faXmark} 
-                   size={27}
-                   color="#A77B5A"
-                   style={styles.iconDelete}
-                  />
-                </TouchableOpacity>
-              </View> 
         </View>
-  )
-}) : null;
 
+        {/* Bouton pour supprimer un produit */}
+        <View style={styles.buttonDelete}>
+          <TouchableOpacity onPress={() => handleProductDelete(data)}>
+            <FontAwesomeIcon
+              icon={faXmark}
+              size={27}
+              color="#A77B5A"
+              style={styles.iconDelete}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }) : null;
 
   return (
-     // Conteneur principal
     <View style={styles.container}>
       <Image
         source={require("../assets/Squirrel/Heureux.png")}
         style={styles.squirrel}
       />
-       {/* Titre de la page */}  
       <Text style={styles.PageTitle}>Mon Placard</Text>
-      {/* Conteneur des produits dans le placard */}
-      <View  style={styles.productContainer}>
-        {/* Affichage des produits */}
-        <ScrollView Style={{ flexGrow: 1 }}>
-        {products}
-        </ScrollView>
-      </View >
 
-      {/* Boutons d'accès au congélateur */}
+      {/* Conteneur des produits dans le placard */}
+      <View style={styles.productContainer}>
+        <ScrollView style={{ flexGrow: 1 }}>
+          {products}
+        </ScrollView>
+      </View>
+
+      {/* Boutons d'accès au congélateur et au frigo */}
       <View style={styles.stocksButtonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
           <Text style={styles.buttonText}>Mon Congelo</Text>
         </TouchableOpacity>
-        {/* Boutons d'accès aux placards */}
         <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
           <Text style={styles.buttonText}>Mes Frigo</Text>
         </TouchableOpacity>
       </View>
-  
-      {/* DLC courte Modal */}
+
+      {/* Modales pour la DLC courte et longue */}
       <Modal
         transparent={true}
         visible={shortDlcModalVisible}
@@ -239,15 +226,14 @@ setProductsInfo((prevProductsInfo) =>
         onRequestClose={() => setShortDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-        <Image
-        source={require("../assets/Squirrel/Triste.png")} // Chemin de l'image de l'écureuil
-        style={styles.squirrelModal}
-      />
+          <Image
+            source={require("../assets/Squirrel/Triste.png")}
+            style={styles.squirrelModal}
+          />
           <Text style={styles.modalTitle}>
             Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
-            porte-monnaie et la Planète te diront MERCI ! 
+            porte-monnaie et la Planète te diront MERCI !
           </Text>
-          {/* Display rewards here */}
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => setShortDlcModalVisible(false)}
@@ -256,22 +242,21 @@ setProductsInfo((prevProductsInfo) =>
           </TouchableOpacity>
         </View>
       </Modal>
-       {/* DLC Longue Modal */}
-       <Modal
+
+      <Modal
         transparent={true}
         visible={longDlcModalVisible}
         animationType="slide"
         onRequestClose={() => setLongDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-        <Image
-        source={require("../assets/Squirrel/Heureux.png")} // Chemin de l'image de l'écureuil
-        style={styles.squirrelModal}
-      />
+          <Image
+            source={require("../assets/Squirrel/Heureux.png")}
+            style={styles.squirrelModal}
+          />
           <Text style={styles.modalTitle}>
-            Tout va bien, il te reste encore quelques temps avant que ton produit ne se périme. Privilégie les produits ayant des dates plus courtes !
+            Ton produit est encore frais, tu peux le garder encore un moment.
           </Text>
-          {/* Display rewards here */}
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => setLongDlcModalVisible(false)}
@@ -283,6 +268,7 @@ setProductsInfo((prevProductsInfo) =>
     </View>
   );
 };
+
 
 // Styles pour les différents éléments du composant
 const styles = StyleSheet.create({
