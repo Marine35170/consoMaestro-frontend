@@ -159,7 +159,9 @@ export default function ScanScreen() {
       >
         <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
           <View style={styles.container}>
+            <View style={styles.textScan}>
             <Text style={styles.text}>Scannez votre produit</Text>
+            </View>
             <BarCodeScanner
               onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
               style={[styles.camera, isKeyboardVisible && styles.cameraKeyboardVisible]}
@@ -180,9 +182,11 @@ export default function ScanScreen() {
             </TouchableOpacity>
 
             {/* Bouton pour valider les produits */}
+            <View style={styles.enregistrement}>
             <TouchableOpacity style={styles.fin} onPress={handleFinish}>
-              <Text style={styles.buttonFinish}>C'est tout bon !</Text>
+              <Image style={styles.buttonCheck} source={require("../assets/buttonCheck.png")}/>
             </TouchableOpacity>
+            </View>
 
             {/* Modal pour ajouter la DLC et l'endroit où stocker le produit */}
             <Modal style={styles.modal} visible={showModal} animationType="slide">
@@ -193,7 +197,9 @@ export default function ScanScreen() {
                   </View>
 
                   {/* Sélecteur pour le lieu de stockage */}
+                  <View style={styles.storageOption}>
                   <Text style={styles.textStockage}>Choisissez votre lieu de stockage:</Text>
+                  </View>
                   <View style={styles.storageOptions}>
                     {[{ label: 'Frigo', image: fridgeImage },
                       { label: 'Congelo', image: freezerImage },
@@ -203,7 +209,7 @@ export default function ScanScreen() {
                         key={place.label}
                         onPress={() => setStoragePlace(place.label)}
                       >
-                        <View style={storagePlace === place.label ? styles.selectedOptionImage : {}}>
+                        <View style={storagePlace === place.label ? styles.selectedOptionImage : styles.noSelectedImage}>
                           <Image source={place.image} style={styles.optionImage} />
                         </View>
                       </TouchableOpacity>
@@ -261,15 +267,18 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     fontWeight: "bold",
+    textAlign: "center",
+  
+    color: "#fff",
+  },
+  textScan: {
     marginTop: 30,
     width: 300,
-    textAlign: "center",
     height: 40,
     paddingTop: 5,
     borderRadius: 10,
     marginBottom: 40,
     backgroundColor: "#B19276",
-    color: "#fff",
   },
   ou: {
     fontSize: 20,
@@ -289,18 +298,16 @@ const styles = StyleSheet.create({
     color: "#E56400",
   },
   fin: {
-    backgroundColor: "#69914a",
     marginTop: 20,
-    borderWidth: 1,
+    marginBottom: 20,
     width: "40%",
     height: "5%",
     borderRadius: 10,
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",
-    borderColor : "#B19276",
+    
   },
- 
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -316,6 +323,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#69914a",
     top: -80,
+    borderColor: "#FFF",
+    borderWidth: 1,
   },
   storageOptions: {
     flexDirection: "row",
@@ -326,24 +335,56 @@ const styles = StyleSheet.create({
   textStockage: {
     fontSize: 20,
     fontWeight: "bold",
+    color: "#E56400",
+    textAlign: "center",
+  },
+  storageOption: {
     marginBottom: 10,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    width: "90%",
+    height: "5%",
+    justifyContent: "center",
+    borderColor: "#E56400",
+    borderWidth: 1,
   },
   selectedOptionImage: {
-    borderBottomColor: "#E56400",
-    borderBottomWidth: 2,
+    backgroundColor: '#E56400',
+    padding: 5,                 
+    borderRadius: 10,           
+    alignItems: 'center',      
+    justifyContent: 'center',   
+    marginBottom: 5,           
+    borderWidth: 2,             
+    borderColor: '#FAF9F3', 
+    width: 80,
+    height: 80,    
+  },
+  noSelectedImage: {
+    backgroundColor: '#A77B5A',
+    padding: 5,                 
+    borderRadius: 10,           
+    alignItems: 'center',      
+    justifyContent: 'center',   
+    marginBottom: 5,           
+    borderWidth: 2,             
+    borderColor: '#FAF9F3',     
+    width: 80,
+    height: 80,
   },
   inputDate: {   
     fontSize: 20,
     color: "#E56400",
   },
   enregistrerButtun: {
-    backgroundColor: "#B19276",
+    backgroundColor: "#E56400",
     width: 150,
     height: 40,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
   },
+  
   optionImage: {
     width: 50,
     height: 50,
@@ -363,6 +404,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
     marginTop: 50,  
+    borderColor: "#E56400",
+    borderWidth: 1,
   },
   buttonFinish: {
     color: "#fff",
@@ -375,6 +418,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
+    marginBottom: 20,
   },
-  
+  enregistrement: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonCheck:{
+    width: 80,
+    height: 80, 
+    zIndex: 1,
+  },
+  textCkeck:{
+    zIndex: 50,
+    color: "#fff",
+  },
 });

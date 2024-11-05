@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
+
 const FridgeScreen = () => {
   // Initialisation des hooks de navigation et de l'état
   const navigation = useNavigation();
@@ -284,6 +285,7 @@ const styles = StyleSheet.create({
     left: 30,
   },
   PageTitle: {
+    fontFamily: 'Hitchcut-Regular',
     color: "#E56400", // Couleur du titre
     fontWeight: "bold",
     fontSize: 20,

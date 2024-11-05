@@ -1,0 +1,10 @@
+@font-face {
+    font-family:'Hitchcut-Regular' ;
+    src: url(../assets/fonts/Hitchcut-Regular.ttf);
+}
+
+@font-face {
+    font-family: 'Avenir-Next-Regular' ;
+    src: url(../assets/fonts/AvenirNextLTPro-Regular.otf);
+}
+body {font-family:'Avenir-Next-Regular';}
