@@ -1,12 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar'; 
 import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './screens/HomeScreen';
+import { NavigationContainer } from '@react-navigation/native'; // Importation de la bibliothèque de navigation
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; // Création d'une navigation par pile
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; // Création d'une navigation par onglets
+import HomeScreen from './screens/HomeScreen'; // Importation des écrans
 import ProfileScreen from './screens/ProfileScreen';
 import MenuScreen from './screens/MenuScreen';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; // Importation des icônes Ionicons
 import ScanScreen from './screens/ScanScreen';
 import AuthScreen from './screens/AuthScreen';
 import QuickConsoScreen from './screens/QuickconsoScreen';
@@ -15,29 +15,30 @@ import CongeloScreen from './screens/CongeloScreen';
 import PlacardScreen from './screens/PlacardScreen';
 import RecipesScreen from './screens/RecipesScreen';
 import RappelConsoScreen from './screens/RappelconsoScreen';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './reducers/userReducer';
+import { Provider } from 'react-redux'; // Importation de Redux pour la gestion d'état
+import { configureStore } from '@reduxjs/toolkit'; // Configuration du store Redux
+import userReducer from './reducers/userReducer'; // Réducteur pour la gestion de l'utilisateur
 
+const Stack = createNativeStackNavigator(); // Création de la pile de navigation
+const Tab = createBottomTabNavigator(); // Création de la navigation par onglets
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
-
+// Configuration du store Redux
 const store = configureStore({
   reducer: {
-    user: userReducer,
+    user: userReducer, // Gestion de l'état utilisateur
   },
 });
 
+// Configuration de la navigation par onglets
 const TabNavigator = () => {
   return (
-    
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false,
+        headerShown: false, // Masque l'en-tête par défaut
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
+          // Définition des icônes pour chaque onglet
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Profile') {
@@ -49,8 +50,8 @@ const TabNavigator = () => {
           // Retourne l'icône correspondante
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: 'tomato', // Couleur de l'icône active
+        tabBarInactiveTintColor: 'gray', // Couleur de l'icône inactive
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -60,32 +61,33 @@ const TabNavigator = () => {
       <Tab.Screen
         name="FridgeScreen"
         component={FridgeScreen}
-        options={{ tabBarButton: () => null }}
+        options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
       />
       <Tab.Screen
         name="CongeloScreen"
         component={CongeloScreen}
-        options={{ tabBarButton: () => null }}
+        options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
       />
       <Tab.Screen
         name="PlacardScreen"
         component={PlacardScreen}
-        options={{ tabBarButton: () => null }}
+        options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
       />
       <Stack.Screen 
       name="QuickConsoScreen" 
       component={QuickConsoScreen} 
-      options={{ tabBarButton: () => null }}
+      options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
       />
     </Tab.Navigator>
   );
 };
 
+// Fonction principale de l'application
 export default function App() {
  return (
-  <Provider store={store}>
-   <NavigationContainer>
-     <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Provider store={store}> // Fournit le store Redux à l'application
+   <NavigationContainer> // Conteneur pour la navigation
+     <Stack.Navigator screenOptions={{ headerShown: false }}> // Stack sans en-tête
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />
@@ -96,12 +98,3 @@ export default function App() {
    </Provider>
  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
