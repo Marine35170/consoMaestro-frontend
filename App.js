@@ -85,9 +85,9 @@ const TabNavigator = () => {
 // Fonction principale de l'application
 export default function App() {
  return (
-  <Provider store={store}> // Fournit le store Redux à l'application
-   <NavigationContainer> // Conteneur pour la navigation
-     <Stack.Navigator screenOptions={{ headerShown: false }}> // Stack sans en-tête
+  <Provider store={store}> 
+   <NavigationContainer> 
+     <Stack.Navigator screenOptions={{ headerShown: false }}> 
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />

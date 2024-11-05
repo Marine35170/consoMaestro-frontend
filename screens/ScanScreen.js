@@ -203,7 +203,7 @@ export default function ScanScreen() {
                         key={place.label}
                         onPress={() => setStoragePlace(place.label)}
                       >
-                        <View style={storagePlace === place.label ? styles.selectedOptionImage : {}}>
+                        <View style={storagePlace === place.label ? styles.selectedOptionImage : styles.noSelectedImage}>
                           <Image source={place.image} style={styles.optionImage} />
                         </View>
                       </TouchableOpacity>
@@ -329,8 +329,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedOptionImage: {
-    borderBottomColor: "#E56400",
-    borderBottomWidth: 2,
+    backgroundColor: '#E56400',
+    padding: 5,                 
+    borderRadius: 10,           
+    alignItems: 'center',      
+    justifyContent: 'center',   
+    marginBottom: 5,           
+    borderWidth: 2,             
+    borderColor: '#FAF9F3',     
+  },
+  noSelectedImage: {
+    backgroundColor: '#A77B5A',
+    padding: 5,                 
+    borderRadius: 10,           
+    alignItems: 'center',      
+    justifyContent: 'center',   
+    marginBottom: 5,           
+    borderWidth: 2,             
+    borderColor: '#FAF9F3',     
   },
   inputDate: {   
     fontSize: 20,
