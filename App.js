@@ -19,28 +19,6 @@ import userReducer from './reducers/userReducer'; // Réducteur pour la gestion 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUtensils } from '@fortawesome/free-solid-svg-icons';
 
-// import { useFonts } from 'expo-font';
-// import * as SplashScreen from 'expo-splash-screen';
-// import { useEffect } from 'react';
-
-// SplashScreen.preventAutoHideAsync();
-
-// export default function App() {
-//   const [loaded, error] = useFonts({
-//     'Hitchcut': require('./assets/fonts/Hitchcut-Regulard.ttf'),
-//     'AvenirNext': require('./assets/fonts/AvenirNextLTPro-Regular.otf')
-//   });
-
-//   useEffect(() => {
-//     if (loaded || error) {
-//       SplashScreen.hideAsync();
-//     }
-//   }, [loaded, error]);
-
-//   if (!loaded && !error) {
-//     return null;
-//   }
-// }
 
 const Stack = createNativeStackNavigator(); // Création de la pile de navigation
 const Tab = createBottomTabNavigator(); // Création de la navigation par onglets
