@@ -158,14 +158,17 @@ const FridgeScreen = () => {
     ? productsInfo.map((data, i) => {
         const formattedDlc = new Date(data.dlc).toLocaleDateString();
         let imageSource;
-
-        // Choix de l'image en fonction du lieu de stockage
+        let Encart;
+        // Sélection de l'image en fonction de l'emplacement de stockage
         if (data.storagePlace === "Frigo") {
-          imageSource = require('../assets/FRIGO.png');
+            imageSource = require('../assets/FRIGO.png');
+            Encart = styles.buttonFrigo;
         } else if (data.storagePlace === "Congelo") {
-          imageSource = require('../assets/congelo.png');
+            imageSource = require('../assets/congelo.png');
+            Encart = styles.buttonFreezer;
         } else if (data.storagePlace === "Placard") {
-          imageSource = require('../assets/Placard.png');
+            imageSource = require('../assets/Placard.png');
+            Encart = styles.buttonPlacard;
         }
 
         return (
@@ -180,7 +183,7 @@ const FridgeScreen = () => {
             </TouchableOpacity>
 
             {/* Bouton pour changer le lieu de stockage */}
-            <View style={styles.buttonFreezer}>
+            <View style={Encart}>
               <TouchableOpacity onPress={() => handleImageClick(data)}>
                 <Image
                   source={imageSource} // Icône de congélateur
@@ -342,7 +345,6 @@ const styles = StyleSheet.create({
   },
   buttonFreezer: {
     justifyContent: "center",
-    backgroundColor: "#FAF9F3",
     borderColor: "#A77B5A",
     borderWidth: 1,
     width: 50,
@@ -350,7 +352,30 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     right: 5,
+    backgroundColor: "#0d1180",
   },
+  buttonPlacard: {
+      justifyContent: "center",
+      borderColor: "#A77B5A",
+      borderWidth: 1,
+      width: 50,
+      height: 47,
+      borderRadius: 10,
+      alignItems: "center",
+      right: 5,
+      backgroundColor: "#A77B5A",
+    },
+    buttonFrigo: {
+      justifyContent: "center",
+      borderColor: "#A77B5A",
+      borderWidth: 1,
+      width: 50,
+      height: 47,
+      borderRadius: 10,
+      alignItems: "center",
+      right: 5,
+      backgroundColor: "#64d3df",
+    },
   freezerLogo: {
     width: 30,
     height: 30,
