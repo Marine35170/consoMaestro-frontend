@@ -1,133 +1,119 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-import { useState, useEffect } from "react"; // Importation de useState et useEffect pour gérer l'état et les effets
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Modal,
-  ScrollView,
-} from "react-native";
-import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
+import {View,Text,StyleSheet,TouchableOpacity,Image,Modal,ScrollView,} from "react-native";
+import moment from "moment"; // Pour la manipulation des dates
 import { useSelector } from "react-redux";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const FridgeScreen = () => {
-  // Utilisation du hook de navigation pour gérer la navigation entre les écrans
+  // Initialisation des hooks de navigation et de l'état
   const navigation = useNavigation();
-  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // État pour la modal de DLC courte
-  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // État pour la modal de DLC longue
-  const [productsInfo, setProductsInfo] = useState(); // État pour les produits enregistrer par le user
-  const userId = useSelector((state) => state.user.id);
-  const isFocused = useIsFocused();
-  const [refresh, setRefresh] = useState(false);
+  const userId = useSelector((state) => state.user.id); // Récupération de l'ID utilisateur depuis le store Redux
+  const isFocused = useIsFocused(); // Vérifie si l'écran est en focus
+  const [productsInfo, setProductsInfo] = useState(); // État pour stocker les informations des produits
+  const [refresh, setRefresh] = useState(false); // État pour forcer le rafraîchissement des données
+  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // Modal pour DLC courte
+  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // Modal pour DLC longue
 
+  // Effet pour récupérer les produits lorsque l'écran est en focus ou que l'état de rafraîchissement change
   useEffect(() => {
     const fetchProducts = async () => {
-      // const token = await AsyncStorage.getItem("userToken"); // Récupérer le token stocké
-
-      fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
-        method: "GET",
-        headers: {
-          // Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.result) {
-            console.log("data from ", data);
-            setProductsInfo(data.data);
-            // Met à jour l'état avec les infos des produits
-          } else {
-            console.error(
-              "Erreur lors de la récupération des produits:",
-              data.message
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("Erreur lors de la récupération des produits:", error);
+      try {
+        const response = await fetch(`https://conso-maestro-backend.vercel.app/frigo/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+        const data = await response.json();
+        if (data.result) {
+          console.log("data from ", data);
+          setProductsInfo(data.data); // Met à jour l'état avec les informations des produits
+        } else {
+          console.error("Erreur lors de la récupération des produits:", data.message);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des produits:", error);
+      }
     };
 
     fetchProducts();
   }, [isFocused, refresh]);
 
+  // Navigation vers l'écran Placard
   const handlePlacardPress = () => {
-    navigation.navigate("PlacardScreen"); // Permet d'aller vers la page Placard
+    navigation.navigate("PlacardScreen");
   };
+
+  // Navigation vers l'écran Congélateur
   const handleCongeloPress = () => {
-    navigation.navigate("CongeloScreen"); // Naviguer vers la page congelo
+    navigation.navigate("CongeloScreen");
   };
 
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
   const handleDlcColor = (dlcDate) => {
-    const today = moment(); // Date actuelle
-    const expirationDate = moment(dlcDate); // Date de limite de consommation
+    const today = moment();
+    const expirationDate = moment(dlcDate);
+    const daysRemaining = expirationDate.diff(today, "days");
 
-    const daysRemaining = expirationDate.diff(today, "days"); // Différence en jours entre la date d'aujourd'hui et la DLC
-
-    // Logique de couleur : Rouge si la DLC est à 2 jours ou moins, Orange si entre 2 et 4 jours, Vert sinon
+    // Logique de couleur
     if (daysRemaining <= 2) {
-      return styles.redDlcContainer;
+      return styles.redDlcContainer; // Rouge si à 2 jours ou moins
     } else if (daysRemaining <= 4) {
-      return styles.orangeDlcContainer;
+      return styles.orangeDlcContainer; // Orange si entre 2 et 4 jours
     } else {
-      return styles.greenDlcContainer;
+      return styles.greenDlcContainer; // Vert sinon
     }
   };
 
-  
+  // Fonction pour changer le lieu de stockage du produit
   const changementStoragePlace = async (data, newStoragePlace) => {
-    fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
-        method: "Put",
+    try {
+      const response = await fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
+        method: "PUT",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            newStoragePlace: newStoragePlace,
+          newStoragePlace: newStoragePlace,
         }),
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        if (data.result) {
-           console.log("Produit mis à jour avec succès:", data.message);
-        } else {
-            console.error("Erreur lors de la mise à jour du produit:", data.message);
-        }
-    })
-}
+      });
+      const result = await response.json();
+      if (result.result) {
+        console.log("Produit mis à jour avec succès:", result.message);
+      } else {
+        console.error("Erreur lors de la mise à jour du produit:", result.message);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du produit:", error);
+    }
+  };
 
-const handleImageClick = async  (data) => {
+  // Fonction pour gérer le clic sur l'image du produit
+  const handleImageClick = async (data) => {
     let newStoragePlace;
-   if (data.storagePlace === "Frigo"){
-    newStoragePlace = "Congelo";
-  }
-  else if (data.storagePlace === "Congelo"){
-    newStoragePlace = "Placard";
-  }
-  else if (data.storagePlace === "Placard"){
-    newStoragePlace = "Frigo";
-};
+    if (data.storagePlace === "Frigo") {
+      newStoragePlace = "Congelo";
+    } else if (data.storagePlace === "Congelo") {
+      newStoragePlace = "Placard";
+    } else if (data.storagePlace === "Placard") {
+      newStoragePlace = "Frigo";
+    }
 
-await changementStoragePlace(data, newStoragePlace);
+    await changementStoragePlace(data, newStoragePlace);
 
-setProductsInfo((prevProductsInfo) =>
-    prevProductsInfo.map((product) =>
-      product._id === data._id
-        ? { ...product, storagePlace: newStoragePlace }
-        : product
-    )
+    // Mise à jour de l'état local avec le nouveau lieu de stockage
+    setProductsInfo((prevProductsInfo) =>
+      prevProductsInfo.map((product) =>
+        product._id === data._id
+          ? { ...product, storagePlace: newStoragePlace }
+          : product
+      )
     );
+  };
 
-
-}
-
-  // Fonction pour gérer l'affichage des modals selon les jours restants
+  // Fonction pour gérer l'affichage des modals en fonction de la DLC
   const handleDlcPress = (dlcDate) => {
     const today = moment();
     const expirationDate = moment(dlcDate);
@@ -140,8 +126,7 @@ setProductsInfo((prevProductsInfo) =>
     }
   };
 
-
-  // Fonction pour supprimer l'affichage d'un produit
+  // Fonction pour supprimer un produit
   const handleProductDelete = (data) => {
     fetch(`https://conso-maestro-backend.vercel.app/products/${data._id}`, {
       method: "DELETE",
@@ -149,40 +134,39 @@ setProductsInfo((prevProductsInfo) =>
         "Content-Type": "application/json",
       },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.result) {
-        console.log("Produit supprimé avec succès :", data.message);
-        setProductsInfo((prevProductsInfo) =>
-          prevProductsInfo.filter(product => product._id !== data._id)
-        );
-        setRefresh((prev) => !prev); // Force le rafraîchissement
-      } else {
-        console.error("Erreur lors de la suppression du produit :", data.message);
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la suppression du produit :", error);
-    });
-  }
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.result) {
+          console.log("Produit supprimé avec succès :", result.message);
+          // Met à jour l'état en filtrant le produit supprimé
+          setProductsInfo((prevProductsInfo) =>
+            prevProductsInfo.filter((product) => product._id !== data._id)
+          );
+          setRefresh((prev) => !prev); // Force le rafraîchissement
+        } else {
+          console.error("Erreur lors de la suppression du produit :", result.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la suppression du produit :", error);
+      });
+  };
 
-
-
-
+  // Rendu des produits
   const products = productsInfo
     ? productsInfo.map((data, i) => {
-        console.log("productsInfo", productsInfo);
-        const formattedDlc = new Date(data.dlc).toLocaleDateString();  
+        const formattedDlc = new Date(data.dlc).toLocaleDateString();
         let imageSource;
-        if (data.storagePlace === "Frigo"){
+
+        // Choix de l'image en fonction du lieu de stockage
+        if (data.storagePlace === "Frigo") {
           imageSource = require('../assets/FRIGO.png');
-        }
-        else if (data.storagePlace === "Congelo"){
+        } else if (data.storagePlace === "Congelo") {
           imageSource = require('../assets/congelo.png');
-        }
-        else if (data.storagePlace === "Placard"){
+        } else if (data.storagePlace === "Placard") {
           imageSource = require('../assets/Placard.png');
         }
+
         return (
           <View style={styles.ProductLineContainer} key={i}>
             <Text style={styles.ProductTitle}>{data.name}</Text>
@@ -194,29 +178,27 @@ setProductsInfo((prevProductsInfo) =>
               </View>
             </TouchableOpacity>
 
-            {/* Bouton pour ajouter le produit au congélateur */}
+            {/* Bouton pour changer le lieu de stockage */}
             <View style={styles.buttonFreezer}>
-            <TouchableOpacity  onPress={() => handleImageClick(data)}>
-              <Image
-                source={imageSource} // Icône de congélateur
-                style={styles.freezerLogo}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleImageClick(data)}>
+                <Image
+                  source={imageSource} // Icône de congélateur
+                  style={styles.freezerLogo}
+                />
+              </TouchableOpacity>
             </View>
 
-              {/* Bouton pour supprimer un produit*/}
-              <View style={styles.buttonDelete}>
-                <TouchableOpacity onPress={() => handleProductDelete(data)}
-                >
-                  <FontAwesomeIcon
-                   icon={faXmark} 
-                   size={27}
-                   color="#A77B5A"
-                   style={styles.iconDelete}
-                  />
-                </TouchableOpacity>
-              </View> 
-            
+            {/* Bouton pour supprimer un produit */}
+            <View style={styles.buttonDelete}>
+              <TouchableOpacity onPress={() => handleProductDelete(data)}>
+                <FontAwesomeIcon
+                  icon={faXmark} 
+                  size={27}
+                  color="#A77B5A"
+                  style={styles.iconDelete}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         );
       })
@@ -234,21 +216,20 @@ setProductsInfo((prevProductsInfo) =>
       {/* Conteneur des produits dans le frigo */}
       <View style={styles.productContainer}>
         {/* Affichage des produits */}
-        <ScrollView Style={{ flexGrow: 1 }}>{products}</ScrollView>
+        <ScrollView style={{ flexGrow: 1 }}>{products}</ScrollView>
       </View>
 
-      {/* Boutons d'accès au congélateur */}
+      {/* Boutons d'accès au congélateur et aux placards */}
       <View style={styles.stocksButtonsContainer}>
         <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
           <Text style={styles.buttonText}>Mes Placards</Text>
         </TouchableOpacity>
-        {/* Boutons d'accès aux placards */}
         <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
           <Text style={styles.buttonText}>Mon Congelo</Text>
         </TouchableOpacity>
       </View>
 
-      {/* DLC courte Modal */}
+      {/* Modal pour DLC courte */}
       <Modal
         transparent={true}
         visible={shortDlcModalVisible}
@@ -256,24 +237,17 @@ setProductsInfo((prevProductsInfo) =>
         onRequestClose={() => setShortDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <Image
-            source={require("../assets/Squirrel/Triste.png")} // Chemin de l'image de l'écureuil
-            style={styles.squirrelModal}
-          />
-          <Text style={styles.modalTitle}>
-            Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
-            porte-monnaie et la Planète te diront MERCI !
-          </Text>
-          {/* Display rewards here */}
+          <Text style={styles.modalText}>DLC courte !</Text>
           <TouchableOpacity
-            style={styles.closeButton}
+            style={styles.modalButton}
             onPress={() => setShortDlcModalVisible(false)}
           >
-            <Text style={styles.closeButtonText}>Fermer</Text>
+            <Text style={styles.modalButtonText}>Fermer</Text>
           </TouchableOpacity>
         </View>
       </Modal>
-      {/* DLC Longue Modal */}
+
+      {/* Modal pour DLC longue */}
       <Modal
         transparent={true}
         visible={longDlcModalVisible}
@@ -281,21 +255,12 @@ setProductsInfo((prevProductsInfo) =>
         onRequestClose={() => setLongDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <Image
-            source={require("../assets/Squirrel/Heureux.png")} // Chemin de l'image de l'écureuil
-            style={styles.squirrelModal}
-          />
-          <Text style={styles.modalTitle}>
-            Tout va bien, il te reste encore quelques temps avant que ton
-            produit ne se périme. Privilégie les produits ayant des dates plus
-            courtes !
-          </Text>
-          {/* Display rewards here */}
+          <Text style={styles.modalText}>DLC longue.</Text>
           <TouchableOpacity
-            style={styles.closeButton}
+            style={styles.modalButton}
             onPress={() => setLongDlcModalVisible(false)}
           >
-            <Text style={styles.closeButtonText}>Fermer</Text>
+            <Text style={styles.modalButtonText}>Fermer</Text>
           </TouchableOpacity>
         </View>
       </Modal>
