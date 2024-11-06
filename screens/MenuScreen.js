@@ -32,7 +32,7 @@ const MenuScreen = () => {
     };
 
     return (
-        <ImageBackground source={require('../assets/BackgroundMenuv2.png')} style={styles.background}>  
+        <ImageBackground source={require('../assets/backgroundMenuv2.png')} style={styles.background}>  
             <View style={styles.container}>
                 <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
                 <Text style={styles.PageTitle}> Ma Cuisine </Text>
