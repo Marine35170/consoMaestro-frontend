@@ -232,7 +232,7 @@ const InventaireScreen = ({ route }) => {
                 <FontAwesomeIcon
                   icon={faXmark}
                   size={27}
-                  color="#A77B5A"
+                  color="#FF4C4C"
                   style={styles.iconDelete}
                 />
               </TouchableOpacity>
