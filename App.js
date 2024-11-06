@@ -19,11 +19,14 @@ import { faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { useFonts } from 'expo-font'; // Importation de la gestion des polices
 import * as SplashScreen from 'expo-splash-screen'; // Importation de l'écran de démarrage
 import React, { useEffect } from "react";
-import { View, StyleSheet,} from "react-native";
+import { LogBox } from 'react-native'; // Importation de LogBox pour désactiver les warnings
 
 
 const Stack = createNativeStackNavigator(); // Création de la pile de navigation
 const Tab = createBottomTabNavigator(); // Création de la navigation par onglets
+
+// Désactiver tous les warnings
+LogBox.ignoreAllLogs(); // Ajoute cette ligne pour ignorer tous les warnings
 
 // Empêche l'écran de démarrage de se fermer automatiquement
 SplashScreen.preventAutoHideAsync();
