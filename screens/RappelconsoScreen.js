@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     resultTitle: {
         fontWeight: 'bold',
         fontSize: 16,
+        color: "#E56400",
     },
 
     scrollContainer: {
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backgroundColor: 'rgba(0, 0, 0, 0.80)',
         padding: 20,
     },
     modalTitle: {
