@@ -409,6 +409,7 @@ const styles = StyleSheet.create({
   },
   buttonFinish: {
     color: "#fff",
+    fontWeight: "bold",
   },
   valider: {
     backgroundColor: "#B19276",
