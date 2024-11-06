@@ -32,9 +32,10 @@ const MenuScreen = () => {
     };
 
     return (
-        <ImageBackground source={require('../assets/backgroundMenuv2.png')} style={styles.background}>  
+        <ImageBackground source={require('../assets/BackgroundMenuv2.png')} style={styles.background}>  
             <View style={styles.container}>
                 <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
+                <Text style={styles.PageTitle}> Ma Cuisine </Text>
                 
                 {/* Conteneur pour les alertes et rappels conso */}
                 <View style={styles.alertContainer}>
@@ -101,13 +102,22 @@ const styles = StyleSheet.create({
     },
 
     // Icone écurreil 
+    PageTitle: {
+        fontFamily: "Hitchcut-Regular",
+        color: "#E56400", // Couleur du titre
+        fontSize: 25,
+        textAlign: "center",
+        marginBottom: 20,
+  
+      },
 
-    squirrel: {
-        width: 60,
-        height: 60,
-        marginBottom: 10,
-        marginRight: 230,
-    },
+      squirrel: {
+        position: "absolute",
+        width: 50,
+        height: 50,
+        top: 50,
+        left: 30,
+      },
 
 
     // Style du bouton " a consommer rapidement !" 
@@ -117,13 +127,12 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 10,
-        marginTop: 20,
+        marginTop: 30,
         marginBottom: 30,
         width: 300,
         alignItems: 'center', // Centre horizontalement le texte
         justifyContent: 'center', // Centre verticalement le texte
-        borderColor: '#fff',
-        borderWidth: 1,
+
     },
 
     // Texte du bouton " a consommer rapidement !" 
@@ -193,8 +202,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        borderColor: '#fff',
-        borderWidth: 1,
+
     },
     // Bouton "mes rappels conso DGCCRF"
 
@@ -203,13 +211,12 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 40,
         borderRadius: 10,
-        marginTop: 50,          //Eloigne du dessus 
+        marginTop: 80,          //Eloigne du dessus 
         width: 300,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        borderColor: '#fff',
-        borderWidth: 1,
+
     },
     // Texte des boutons
 
