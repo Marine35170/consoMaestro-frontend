@@ -351,7 +351,6 @@ const styles = StyleSheet.create({
   PageTitle: {
     fontFamily: "Hitchcut-Regular",
     color: "#E56400", // Couleur du titre
-    fontWeight: "bold",
     fontSize: 20,
     textAlign: "center",
     marginBottom: 20,
@@ -406,8 +405,6 @@ const styles = StyleSheet.create({
   },
   buttonFreezer: {
     justifyContent: "center",
-    borderColor: "#A77B5A",
-    borderWidth: 1,
     width: 50,
     height: 47,
     borderRadius: 10,
@@ -417,8 +414,6 @@ const styles = StyleSheet.create({
   },
   buttonPlacard: {
       justifyContent: "center",
-      borderColor: "#A77B5A",
-      borderWidth: 1,
       width: 50,
       height: 47,
       borderRadius: 10,
@@ -428,8 +423,6 @@ const styles = StyleSheet.create({
     },
     buttonFrigo: {
       justifyContent: "center",
-      borderColor: "#A77B5A",
-      borderWidth: 1,
       width: 50,
       height: 47,
       borderRadius: 10,

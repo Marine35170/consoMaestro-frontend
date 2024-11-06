@@ -110,7 +110,8 @@ flexDirection:'row',
   colorusername:{
     color: '#E56400',
     fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: "Hitchcut-Regular",
+    top: -3,
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",
