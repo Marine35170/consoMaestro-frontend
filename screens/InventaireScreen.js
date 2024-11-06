@@ -499,6 +499,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   buttonText: {
+    fontFamily: "Hitchcut-Regular",
     fontWeight: "bold",
     textAlign: "center",
     color: "#E56400",
