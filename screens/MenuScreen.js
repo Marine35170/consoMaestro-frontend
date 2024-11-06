@@ -31,18 +31,22 @@ const MenuScreen = () => {
         navigation.navigate('RappelConsoScreen');
     };
 
-    return (<ImageBackground source={require('../assets/backgroundMenuv2.png')} style={styles.background}>  
-        <View style={styles.container}>
-            <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
+    return (
+        <ImageBackground source={require('../assets/backgroundMenuv2.png')} style={styles.background}>  
             <View style={styles.container}>
-
-                <View style={styles.limitConso}>
-
+                <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
+                
+                {/* Conteneur pour les alertes et rappels conso */}
+                <View style={styles.alertContainer}>
+                    <TouchableOpacity style={styles.buttonDGCCRF} onPress={handleRappelConsoPress}>
+                        <Text style={styles.buttonText}>Mes rappels conso (DGCCRF)</Text>
+                    </TouchableOpacity>
+                    
                     <TouchableOpacity style={styles.alertBanner} onPress={handleQuickConsumePress}>
                         <Text style={styles.alertText}>A consommer rapidement !</Text>
                     </TouchableOpacity>
                 </View>
-
+    
                 <View style={styles.stockageContainer}>
                     <TouchableOpacity style={styles.stockageItem} onPress={handleFridgePress}>
                         <View style={styles.imageContainer}>
@@ -50,36 +54,31 @@ const MenuScreen = () => {
                         </View>
                         <Text style={styles.stockageText}>FRIGO</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.stockageItem}onPress={handleCongeloPress}>
+                    <TouchableOpacity style={styles.stockageItem} onPress={handleCongeloPress}>
                         <View style={styles.imageContainer}>
                             <Image source={require('../assets/congelo.png')} style={styles.iconImage} />
                         </View>
                         <Text style={styles.stockageText}>CONGÉLO</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.stockageItem}onPress={handlePlacardPress}>
+                    <TouchableOpacity style={styles.stockageItem} onPress={handlePlacardPress}>
                         <View style={styles.imageContainer}>
                             <Image source={require('../assets/Placard.png')} style={styles.iconImage} />
                         </View>
                         <Text style={styles.stockageText}>PLACARDS</Text>
                     </TouchableOpacity>
                 </View>
-
-                <View style={styles.actionButtons}>
+    
+                <View style={styles.centeredButtonContainer}>
                     <TouchableOpacity style={styles.buttonRecipe} onPress={handleRecipePress}>
-                            <View style={styles.iconAndText}>
-                                <Ionicons name="ice-cream-outline" size={20} color="#FFF" style={styles.icon} />
-                                <Text style={styles.buttonText}>Idées recettes</Text>
-                            </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonDGCCRF} onPress={handleRappelConsoPress}>
-                        <Text style={styles.buttonText}>Mes rappels conso (DGCCRF)</Text>
+                        <View style={styles.iconAndText}>
+                            
+                            <Text style={styles.buttonText}>Idées recettes</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
-    </ImageBackground>
-    );
-};
+        </ImageBackground>
+    )};   
 
 export default MenuScreen;
 
@@ -118,7 +117,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 10,
-        marginBottom: 40,
+        marginTop: 20,
+        marginBottom: 30,
         width: 300,
         alignItems: 'center', // Centre horizontalement le texte
         justifyContent: 'center', // Centre verticalement le texte
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         marginHorizontal: 20,
         marginBottom: 50,
-        marginTop: 50,
+        marginTop: 30,
         justifyContent: 'space-between',
     },
 
@@ -192,7 +192,6 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: 70,
         flexDirection: 'row',
         borderColor: '#fff',
         borderWidth: 1,
