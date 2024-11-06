@@ -67,6 +67,11 @@ export default function AuthScreen() {
     return;
   }
 
+  // Vérification que le mot de passe fait au moins 5 caractères
+  if (signupPassword.trim().length < 5) {
+    Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 5 caractères.');
+    return;
+  }
   
     try {
       const response = await fetch('https://conso-maestro-backend.vercel.app/users/signup', {
