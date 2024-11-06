@@ -117,7 +117,7 @@ const RecipesScreen = () => {
             <Ionicons name="heart" size={32} color="red" />
           </TouchableOpacity>
         </View>
-
+        <Text style={styles.textfavories}>Mes favories</Text>
         <Text style={styles.text}>Idées recettes</Text>
         {loading ? (
           <ActivityIndicator size="large" color="#FFF" /> // Affichage de l'indicateur de chargement si `loading` est true
@@ -219,10 +219,19 @@ export default RecipesScreen;
       },
       text: {
         fontSize: 24,
-        fontWeight: 'bold',
+        fontFamily: "Hitchcut-Regular",
+        color: '#F0672D',
+        marginTop: 40,
+        top: -73,
+      },
+      textfavories: {
+        fontSize: 19,
+        fontFamily: "Hitchcut-Regular",
         color: '#F0672D',
         marginBottom: 20,
         marginTop: 19,
+        top: -73,
+        right: 58,
       },
       recipeCard: {
         backgroundColor: '#F0672D',

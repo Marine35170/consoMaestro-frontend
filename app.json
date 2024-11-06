@@ -22,14 +22,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
-    // "plugins": [
-    //   [
-    //     "expo-font",
-    //     {
-    //       "fonts": ["./assets/fonts/Hitchcut-Regular.ttf", "./assets/fonts/AvenirNextLTPro-regulard.otf"]
-    //     }
-    //   ]
-    // ]
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": ["path/to/file.ttf"]
+        }
+      ]
+    ]
   }
 }

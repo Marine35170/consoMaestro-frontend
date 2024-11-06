@@ -50,7 +50,7 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground
-      source={require("../assets/backgroundScanne.png")}
+      source={require("../assets/backgroundHome.png")}
       style={styles.background}
     >
       <View style={styles.container}>
@@ -101,16 +101,19 @@ const styles = StyleSheet.create({
   squirrel: {
     width: 60,
     height: 60,
-    
+    top: -15,
+    left: 3,
   },
   usernameline:{
-flexDirection:'row',
+  flexDirection:'row',
+  marginRight: 20,
 
   },
   colorusername:{
     color: '#E56400',
     fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: "Hitchcut-Regular",
+    top: -3,
   },
   tipsContainer: {
     backgroundColor: "#FAF9F3",

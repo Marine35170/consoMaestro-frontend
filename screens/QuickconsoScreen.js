@@ -157,7 +157,7 @@ const QuickConsoScreen = () => {
                 </View>
                 <View style={styles.buttonDelete}>
                     <TouchableOpacity onPress={() => handleProductDelete(data)}>
-                        <FontAwesomeIcon icon={faXmark} size={27} color="#A77B5A" style={styles.iconDelete} />
+                        <FontAwesomeIcon icon={faXmark} size={27} color="#FF4C4C" style={styles.iconDelete} />
                     </TouchableOpacity>
                 </View> 
             </View>
@@ -238,10 +238,11 @@ const styles = StyleSheet.create({
     },
     PageTitle: {
       color: "#E56400", // Couleur du titre
-      fontWeight: "bold",
+      fontFamily: "Hitchcut-Regular",
       fontSize: 20,
       textAlign: "center",
       marginBottom: 20,
+      top: 10,
     },
     productContainer: {
       borderWidth: 1,

@@ -232,7 +232,7 @@ const InventaireScreen = ({ route }) => {
                 <FontAwesomeIcon
                   icon={faXmark}
                   size={27}
-                  color="#A77B5A"
+                  color="#FF4C4C"
                   style={styles.iconDelete}
                 />
               </TouchableOpacity>
@@ -343,15 +343,14 @@ const styles = StyleSheet.create({
   },
   squirrel: {
     position: "absolute",
-    width: 50,
-    height: 50,
-    top: 50,
+    width: 60,
+    height: 60,
+    top: 35,
     left: 30,
   },
   PageTitle: {
     fontFamily: "Hitchcut-Regular",
     color: "#E56400", // Couleur du titre
-    fontWeight: "bold",
     fontSize: 20,
     textAlign: "center",
     marginBottom: 20,
@@ -406,8 +405,6 @@ const styles = StyleSheet.create({
   },
   buttonFreezer: {
     justifyContent: "center",
-    borderColor: "#A77B5A",
-    borderWidth: 1,
     width: 50,
     height: 47,
     borderRadius: 10,
@@ -417,8 +414,6 @@ const styles = StyleSheet.create({
   },
   buttonPlacard: {
       justifyContent: "center",
-      borderColor: "#A77B5A",
-      borderWidth: 1,
       width: 50,
       height: 47,
       borderRadius: 10,
@@ -428,8 +423,6 @@ const styles = StyleSheet.create({
     },
     buttonFrigo: {
       justifyContent: "center",
-      borderColor: "#A77B5A",
-      borderWidth: 1,
       width: 50,
       height: 47,
       borderRadius: 10,

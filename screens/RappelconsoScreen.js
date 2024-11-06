@@ -59,7 +59,7 @@ const RappelConsoScreen = () => {
         <ImageBackground source={require('../assets/backgroundRappelConso.png')} style={styles.background}>
             <View style={styles.container}>
                 <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
-                <Text style={styles.title}>Rappel Conso</Text>
+                <Text style={styles.PageTitle}>Rappel Conso</Text>
 
                 <View style={styles.resultsContainer}>
                     <ScrollView contentContainerStyle={styles.resultsScrollContainer}>
@@ -158,12 +158,14 @@ const styles = StyleSheet.create({
         height: 60,
         marginBottom: 10,
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#FF4C4C',
+    PageTitle: {
+        fontFamily: "Hitchcut-Regular",
+        color: "#E56400", // Couleur du titre
+        fontSize: 20,
+        textAlign: "center",
         marginBottom: 20,
-    },
+      },
+
     resultsContainer: {
         borderWidth: 1,
         backgroundColor: "#A77B5A",
