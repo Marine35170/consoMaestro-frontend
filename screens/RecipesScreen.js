@@ -210,7 +210,7 @@ export default RecipesScreen;
       },
       text: {
         fontSize: 24,
-        fontWeight: 'bold',
+        fontFamily: "Hitchcut-Regular",
         color: '#F0672D',
         marginBottom: 20,
         marginTop: 19,
