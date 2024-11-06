@@ -62,11 +62,13 @@ const RappelConsoScreen = () => {
                 <Text style={styles.title}>Rappel Conso</Text>
 
                 <View style={styles.resultsContainer}>
-                    {searchResults.map((recall, index) => (
-                        <TouchableOpacity key={index} style={styles.resultItem} onPress={() => openModal(recall)}>
-                            <Text style={styles.resultTitle}>{recall.noms_des_modeles_ou_references}</Text>
-                        </TouchableOpacity>
-                    ))}
+                    <ScrollView contentContainerStyle={styles.resultsScrollContainer}>
+                        {searchResults.map((recall, index) => (
+                            <TouchableOpacity key={index} style={styles.resultItem} onPress={() => openModal(recall)}>
+                                <Text style={styles.resultTitle}>{recall.noms_des_modeles_ou_references}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
 
                 {/* Modal Détails du Produit */}
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
         padding: 20,
     },
     modalTitle: {
@@ -210,9 +212,9 @@ const styles = StyleSheet.create({
     },
 
     modalSectionTitle: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 'bold',
-        color: 'orange',  // Changez ici pour la couleur orange souhaitée
+        color: '#E56400',
         marginTop: 10,
     },
 
@@ -220,7 +222,9 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 16,
         marginBottom: 5,
+        fontWeight: 'bold'
     },
+
     noRecallModalContainer: {
         flex: 1,
         justifyContent: 'center',
