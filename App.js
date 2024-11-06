@@ -83,7 +83,13 @@ const TabNavigator = () => {
       component={QuickConsoScreen} 
       options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
       />
+      <Stack.Screen 
+      name="RappelConsoScreen" 
+      component={RappelConsoScreen}
+      options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
+      />
     </Tab.Navigator>
+    
   );
 };
 
@@ -110,7 +116,6 @@ export default function App() {
        <Stack.Screen name="AuthScreen" component={AuthScreen} />
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
        <Stack.Screen name="ScanScreen" component={ScanScreen} />
-       <Stack.Screen name="RappelConsoScreen" component={RappelConsoScreen} />
      </Stack.Navigator>
    </NavigationContainer>
    </Provider>
