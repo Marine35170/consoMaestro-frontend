@@ -62,16 +62,19 @@ const InventaireScreen = ({ route }) => {
   // Navigation vers l'écran Placard
   const handlePlacardPress = () => {
     navigation.navigate("InventaireScreen", { storageType: 'placard' });
+    setRefresh((prev) => !prev); // Force le rafraîchissement
   };
 
   // Navigation vers l'écran Congélateur
   const handleCongeloPress = () => {
     navigation.navigate("InventaireScreen", { storageType: 'congelo' });
+    setRefresh((prev) => !prev); // Force le rafraîchissement
   };
 
   //Navigation vers l'écran Congélateur
   const handleFridgePress = () => {
     navigation.navigate("InventaireScreen", { storageType: 'frigo' });
+    setRefresh((prev) => !prev); // Force le rafraîchissement
   };
 
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
