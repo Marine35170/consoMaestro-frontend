@@ -49,7 +49,7 @@ const RappelConsoScreen = () => {
     }, []);
 
     return (
-        <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}> 
+        <ImageBackground source={require('../assets/backgroundRappelConso.png')} style={styles.background}> 
             <View style={styles.container}>
                 <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
                 <Text style={styles.title}>Rappel Conso</Text>
