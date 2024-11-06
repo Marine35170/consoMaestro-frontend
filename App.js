@@ -19,6 +19,7 @@ import { faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { useFonts } from 'expo-font'; // Importation de la gestion des polices
 import * as SplashScreen from 'expo-splash-screen'; // Importation de l'écran de démarrage
 import React, { useEffect } from "react";
+import { View, StyleSheet,} from "react-native";
 
 
 const Stack = createNativeStackNavigator(); // Création de la pile de navigation
@@ -121,3 +122,4 @@ export default function App() {
    </Provider>
  );
 }
+
