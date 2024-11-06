@@ -161,10 +161,14 @@ export default function ProfileScreen() {
         {/* Section des informations utilisateur */}
         <View style={styles.infoContainer}>
           <Text style={styles.sectionTitle}>Mes informations personnelles</Text>
-          <Text style={styles.infoText}>e-mail: {userInfo.email}</Text>
-          <Text style={styles.infoText}>
-            Nom d'utilisateur: {userInfo.username}
-          </Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.persoSectionTitle}>E-mail:</Text>
+            <Text style={styles.infoText}>{userInfo.email}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.persoSectionTitle}>Nom d'utilisateur:</Text>
+            <Text style={styles.infoText}>{userInfo.username}</Text>
+          </View>
 
           {/* Affiche un message de succès en cas de mise à jour réussie */}
           {successMessage ? (
@@ -380,12 +384,27 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Hitchcut-Regular",
+    fontSize: 17,
+
     color: "#FFF",
     marginBottom: 10,
     textAlign: "center",
   },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5, // Ajustez l'espacement vertical entre chaque ligne si nécessaire
+  },
+  persoSectionTitle: {
+    flexDirection: 'row',
+    fontSize: 16,
+    color: "#FFF",
+    fontWeight: "bold",
+    marginRight: 20,
+    marginBottom: 5, 
+  },
+
   infoText: { fontSize: 16, marginBottom: 5, color: "#FFF" },
   successMessage: {
     fontSize: 16,

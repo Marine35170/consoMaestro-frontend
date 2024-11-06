@@ -44,7 +44,7 @@ const MenuScreen = () => {
                     </TouchableOpacity>
                     
                     <TouchableOpacity style={styles.alertBanner} onPress={handleQuickConsumePress}>
-                        <Text style={styles.alertText}>A consommer rapidement !</Text>
+                        <Text style={styles.buttonText}>A consommer rapidement !</Text>
                     </TouchableOpacity>
                 </View>
     
@@ -136,13 +136,6 @@ const styles = StyleSheet.create({
 
     },
 
-    // Texte du bouton " a consommer rapidement !" 
-
-    alertText: {
-        color: '#fff',
-        fontSize: 16, 
-    },
-
     // Container des images des stockages (frigo congelo placards)
 
     stockageContainer: {
@@ -186,8 +179,8 @@ const styles = StyleSheet.create({
     // Texte des stockage (frigo congelo placards)
 
     stockageText: {
+        fontFamily: "Hitchcut-Regular",
         color: '#664C25',
-        fontWeight: 'bold',
         fontSize: 16,
     },
 
@@ -224,6 +217,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: "bold",
 
       
     },

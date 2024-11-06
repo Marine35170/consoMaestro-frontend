@@ -143,17 +143,18 @@ const styles = StyleSheet.create({
     top: -95,
   }, 
   buttonText: {
+    fontFamily: "Hitchcut-Regular",
     position: "absolute",
     marginTop: 20,
     textAlign: "center",
     color: "#E56400",
-    fontWeight: "bold",
     fontSize: 24,
     top: 0,
   },
   tipsMainTitle: {
+    fontFamily: "Hitchcut-Regular",
     color: "#E56400",
-    fontWeight: "bold",
+    
     fontSize: 24,
     textAlign: "center",
     marginBottom: 5,
