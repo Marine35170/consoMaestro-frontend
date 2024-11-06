@@ -16,10 +16,16 @@ import { configureStore } from '@reduxjs/toolkit'; // Configuration du store Red
 import userReducer from './reducers/userReducer'; // Réducteur pour la gestion de l'utilisateur
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUtensils } from '@fortawesome/free-solid-svg-icons';
+import { useFonts } from 'expo-font'; // Importation de la gestion des polices
+import * as SplashScreen from 'expo-splash-screen'; // Importation de l'écran de démarrage
+import React, { useEffect } from "react";
 
 
 const Stack = createNativeStackNavigator(); // Création de la pile de navigation
 const Tab = createBottomTabNavigator(); // Création de la navigation par onglets
+
+// Empêche l'écran de démarrage de se fermer automatiquement
+SplashScreen.preventAutoHideAsync();
 
 // Configuration du store Redux
 const store = configureStore({
@@ -83,6 +89,20 @@ const TabNavigator = () => {
 
 // Fonction principale de l'application
 export default function App() {
+
+  const [loaded, error] = useFonts({
+    'Hitchcut-Regular': require('./assets/fonts/Hitchcut-Regular.ttf'),
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
  return (
   <Provider store={store}> 
    <NavigationContainer> 
