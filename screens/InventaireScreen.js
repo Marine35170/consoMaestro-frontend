@@ -294,7 +294,7 @@ const InventaireScreen = ({ route }) => {
       {bouton()}
 
 
-      {/* Modal pour DLC courte */}
+      {/* Modales pour la DLC courte et longue */}
       <Modal
         transparent={true}
         visible={shortDlcModalVisible}
@@ -302,17 +302,23 @@ const InventaireScreen = ({ route }) => {
         onRequestClose={() => setShortDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <Text style={styles.modalText}>DLC courte !</Text>
+          <Image
+            source={require("../assets/Squirrel/Triste.png")}
+            style={styles.squirrelModal}
+          />
+          <Text style={styles.modalTitle}>
+            Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
+            porte-monnaie et la Planète te diront MERCI !
+          </Text>
           <TouchableOpacity
-            style={styles.modalButton}
+            style={styles.closeButton}
             onPress={() => setShortDlcModalVisible(false)}
           >
-            <Text style={styles.modalButtonText}>Fermer</Text>
+            <Text style={styles.closeButtonText}>Fermer</Text>
           </TouchableOpacity>
         </View>
       </Modal>
 
-      {/* Modal pour DLC longue */}
       <Modal
         transparent={true}
         visible={longDlcModalVisible}
@@ -320,12 +326,18 @@ const InventaireScreen = ({ route }) => {
         onRequestClose={() => setLongDlcModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <Text style={styles.modalText}>DLC longue.</Text>
+          <Image
+            source={require("../assets/Squirrel/Heureux.png")}
+            style={styles.squirrelModal}
+          />
+          <Text style={styles.modalTitle}>
+            Ton produit est encore frais, tu peux le garder encore un moment.
+          </Text>
           <TouchableOpacity
-            style={styles.modalButton}
+            style={styles.closeButton}
             onPress={() => setLongDlcModalVisible(false)}
           >
-            <Text style={styles.modalButtonText}>Fermer</Text>
+            <Text style={styles.closeButtonText}>Fermer</Text>
           </TouchableOpacity>
         </View>
       </Modal>
