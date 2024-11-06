@@ -23,8 +23,9 @@ const InventaireScreen = ({ route }) => {
   const [refresh, setRefresh] = useState(false); // État pour forcer le rafraîchissement des données
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // Modal pour DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // Modal pour DLC longue
-  const { storageType } = route.params // Recuperation du params
-
+  const [lateDlcModalVisible, setLateDlcModalVisible] = useState(false); // Modal pour DLC passée
+  const [middleDlcModalVisible, setMiddleDlcModalVisible] = useState(false); // Modal pour DLC moyenne
+  const { storageType } = route.params; // Recuperation du params
 
   // Effet pour récupérer les produits lorsque l'écran est en focus ou que l'état de rafraîchissement change
   useEffect(() => {
@@ -41,8 +42,10 @@ const InventaireScreen = ({ route }) => {
         );
         const data = await response.json();
         if (data.result) {
-           // Tri des produits par DLC (date la plus proche d'aujourd'hui en premier)
-           const sortedProducts = data.data.sort((a, b) => new Date(a.dlc) - new Date(b.dlc));
+          // Tri des produits par DLC (date la plus proche d'aujourd'hui en premier)
+          const sortedProducts = data.data.sort(
+            (a, b) => new Date(a.dlc) - new Date(b.dlc)
+          );
           console.log("data from ", data);
           setProductsInfo(sortedProducts); // Met à jour l'état avec les informations des produits
         } else {
@@ -58,22 +61,22 @@ const InventaireScreen = ({ route }) => {
 
     fetchProducts();
   }, [isFocused, refresh]);
-  
+
   // Navigation vers l'écran Placard
   const handlePlacardPress = () => {
-    navigation.navigate("InventaireScreen", { storageType: 'placard' });
+    navigation.navigate("InventaireScreen", { storageType: "placard" });
     setRefresh((prev) => !prev); // Force le rafraîchissement
   };
 
   // Navigation vers l'écran Congélateur
   const handleCongeloPress = () => {
-    navigation.navigate("InventaireScreen", { storageType: 'congelo' });
+    navigation.navigate("InventaireScreen", { storageType: "congelo" });
     setRefresh((prev) => !prev); // Force le rafraîchissement
   };
 
   //Navigation vers l'écran Congélateur
   const handleFridgePress = () => {
-    navigation.navigate("InventaireScreen", { storageType: 'frigo' });
+    navigation.navigate("InventaireScreen", { storageType: "frigo" });
     setRefresh((prev) => !prev); // Force le rafraîchissement
   };
 
@@ -84,10 +87,9 @@ const InventaireScreen = ({ route }) => {
     const daysRemaining = expirationDate.diff(today, "days");
 
     // Logique de couleur
-      if (daysRemaining < 0) {
+    if (daysRemaining < 0) {
       return styles.blackDlcContainer; // Rouge si dépassée
-    }
-      else if (daysRemaining <= 2) {
+    } else if (daysRemaining <= 2) {
       return styles.redDlcContainer; // Rouge si à 2 jours ou moins
     } else if (daysRemaining <= 4) {
       return styles.orangeDlcContainer; // Orange si entre 2 et 4 jours
@@ -154,9 +156,13 @@ const InventaireScreen = ({ route }) => {
     const expirationDate = moment(dlcDate);
     const daysRemaining = expirationDate.diff(today, "days");
 
-    if (daysRemaining <= 4) {
+    if (daysRemaining < 0) {
+      setLateDlcModalVisible(true);
+    } else if (daysRemaining <= 2) {
       setShortDlcModalVisible(true);
-    } else {
+    } else if (daysRemaining <= 4) {
+      setMiddleDlcModalVisible(true);
+    } else if (daysRemaining > 4) {
       setLongDlcModalVisible(true);
     }
   };
@@ -198,20 +204,19 @@ const InventaireScreen = ({ route }) => {
         let Encart;
         // Sélection de l'image en fonction de l'emplacement de stockage
         if (data.storagePlace === "Frigo") {
-            imageSource = require('../assets/FRIGO.png');
-            Encart = styles.buttonFrigo;
+          imageSource = require("../assets/FRIGO.png");
+          Encart = styles.buttonFrigo;
         } else if (data.storagePlace === "Congelo") {
-            imageSource = require('../assets/congelo.png');
-            Encart = styles.buttonFreezer;
+          imageSource = require("../assets/congelo.png");
+          Encart = styles.buttonFreezer;
         } else if (data.storagePlace === "Placard") {
-            imageSource = require('../assets/Placard.png');
-            Encart = styles.buttonPlacard;
+          imageSource = require("../assets/Placard.png");
+          Encart = styles.buttonPlacard;
         }
 
         return (
           <View style={styles.ProductLineContainer} key={i}>
-            <Text style={styles.ProductTitle}>{data.name}</Text>
-
+              <Text style={styles.ProductTitle}>{data.name}</Text>
             {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
             <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}>
               <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
@@ -245,37 +250,42 @@ const InventaireScreen = ({ route }) => {
       })
     : null;
 
-    const bouton = () => {
-      if ( storageType === "frigo") {
-        return (<View style={styles.stocksButtonsContainer}>
+  const bouton = () => {
+    if (storageType === "frigo") {
+      return (
+        <View style={styles.stocksButtonsContainer}>
           <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
             <Text style={styles.buttonText}>Mes Placards</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
             <Text style={styles.buttonText}>Mon Congelo</Text>
           </TouchableOpacity>
-        </View>);
-      } else if ( storageType === "congelo") {
-       return <View style={styles.stocksButtonsContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
-               <Text style={styles.buttonText}>Mon Frigo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
-               <Text style={styles.buttonText}>Mes Placards</Text>
-            </TouchableOpacity>
-         </View>
-      } else {
-        return <View style={styles.stocksButtonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
-          <Text style={styles.buttonText}>Mon Congelo</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
-          <Text style={styles.buttonText}>Mes Frigo</Text>
-        </TouchableOpacity>
-      </View>
-      };
+        </View>
+      );
+    } else if (storageType === "congelo") {
+      return (
+        <View style={styles.stocksButtonsContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
+            <Text style={styles.buttonText}>Mon Frigo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
+            <Text style={styles.buttonText}>Mes Placards</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.stocksButtonsContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
+            <Text style={styles.buttonText}>Mon Congelo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
+            <Text style={styles.buttonText}>Mes Frigo</Text>
+          </TouchableOpacity>
+        </View>
+      );
     }
-
+  };
 
   return (
     // Conteneur principal
@@ -293,11 +303,10 @@ const InventaireScreen = ({ route }) => {
       </View>
 
       {/* Boutons d'accès au congélateur et aux placards ou frigo*/}
-      
+
       {bouton()}
 
-
-      {/* Modales pour la DLC courte et longue */}
+      {/* Modales pour la DLC courte  */}
       <Modal
         transparent={true}
         visible={shortDlcModalVisible}
@@ -321,6 +330,60 @@ const InventaireScreen = ({ route }) => {
           </TouchableOpacity>
         </View>
       </Modal>
+
+      {/* Modales pour la DLC passé */}
+
+      <Modal
+        transparent={true}
+        visible={lateDlcModalVisible}
+        animationType="slide"
+        onRequestClose={() => setLateDlcModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Image
+            source={require("../assets/Squirrel/Triste.png")}
+            style={styles.squirrelModal}
+          />
+          <Text style={styles.modalTitle}>
+            Oh non, ton produit est périmé, tu devrais le mettre au congelateur
+            si possible!
+          </Text>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setLateDlcModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      {/* Modales pour la DLC moyenne */}
+
+      <Modal
+        transparent={true}
+        visible={middleDlcModalVisible}
+        animationType="slide"
+        onRequestClose={() => setMiddleDlcModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Image
+            source={require("../assets/Squirrel/Normal.png")}
+            style={styles.squirrelModal}
+          />
+          <Text style={styles.modalTitle}>
+            Ton produit est encore frais, tu peux le garder encore un moment.
+            Mais tu devrais commencer à penser à le consommer, ou le congeler.
+          </Text>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setMiddleDlcModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      {/* Modales pour la DLC longue */}
 
       <Modal
         transparent={true}
@@ -397,9 +460,10 @@ const styles = StyleSheet.create({
   },
   ProductTitle: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: "bold",
     color: "#E56400",
+    paddingRight: 30,          // Espace entre le texte et les boutons
   },
   DlcButtonContainer: {
     alignItems: "center",
@@ -429,23 +493,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#0d1180",
   },
   buttonPlacard: {
-      justifyContent: "center",
-      width: 50,
-      height: 47,
-      borderRadius: 10,
-      alignItems: "center",
-      right: 5,
-      backgroundColor: "#A77B5A",
-    },
-    buttonFrigo: {
-      justifyContent: "center",
-      width: 50,
-      height: 47,
-      borderRadius: 10,
-      alignItems: "center",
-      right: 5,
-      backgroundColor: "#64d3df",
-    },
+    justifyContent: "center",
+    width: 50,
+    height: 47,
+    borderRadius: 10,
+    alignItems: "center",
+    right: 5,
+    backgroundColor: "#A77B5A",
+  },
+  buttonFrigo: {
+    justifyContent: "center",
+    width: 50,
+    height: 47,
+    borderRadius: 10,
+    alignItems: "center",
+    right: 5,
+    backgroundColor: "#64d3df",
+  },
   freezerLogo: {
     width: 30,
     height: 30,
