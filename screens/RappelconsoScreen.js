@@ -64,7 +64,7 @@ const RappelConsoScreen = () => {
                 <View style={styles.resultsContainer}>
                     {searchResults.map((recall, index) => (
                         <TouchableOpacity key={index} style={styles.resultItem} onPress={() => openModal(recall)}>
-                            <Text style={styles.resultTitle}>{recall.nom_de_la_marque_du_produit}</Text>
+                            <Text style={styles.resultTitle}>{recall.noms_des_modeles_ou_references}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -179,6 +179,14 @@ const styles = StyleSheet.create({
         color: '#FFF',
         marginBottom: 20,
     },
+
+    modalSectionTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'orange',  // Changez ici pour la couleur orange souhaitée
+        marginTop: 10,
+    },
+    
     modalText: {
         color: '#FFF',
         fontSize: 16,
