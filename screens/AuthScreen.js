@@ -59,6 +59,15 @@ export default function AuthScreen() {
   // logique d'inscription
   const handleSignUp = async () => {
     console.log('handleSignUp')
+
+     // Vérification du format de l'email avec une regex simple
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(signupEmail.trim())) {
+    Alert.alert('Erreur', 'Veuillez entrer un email valide.');
+    return;
+  }
+
+  
     try {
       const response = await fetch('https://conso-maestro-backend.vercel.app/users/signup', {
         method: 'POST',
