@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { useSelector } from 'react-redux';
+import { View, Text, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
+
 
 const RappelConsoScreen = () => {
-    const [productName, setProductName] = useState(''); // Stocke le nom du produit à rechercher
     const [searchResults, setSearchResults] = useState([]); // Résultats de rappel récupérés depuis l'API
-    const [filteredResults, setFilteredResults] = useState([]); // Résultats de rappel filtrés
-    const [error, setError] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null); // Produit sélectionné pour le modal
     const [isModalVisible, setModalVisible] = useState(false);
+    const [error, setError] = useState('');
 
+    const userId = useSelector((state) => state.user.id);
+
+    console.log ("tets4" , userId);
     // Ouvre le modal avec les détails du produit
     const openModal = (product) => {
         setSelectedProduct(product);
@@ -20,62 +23,44 @@ const RappelConsoScreen = () => {
         setSelectedProduct(null);
         setModalVisible(false);
     };
-
+    console.log("test3" , searchResults);
     // Fonction pour récupérer les rappels depuis l'API
     const fetchRecalls = async () => {
         try {
-            const response = await fetch('http://conso-maestro-backend.vercel.app/rappels/fetch-recalls');
+            const response = await fetch(`http://conso-maestro-backend.vercel.app/rappels/check-recall/${userId}`);
             const data = await response.json();
-            if (data.result) {
-                setSearchResults(data.data);
-                setFilteredResults(data.data); // Initialement, tous les résultats sont affichés
+            console.log("test0" , data );
+            if (data) {  // data.result : réponse si api a fonctionné   data.recalls  data de l'api récupérée
+                setSearchResults(data.recalls); // Utilisez `data.recalls` pour accéder aux produits rappelés
+                console.log("test1" , searchResults);
             } else {
-                const text = await response.text(); // Affiche le contenu brut de la réponse pour débogage
-                console.error("Réponse inattendue :", text);
-                setError("Réponse inattendue du serveur.");
+                setError("Aucun rappel trouvé.");
+                console.log("test2" , searchResults);
             }
         } catch (err) {
-            setError('Erreur lors de la récupération des données.');
-            console.error("Détails de l'erreur :", err);
+            console.error("Erreur lors de la récupération des données :", err);
         }
     };
 
     // Exécute `fetchRecalls` une fois au montage du composant
+
     useEffect(() => {
         fetchRecalls();
     }, []);
 
-    // Filtre les rappels en fonction du nom du produit saisi
-    const handleSearch = () => {
-        const filtered = searchResults.filter(recall => 
-            recall.nom_de_la_marque_du_produit.toLowerCase().includes(productName.toLowerCase())
-        );
-        setFilteredResults(filtered);
-    };
-
     return (
-        <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}>
+        <ImageBackground source={require('../assets/backgroundMenu.png')} style={styles.background}> 
             <View style={styles.container}>
                 <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
                 <Text style={styles.title}>Rappel Conso</Text>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nom du produit"
-                    value={productName}
-                    onChangeText={setProductName}
-                />
-                <Button title="Rechercher" onPress={handleSearch} />
-
-                {error ? <Text style={styles.error}>{error}</Text> : null}
-
-                <ScrollView style={styles.resultsContainer}>
-                    {filteredResults.map((recall, index) => (
+                <View style={styles.resultsContainer}>
+                    {searchResults.map((recall, index) => (
                         <TouchableOpacity key={index} style={styles.resultItem} onPress={() => openModal(recall)}>
                             <Text style={styles.resultTitle}>{recall.nom_de_la_marque_du_produit}</Text>
                         </TouchableOpacity>
                     ))}
-                </ScrollView>
+                </View>
 
                 <Modal
                     transparent={true}
@@ -84,7 +69,7 @@ const RappelConsoScreen = () => {
                     onRequestClose={closeModal}
                 >
                     <View style={styles.modalContainer}>
-                        {selectedProduct && (
+                        {selectedProduct && (  // mettre un overflow pour le scroll , changer la police des titres et des textes, ajouter de l'espace,
                             <>
                                 <Text style={styles.modalTitle}>Détails du Produit</Text>
                                 <Text style={styles.modalText}>Catégorie : {selectedProduct.categorie_de_produit}</Text>
@@ -133,23 +118,17 @@ const styles = StyleSheet.create({
         color: '#333',
         marginBottom: 20,
     },
-    input: {
-        height: 40,
-        borderColor: 'gray',
+    resultsContainerContainer: {
         borderWidth: 1,
-        borderRadius: 5,
-        width: '100%',
-        paddingHorizontal: 10,
+        backgroundColor: "#A77B5A",
+        borderColor: "#A77B5A",
+        width: "85%", // Largeur relative à l'écran
+        height: "65%", // Hauteur relative à l'écran
+        borderRadius: 10,
+        padding: 10,
         marginBottom: 20,
-    },
-    error: {
-        color: 'red',
-        marginBottom: 10,
-    },
-    resultsContainer: {
-        marginTop: 20,
-        width: '100%',
-    },
+      },
+      
     resultItem: {
         backgroundColor: '#fff',
         padding: 15,
