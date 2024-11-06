@@ -84,7 +84,10 @@ const InventaireScreen = ({ route }) => {
     const daysRemaining = expirationDate.diff(today, "days");
 
     // Logique de couleur
-    if (daysRemaining <= 2) {
+      if (daysRemaining < 0) {
+      return styles.blackDlcContainer; // Rouge si dépassée
+    }
+      else if (daysRemaining <= 2) {
       return styles.redDlcContainer; // Rouge si à 2 jours ou moins
     } else if (daysRemaining <= 4) {
       return styles.orangeDlcContainer; // Orange si entre 2 et 4 jours
@@ -414,6 +417,7 @@ const styles = StyleSheet.create({
   DlcText: {
     fontSize: 12,
     fontWeight: "bold",
+    color: "#FFF",
   },
   buttonFreezer: {
     justifyContent: "center",
@@ -508,6 +512,9 @@ const styles = StyleSheet.create({
   },
   greenDlcContainer: {
     backgroundColor: "#69914a", // Vert
+  },
+  blackDlcContainer: {
+    backgroundColor: "#000000", // Noir
   },
 });
 

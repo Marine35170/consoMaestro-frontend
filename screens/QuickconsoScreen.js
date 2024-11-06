@@ -103,14 +103,17 @@ const QuickConsoScreen = () => {
         const daysRemaining = expirationDate.diff(today, "days");
 
         // Logique de couleur : Rouge si la DLC est à 2 jours ou moins, Orange si entre 2 et 4 jours, Vert sinon
-        if (daysRemaining <= 2) {
-            return styles.redDlcContainer;
-        } else if (daysRemaining <= 4) {
-            return styles.orangeDlcContainer;
-        } else {
-            return styles.greenDlcContainer;
-        }
-    };
+        if (daysRemaining < 0) {
+            return styles.blackDlcContainer; // Rouge si dépassée
+          }
+            else if (daysRemaining <= 2) {
+            return styles.redDlcContainer; // Rouge si à 2 jours ou moins
+          } else if (daysRemaining <= 4) {
+            return styles.orangeDlcContainer; // Orange si entre 2 et 4 jours
+          } else {
+            return styles.greenDlcContainer; // Vert sinon
+          }
+        };
 
     // Fonction pour gérer l'affichage des modals selon les jours restants
     const handleDlcPress = (dlcDate) => {
@@ -291,6 +294,7 @@ const styles = StyleSheet.create({
     DlcText: {
       fontSize: 12,
       fontWeight: "bold",
+        color: "#FFF",
     },
     buttonFreezer: {
       justifyContent: "center",
@@ -394,6 +398,9 @@ const styles = StyleSheet.create({
     greenDlcContainer: {
       backgroundColor: "#69914a", // Vert
     },
+    blackDlcContainer: {
+        backgroundColor: "#000000", // Noir
+      },
   });
   
 export default QuickConsoScreen;
