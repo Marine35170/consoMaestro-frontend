@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-const FridgeScreen = () => {
+const InventaireScreen = ({ route }) => {
   // Initialisation des hooks de navigation et de l'état
   const navigation = useNavigation();
   const userId = useSelector((state) => state.user.id); // Récupération de l'ID utilisateur depuis le store Redux
@@ -23,13 +23,15 @@ const FridgeScreen = () => {
   const [refresh, setRefresh] = useState(false); // État pour forcer le rafraîchissement des données
   const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // Modal pour DLC courte
   const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // Modal pour DLC longue
+  const { storageType } = route.params // Recuperation du params
+
 
   // Effet pour récupérer les produits lorsque l'écran est en focus ou que l'état de rafraîchissement change
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `https://conso-maestro-backend.vercel.app/frigo/${userId}`,
+          `https://conso-maestro-backend.vercel.app/inventaire/${userId}/${storageType}`, // Requête pour récupérer les produits du frigo
           {
             method: "GET",
             headers: {
@@ -59,12 +61,17 @@ const FridgeScreen = () => {
   
   // Navigation vers l'écran Placard
   const handlePlacardPress = () => {
-    navigation.navigate("PlacardScreen");
+    navigation.navigate("InventaireScreen", { storageType: 'placard' });
   };
 
   // Navigation vers l'écran Congélateur
   const handleCongeloPress = () => {
-    navigation.navigate("CongeloScreen");
+    navigation.navigate("InventaireScreen", { storageType: 'congelo' });
+  };
+
+  //Navigation vers l'écran Congélateur
+  const handleFridgePress = () => {
+    navigation.navigate("InventaireScreen", { storageType: 'frigo' });
   };
 
   // Fonction pour déterminer la couleur du conteneur en fonction de la date de DLC
@@ -232,6 +239,38 @@ const FridgeScreen = () => {
       })
     : null;
 
+    const bouton = () => {
+      if ( storageType === "frigo") {
+        return (<View style={styles.stocksButtonsContainer}>
+          <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
+            <Text style={styles.buttonText}>Mes Placards</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
+            <Text style={styles.buttonText}>Mon Congelo</Text>
+          </TouchableOpacity>
+        </View>);
+      } else if ( storageType === "congelo") {
+       return <View style={styles.stocksButtonsContainer}>
+            <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
+               <Text style={styles.buttonText}>Mon Frigo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
+               <Text style={styles.buttonText}>Mes Placards</Text>
+            </TouchableOpacity>
+         </View>
+      } else {
+        return <View style={styles.stocksButtonsContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
+          <Text style={styles.buttonText}>Mon Congelo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
+          <Text style={styles.buttonText}>Mes Frigo</Text>
+        </TouchableOpacity>
+      </View>
+      };
+    }
+
+
   return (
     // Conteneur principal
     <View style={styles.container}>
@@ -240,22 +279,17 @@ const FridgeScreen = () => {
         style={styles.squirrel}
       />
       {/* Titre de la page */}
-      <Text style={styles.PageTitle}>Mon Frigo</Text>
+      <Text style={styles.PageTitle}>Mon {storageType}</Text>
       {/* Conteneur des produits dans le frigo */}
       <View style={styles.productContainer}>
         {/* Affichage des produits */}
         <ScrollView style={{ flexGrow: 1 }}>{products}</ScrollView>
       </View>
 
-      {/* Boutons d'accès au congélateur et aux placards */}
-      <View style={styles.stocksButtonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
-          <Text style={styles.buttonText}>Mes Placards</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
-          <Text style={styles.buttonText}>Mon Congelo</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Boutons d'accès au congélateur et aux placards ou frigo*/}
+      
+      {bouton()}
+
 
       {/* Modal pour DLC courte */}
       <Modal
@@ -469,4 +503,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FridgeScreen;
+export default InventaireScreen;
