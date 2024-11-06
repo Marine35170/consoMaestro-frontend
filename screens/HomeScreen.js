@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Image,ImageBackground,StyleSheet,Text,TouchableOpacity,View,} from "react-native";
+import { Modal, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
@@ -13,6 +13,10 @@ export default function HomeScreen() {
     titre: "",
     description: "",
   }); // État pour stocker les informations des conseils
+  const [recallProduct, setRecallProduct] = useState(null); // État pour le produit rappelé
+  const [isPopupVisible, setPopupVisible] = useState(false); // État pour afficher la popup
+  const [modalContent, setModalContent] = useState(""); // Pour afficher les produits concernés
+  const userId = useSelector((state) => state.user.id);
 
   // Effet pour récupérer les conseils lorsque l'écran est en focus
   useEffect(() => {
@@ -40,13 +44,61 @@ export default function HomeScreen() {
         });
     };
 
-    fetchAdvice(); // Appel de la fonction fetchAdvice
+    // pop up pour les rappels conso 
+
+    const fetchRecalls = async () => {
+      try {
+        const Id = await AsyncStorage.getItem("userId");
+
+
+        const response = await fetch(`https://conso-maestro-backend.vercel.app/rappels/check-recall/${userId}`);
+        const data = await response.json();
+
+        if (data && data.recalls) {
+          setRecallProduct(data.recalls[0].noms_des_modeles_ou_references); // Prendre le modèle du premier produit rappelé
+          setPopupVisible(true); // Affiche la popup si un rappel est trouvé
+        }
+      } catch (error) {
+        console.error("Erreur lors de la vérification des rappels de produit :", error);
+      }
+    };
+    // Ne charger les rappels que si l'écran est focus
+    if (isFocused) {
+      fetchAdvice();
+      fetchRecalls();
+    }
+
+    // Si l'écran devient inactif, vous pouvez réinitialiser l'état pour éviter que l'image de rappel persiste
+    return () => {
+      setRecallProduct(null);
+      setPopupVisible(false);
+    };
   }, [isFocused]);
+
+  // Fonction pour naviguer vers l'écran de rappel conso
+  const handleRecallPress = () => {
+    setModalContent(recallProduct); // Affiche les produits concernés dans la modal
+    setPopupVisible(false); // Ferme la popup initiale
+  };
 
   // Fonction pour naviguer vers l'écran de scan
   const handleScanPress = () => {
     navigation.navigate("ScanScreen"); // Navigation vers la page de scan de produit
   };
+
+  // Fonction pour naviguer vers la page des rappels Conso
+  const handleViewRecalls = () => {
+    navigation.navigate("RappelConsoScreen"); // Redirige vers la page des rappels Conso
+  };
+
+  // Perme de réutiliser la pop up warning comme on veut
+  useEffect(() => {
+    if (isFocused) {
+      setPopupVisible(false); // Réinitialise la popup à chaque fois que l'écran devient actif
+      setModalContent(""); // Réinitialise le contenu de la modal
+    }
+  }, [isFocused]);
+
 
   return (
     <ImageBackground
@@ -80,6 +132,43 @@ export default function HomeScreen() {
             style={styles.scanImage}
           />
         </TouchableOpacity>
+
+        {/* Image d'alerte persistante */}
+        {recallProduct && (
+          <TouchableOpacity onPress={handleRecallPress} style={styles.alertContainer}>
+            <Image
+              source={require("../assets/attention.png")}
+              style={styles.alertImage}
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Modal pour afficher les produits concernés */}
+        {modalContent && (
+          <Modal
+            transparent={true}
+            visible={true}
+            animationType="slide"
+            onRequestClose={() => setModalContent("")}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalText}>Produits concernés :</Text>
+                <Text style={styles.modalText}>{modalContent}</Text>
+
+                <View style={styles.buttonRow}>
+                  <TouchableOpacity style={styles.closeButton} onPress={handleViewRecalls}>
+                    <Text style={styles.closeButtonText}>Rappels Conso</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.closeButton} onPress={() => setModalContent("")}>
+                    <Text style={styles.closeButtonText}>Fermer</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
       </View>
     </ImageBackground>
   );
@@ -104,12 +193,12 @@ const styles = StyleSheet.create({
     top: -15,
     left: 3,
   },
-  usernameline:{
-  flexDirection:'row',
-  marginRight: 20,
+  usernameline: {
+    flexDirection: 'row',
+    marginRight: 20,
 
   },
-  colorusername:{
+  colorusername: {
     color: '#E56400',
     fontSize: 24,
     fontFamily: "Hitchcut-Regular",
@@ -141,7 +230,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     overflow: "hidden",
     top: -95,
-  }, 
+  },
   buttonText: {
     fontFamily: "Hitchcut-Regular",
     position: "absolute",
@@ -154,7 +243,7 @@ const styles = StyleSheet.create({
   tipsMainTitle: {
     fontFamily: "Hitchcut-Regular",
     color: "#E56400",
-    
+
     fontSize: 24,
     textAlign: "center",
     marginBottom: 5,
@@ -190,5 +279,55 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginRight: 4,
+  },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+ 
+  alertImage: {
+    width: 60,  // Taille de l'image (ajustez selon vos besoins)
+    height: 60, 
+    position: 'absolute', // Position absolue pour la fixer
+    bottom: 2, // Positionner l'image à 20 unités du bas de l'écran
+  },
+
+  alertContainer: {
+    position: 'absolute',
+    bottom: 20,  // Cette valeur définit à quel point l'image sera éloignée du bas
+       justifyContent: "center",
+    alignItems: "center"
+  },
+  modalContent: {
+    backgroundColor: "#FAF9F3",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "80%",
+  },
+  modalText: {
+    fontSize: 18,
+    color: "#E56400",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  buttonRow: {
+    flexDirection: 'row', // Met les éléments sur la même ligne
+    justifyContent: 'center', // Espacement égal entre les boutons (ou 'center' pour les centrer)
+    width: '80%', // Largeur du conteneur pour que les boutons aient un espacement équilibré
+    marginTop: 20, // Espacement au-dessus
+    gap: 20,
+  },
+  closeButton: {
+    backgroundColor: "#A77B5A",
+    padding: 10,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: "#FFF",
+    fontSize: 16,
   },
 });
