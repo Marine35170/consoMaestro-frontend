@@ -9,8 +9,6 @@ import ScanScreen from './screens/ScanScreen';
 import AuthScreen from './screens/AuthScreen';
 import QuickConsoScreen from './screens/QuickconsoScreen';
 import InventaireScreen from './screens/InventaireScreen';
-import CongeloScreen from './screens/CongeloScreen';
-import PlacardScreen from './screens/PlacardScreen';
 import RecipesScreen from './screens/RecipesScreen';
 import RappelConsoScreen from './screens/RappelconsoScreen';
 import { Provider } from 'react-redux'; // Importation de Redux pour la gestion d'état
@@ -67,17 +65,6 @@ const TabNavigator = () => {
         name="InventaireScreen"
         component={InventaireScreen}
         options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
-      />
-      <Tab.Screen
-        name="CongeloScreen"
-        component={CongeloScreen}
-        options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
-      />
-      <Tab.Screen
-        name="PlacardScreen"
-        component={PlacardScreen}
-        options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
-      
       />
        <Tab.Screen
         name="RecipesScreen"
