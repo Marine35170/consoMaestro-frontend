@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
+import { ScrollView, Modal, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
@@ -13,7 +13,7 @@ export default function HomeScreen() {
     titre: "",
     description: "",
   }); // État pour stocker les informations des conseils
-  const [recallProduct, setRecallProduct] = useState(null); // État pour le produit rappelé
+  const [recallProduct, setRecallProduct] = useState([]);// État pour le produit rappelé
   const [isPopupVisible, setPopupVisible] = useState(false); // État pour afficher la popup
   const [modalContent, setModalContent] = useState(""); // Pour afficher les produits concernés
   const userId = useSelector((state) => state.user.id);
@@ -50,12 +50,12 @@ export default function HomeScreen() {
       try {
         const Id = await AsyncStorage.getItem("userId");
 
-
         const response = await fetch(`https://conso-maestro-backend.vercel.app/rappels/check-recall/${userId}`);
         const data = await response.json();
 
         if (data && data.recalls) {
-          setRecallProduct(data.recalls[0].noms_des_modeles_ou_references); // Prendre le modèle du premier produit rappelé
+          // Récupère tous les noms des produits rappelés
+          setRecallProduct(data.recalls[0].noms_des_modeles_ou_references);
           setPopupVisible(true); // Affiche la popup si un rappel est trouvé
         }
       } catch (error) {
@@ -144,6 +144,7 @@ export default function HomeScreen() {
         )}
 
         {/* Modal pour afficher les produits concernés */}
+  
         {modalContent && (
           <Modal
             transparent={true}
@@ -154,6 +155,8 @@ export default function HomeScreen() {
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalText}>Produits concernés :</Text>
+
+                
                 <Text style={styles.modalText}>{modalContent}</Text>
 
                 <View style={styles.buttonRow}>
@@ -169,6 +172,7 @@ export default function HomeScreen() {
             </View>
           </Modal>
         )}
+
       </View>
     </ImageBackground>
   );
@@ -287,10 +291,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
- 
+
   alertImage: {
     width: 60,  // Taille de l'image (ajustez selon vos besoins)
-    height: 60, 
+    height: 60,
     position: 'absolute', // Position absolue pour la fixer
     bottom: 2, // Positionner l'image à 20 unités du bas de l'écran
   },
@@ -298,8 +302,34 @@ const styles = StyleSheet.create({
   alertContainer: {
     position: 'absolute',
     bottom: 20,  // Cette valeur définit à quel point l'image sera éloignée du bas
-       justifyContent: "center",
+    justifyContent: "center",
     alignItems: "center"
+  },
+
+  recallListContainer: {
+    marginTop: 10,
+    padding: 10,
+    maxHeight: 200,  // Limite la hauteur de la liste de produits
+    flexGrow: 1,  // Assurez-vous que le ScrollView s'étend au besoin
+  },
+
+  recallProductText: {
+    fontSize: 16,
+    color: "#664C25",  // Couleur du texte
+    marginVertical: 5,
+    paddingVertical: 5,  // Un peu d'espace vertical
+    paddingHorizontal: 10,  // Un peu d'espace horizontal
+    borderWidth: 1,  // Bordure orange autour de chaque produit
+    borderColor: "#E56400",  // Bordure orange
+    backgroundColor: "transparent",  // Fond transparent
+    borderRadius: 5,  // Bordure arrondie
+  },
+
+  modalText: {
+    fontSize: 18,
+    color: "#E56400",
+    marginBottom: 10,
+    textAlign: "center",
   },
   modalContent: {
     backgroundColor: "#FAF9F3",
@@ -307,7 +337,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     width: "80%",
+    maxHeight: "80%",  // Cette hauteur limite la taille de la modal
   },
+  
+  scrollView: {
+    flexGrow: 1, // Permet au ScrollView d'occuper tout l'espace disponible
+    width: "100%", // Occupe toute la largeur disponible
+  },
+
   modalText: {
     fontSize: 18,
     color: "#E56400",
