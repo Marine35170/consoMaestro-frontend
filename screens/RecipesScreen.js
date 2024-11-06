@@ -212,7 +212,7 @@ export default RecipesScreen;
         fontSize: 24,
         fontFamily: "Hitchcut-Regular",
         color: '#F0672D',
-        marginTop: 19,
+        marginTop: 40,
         top: -73,
       },
       textfavories: {
