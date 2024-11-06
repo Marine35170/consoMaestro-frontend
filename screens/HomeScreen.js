@@ -101,10 +101,12 @@ const styles = StyleSheet.create({
   squirrel: {
     width: 60,
     height: 60,
-    
+    top: -15,
+    left: 3,
   },
   usernameline:{
-flexDirection:'row',
+  flexDirection:'row',
+  marginRight: 20,
 
   },
   colorusername:{

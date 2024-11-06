@@ -343,9 +343,9 @@ const styles = StyleSheet.create({
   },
   squirrel: {
     position: "absolute",
-    width: 50,
-    height: 50,
-    top: 50,
+    width: 60,
+    height: 60,
+    top: 35,
     left: 30,
   },
   PageTitle: {
