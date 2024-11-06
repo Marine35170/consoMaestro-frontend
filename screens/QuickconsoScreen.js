@@ -375,9 +375,10 @@ const styles = StyleSheet.create({
   },
   ProductTitle: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: "bold",
     color: "#E56400",
+    paddingRight: 30,          // Espace entre le texte et les boutons
   },
   DlcButtonContainer: {
     alignItems: "center",

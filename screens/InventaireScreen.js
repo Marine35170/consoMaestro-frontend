@@ -216,8 +216,7 @@ const InventaireScreen = ({ route }) => {
 
         return (
           <View style={styles.ProductLineContainer} key={i}>
-            <Text style={styles.ProductTitle}>{data.name}</Text>
-
+              <Text style={styles.ProductTitle}>{data.name}</Text>
             {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
             <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}>
               <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
@@ -461,9 +460,10 @@ const styles = StyleSheet.create({
   },
   ProductTitle: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: "bold",
     color: "#E56400",
+    paddingRight: 30,          // Espace entre le texte et les boutons
   },
   DlcButtonContainer: {
     alignItems: "center",
