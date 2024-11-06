@@ -50,7 +50,7 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground
-      source={require("../assets/backgroundScanne.png")}
+      source={require("../assets/backgroundHome.png")}
       style={styles.background}
     >
       <View style={styles.container}>
