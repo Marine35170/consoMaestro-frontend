@@ -4,7 +4,7 @@ import { Button, Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSh
 
 
 
-const MenuScreen = () => {                              
+const MenuScreen = () => {
     const navigation = useNavigation();
 
     const handleFridgePress = () => {                       // Permet d'aller vers la page frigo
@@ -14,7 +14,7 @@ const MenuScreen = () => {
     const handleCongeloPress = () => {                      // Permet d'aller vers la page Congelo 
         navigation.navigate('InventaireScreen', { storageType: 'congelo' })
     }
-    
+
 
     const handlePlacardPress = () => {                      // Permet d'aller vers la page Placard
         navigation.navigate('InventaireScreen', { storageType: 'placard' })
@@ -32,22 +32,25 @@ const MenuScreen = () => {
     };
 
     return (
-        <ImageBackground source={require('../assets/backgroundMenuv2.png')} style={styles.background}>  
+        <ImageBackground source={require('../assets/backgroundMenuv2.png')} style={styles.background}>
             <View style={styles.container}>
                 <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
                 <Text style={styles.PageTitle}> Ma Cuisine </Text>
-                
+
                 {/* Conteneur pour les alertes et rappels conso */}
                 <View style={styles.alertContainer}>
                     <TouchableOpacity style={styles.buttonDGCCRF} onPress={handleRappelConsoPress}>
-                        <Text style={styles.buttonText}>Mes rappels conso (DGCCRF)</Text>
+                        <View style={styles.textContainer}>
+                            <Text style={styles.buttonText}>Mes rappels conso</Text>
+                            <Text style={styles.buttonText}>DGCCRF</Text>
+                        </View>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity style={styles.alertBanner} onPress={handleQuickConsumePress}>
                         <Text style={styles.buttonText}>A consommer rapidement !</Text>
                     </TouchableOpacity>
                 </View>
-    
+
                 <View style={styles.stockageContainer}>
                     <TouchableOpacity style={styles.stockageItem} onPress={handleFridgePress}>
                         <View style={styles.imageContainer}>
@@ -68,18 +71,19 @@ const MenuScreen = () => {
                         <Text style={styles.stockageText}>PLACARD</Text>
                     </TouchableOpacity>
                 </View>
-    
+
                 <View style={styles.centeredButtonContainer}>
                     <TouchableOpacity style={styles.buttonRecipe} onPress={handleRecipePress}>
                         <View style={styles.iconAndText}>
-                            
+
                             <Text style={styles.buttonText}>Idées recettes</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
             </View>
         </ImageBackground>
-    )};   
+    )
+};
 
 export default MenuScreen;
 
@@ -109,16 +113,16 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginBottom: 20,
         marginTop: 10,
-  
-      },
 
-      squirrel: {
+    },
+
+    squirrel: {
         position: "absolute",
         width: 60,
         height: 60,
         top: 35,
         left: 30,
-      },
+    },
 
 
     // Style du bouton " a consommer rapidement !" 
@@ -205,13 +209,15 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 40,
         borderRadius: 10,
-        marginTop: 80,          //Eloigne du dessus 
+        marginTop: 80,           // Espacement par rapport au haut
         width: 300,
-        alignItems: 'center',
+        alignItems: 'center',    // Centre le contenu horizontalement
         justifyContent: 'center',
-        flexDirection: 'row',
-
-    },
+      },
+      
+      textContainer: {
+        alignItems: 'center',    // Centre le texte dans le bouton
+      },
     // Texte des boutons
 
     buttonText: {
@@ -219,7 +225,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
 
-      
+
     },
     iconAndText: {
         flexDirection: 'row',
