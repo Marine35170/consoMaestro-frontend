@@ -65,7 +65,7 @@ const MenuScreen = () => {
                         <View style={styles.imageContainer}>
                             <Image source={require('../assets/Placard.png')} style={styles.iconImage} />
                         </View>
-                        <Text style={styles.stockageText}>PLACARDS</Text>
+                        <Text style={styles.stockageText}>PLACARD</Text>
                     </TouchableOpacity>
                 </View>
     

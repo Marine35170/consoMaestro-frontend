@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
 
     resultsContainer: {
         borderWidth: 1,
-        backgroundColor: "#A77B5A",
+        backgroundColor: "#69914A",
         borderColor: "#A77B5A",
         width: "85%",
         height: "65%",
