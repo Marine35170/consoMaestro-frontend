@@ -8,16 +8,16 @@ const MenuScreen = () => {
     const navigation = useNavigation();
 
     const handleFridgePress = () => {                       // Permet d'aller vers la page frigo
-        navigation.navigate('FridgeScreen');
+        navigation.navigate('InventaireScreen', { storageType: 'frigo' });
     };
 
     const handleCongeloPress = () => {                      // Permet d'aller vers la page Congelo 
-        navigation.navigate('CongeloScreen')
+        navigation.navigate('InventaireScreen', { storageType: 'congelo' })
     }
     
 
     const handlePlacardPress = () => {                      // Permet d'aller vers la page Placard
-        navigation.navigate('PlacardScreen')
+        navigation.navigate('InventaireScreen', { storageType: 'placard' })
     };
 
     const handleQuickConsumePress = () => {                 // Permet d'aller vers la page " A consommer rapidement"

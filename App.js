@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons'; // Importation des icônes Ionico
 import ScanScreen from './screens/ScanScreen';
 import AuthScreen from './screens/AuthScreen';
 import QuickConsoScreen from './screens/QuickconsoScreen';
-import FridgeScreen from './screens/FridgeScreen';
+import InventaireScreen from './screens/InventaireScreen';
 import CongeloScreen from './screens/CongeloScreen';
 import PlacardScreen from './screens/PlacardScreen';
 import RecipesScreen from './screens/RecipesScreen';
@@ -64,8 +64,8 @@ const TabNavigator = () => {
       <Tab.Screen name="Menu" component={MenuScreen}/>
       {/* Écrans cachés dans la barre de navigation */}
       <Tab.Screen
-        name="FridgeScreen"
-        component={FridgeScreen}
+        name="InventaireScreen"
+        component={InventaireScreen}
         options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
       />
       <Tab.Screen

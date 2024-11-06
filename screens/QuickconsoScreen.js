@@ -63,7 +63,8 @@ const QuickConsoScreen = () => {
                 });
                 const data = await response.json();
                 if (data.result) {
-                    setProductsInfo(data.data); // Met à jour l'état avec les infos des produits
+                    const sortedProducts = data.data.sort((a, b) => new Date(a.dlc) - new Date(b.dlc));
+                    setProductsInfo(sortedProducts); // Met à jour l'état avec les infos des produits
                 } else {
                     console.error("Erreur lors de la récupération des produits:", data.message);
                 }
