@@ -108,14 +108,15 @@ const styles = StyleSheet.create({
         fontSize: 25,
         textAlign: "center",
         marginBottom: 20,
+        marginTop: -5,
   
       },
 
       squirrel: {
         position: "absolute",
-        width: 50,
-        height: 50,
-        top: 50,
+        width: 60,
+        height: 60,
+        top: 35,
         left: 30,
       },
 
