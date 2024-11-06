@@ -118,10 +118,17 @@ const styles = StyleSheet.create({
         color: '#333',
         marginBottom: 20,
     },
-    resultsContainer: {
-        marginTop: 20,
-        width: '100%',
-    },
+    resultsContainerContainer: {
+        borderWidth: 1,
+        backgroundColor: "#A77B5A",
+        borderColor: "#A77B5A",
+        width: "85%", // Largeur relative à l'écran
+        height: "65%", // Hauteur relative à l'écran
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 20,
+      },
+      
     resultItem: {
         backgroundColor: '#fff',
         padding: 15,
