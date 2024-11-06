@@ -71,31 +71,51 @@ const RappelConsoScreen = () => {
 
                 {/* Modal Détails du Produit */}
                 <Modal
-                    transparent={true}
-                    visible={isModalVisible}
-                    animationType="slide"
-                    onRequestClose={closeModal}
-                >
-                    <View style={styles.modalContainer}>
-                        {selectedProduct && (
-                            <>
-                                <Text style={styles.modalTitle}>Détails du Produit</Text>
-                                <Text style={styles.modalText}>Catégorie : {selectedProduct.categorie_de_produit}</Text>
-                                <Text style={styles.modalText}>Marque : {selectedProduct.nom_de_la_marque_du_produit}</Text>
-                                <Text style={styles.modalText}>Modèle : {selectedProduct.noms_des_modeles_ou_references}</Text>
-                                <Text style={styles.modalText}>Identification : {selectedProduct.identification_des_produits}</Text>
-                                <Text style={styles.modalText}>Motif du Rappel : {selectedProduct.motif_du_rappel}</Text>
-                                <Text style={styles.modalText}>Risque : {selectedProduct.risques_encourus_par_le_consommateur}</Text>
-                                <Text style={styles.modalText}>Préconisations : {selectedProduct.preconisations_sanitaires}</Text>
-                                <Text style={styles.modalText}>Description Complémentaire : {selectedProduct.description_complementaire_du_risque}</Text>
-                                <Text style={styles.modalText}>Conduite à Tenir : {selectedProduct.conduites_a_tenir_par_le_consommateur}</Text>
-                                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                                    <Text style={styles.closeButtonText}>Fermer</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
-                    </View>
-                </Modal>
+    transparent={true}
+    visible={isModalVisible}
+    animationType="slide"
+    onRequestClose={closeModal}
+>
+    <View style={styles.modalContainer}>
+        {selectedProduct && (
+            <>
+                <Text style={styles.modalTitle}>Détails du Produit</Text>
+                
+                <Text style={styles.modalSectionTitle}>Catégorie</Text>
+                <Text style={styles.modalText}>{selectedProduct.categorie_de_produit}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Marque</Text>
+                <Text style={styles.modalText}>{selectedProduct.nom_de_la_marque_du_produit}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Modèle</Text>
+                <Text style={styles.modalText}>{selectedProduct.noms_des_modeles_ou_references}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Identification</Text>
+                <Text style={styles.modalText}>{selectedProduct.identification_des_produits}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Motif du Rappel</Text>
+                <Text style={styles.modalText}>{selectedProduct.motif_du_rappel}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Risque</Text>
+                <Text style={styles.modalText}>{selectedProduct.risques_encourus_par_le_consommateur}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Préconisations</Text>
+                <Text style={styles.modalText}>{selectedProduct.preconisations_sanitaires}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Description Complémentaire</Text>
+                <Text style={styles.modalText}>{selectedProduct.description_complementaire_du_risque}</Text>
+                
+                <Text style={styles.modalSectionTitle}>Conduite à Tenir</Text>
+                <Text style={styles.modalText}>{selectedProduct.conduites_a_tenir_par_le_consommateur}</Text>
+
+                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                    <Text style={styles.closeButtonText}>Fermer</Text>
+                </TouchableOpacity>
+            </>
+        )}
+    </View>
+</Modal>
+
 
                 {/* Modal Pas de produit rappelé */}
                 <Modal
@@ -186,7 +206,7 @@ const styles = StyleSheet.create({
         color: 'orange',  // Changez ici pour la couleur orange souhaitée
         marginTop: 10,
     },
-    
+
     modalText: {
         color: '#FFF',
         fontSize: 16,
