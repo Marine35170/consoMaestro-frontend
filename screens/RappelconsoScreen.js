@@ -56,7 +56,7 @@ const RappelConsoScreen = () => {
     }, []);
 
     return (
-        <ImageBackground source={require('../assets/backgroundRappelConso.png')} style={styles.background}> 
+        <ImageBackground source={require('../assets/backgroundRappelConso.png')} style={styles.background}>
             <View style={styles.container}>
                 <Image source={require('../assets/Squirrel/Heureux.png')} style={styles.squirrel} />
                 <Text style={styles.title}>Rappel Conso</Text>
@@ -71,50 +71,51 @@ const RappelConsoScreen = () => {
 
                 {/* Modal Détails du Produit */}
                 <Modal
-    transparent={true}
-    visible={isModalVisible}
-    animationType="slide"
-    onRequestClose={closeModal}
->
-    <View style={styles.modalContainer}>
-        {selectedProduct && (
-            <>
-                <Text style={styles.modalTitle}>Détails du Produit</Text>
-                
-                <Text style={styles.modalSectionTitle}>Catégorie</Text>
-                <Text style={styles.modalText}>{selectedProduct.categorie_de_produit}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Marque</Text>
-                <Text style={styles.modalText}>{selectedProduct.nom_de_la_marque_du_produit}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Modèle</Text>
-                <Text style={styles.modalText}>{selectedProduct.noms_des_modeles_ou_references}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Identification</Text>
-                <Text style={styles.modalText}>{selectedProduct.identification_des_produits}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Motif du Rappel</Text>
-                <Text style={styles.modalText}>{selectedProduct.motif_du_rappel}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Risque</Text>
-                <Text style={styles.modalText}>{selectedProduct.risques_encourus_par_le_consommateur}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Préconisations</Text>
-                <Text style={styles.modalText}>{selectedProduct.preconisations_sanitaires}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Description Complémentaire</Text>
-                <Text style={styles.modalText}>{selectedProduct.description_complementaire_du_risque}</Text>
-                
-                <Text style={styles.modalSectionTitle}>Conduite à Tenir</Text>
-                <Text style={styles.modalText}>{selectedProduct.conduites_a_tenir_par_le_consommateur}</Text>
+                    transparent={true}
+                    visible={isModalVisible}
+                    animationType="slide"
+                    onRequestClose={closeModal}
+                >
+                    <View style={styles.modalContainer}>
+                        {selectedProduct && (
+                            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                                <Text style={styles.modalTitle}>Détails du Produit</Text>
 
-                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                    <Text style={styles.closeButtonText}>Fermer</Text>
-                </TouchableOpacity>
-            </>
-        )}
-    </View>
-</Modal>
+                                <Text style={styles.modalSectionTitle}>Catégorie</Text>
+                                <Text style={styles.modalText}>{selectedProduct.categorie_de_produit}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Marque</Text>
+                                <Text style={styles.modalText}>{selectedProduct.nom_de_la_marque_du_produit}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Modèle</Text>
+                                <Text style={styles.modalText}>{selectedProduct.noms_des_modeles_ou_references}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Identification</Text>
+                                <Text style={styles.modalText}>{selectedProduct.identification_des_produits}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Motif du Rappel</Text>
+                                <Text style={styles.modalText}>{selectedProduct.motif_du_rappel}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Risque</Text>
+                                <Text style={styles.modalText}>{selectedProduct.risques_encourus_par_le_consommateur}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Préconisations</Text>
+                                <Text style={styles.modalText}>{selectedProduct.preconisations_sanitaires}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Description Complémentaire</Text>
+                                <Text style={styles.modalText}>{selectedProduct.description_complementaire_du_risque}</Text>
+
+                                <Text style={styles.modalSectionTitle}>Conduite à Tenir</Text>
+                                <Text style={styles.modalText}>{selectedProduct.conduites_a_tenir_par_le_consommateur}</Text>
+
+                                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                                    <Text style={styles.closeButtonText}>Fermer</Text>
+                                </TouchableOpacity>
+                            </ScrollView>
+                        )}
+                    </View>
+                </Modal>
+
 
 
                 {/* Modal Pas de produit rappelé */}
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#FF4C4C',
         marginBottom: 20,
     },
     resultsContainer: {
@@ -186,6 +187,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
+
+    scrollContainer: {
+        flexGrow: 1,
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 30,
+    },
+
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
