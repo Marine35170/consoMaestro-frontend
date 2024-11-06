@@ -210,6 +210,7 @@ const InventaireScreen = ({ route }) => {
 
         return (
           <View style={styles.ProductLineContainer} key={i}>
+            
             <Text style={styles.ProductTitle}>{data.name}</Text>
 
             {/* Conteneur pour la date limite de consommation avec couleur dynamique */}
