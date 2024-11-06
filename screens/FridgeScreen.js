@@ -39,8 +39,10 @@ const FridgeScreen = () => {
         );
         const data = await response.json();
         if (data.result) {
+           // Tri des produits par DLC (date la plus proche d'aujourd'hui en premier)
+           const sortedProducts = data.data.sort((a, b) => new Date(a.dlc) - new Date(b.dlc));
           console.log("data from ", data);
-          setProductsInfo(data.data); // Met à jour l'état avec les informations des produits
+          setProductsInfo(sortedProducts); // Met à jour l'état avec les informations des produits
         } else {
           console.error(
             "Erreur lors de la récupération des produits:",

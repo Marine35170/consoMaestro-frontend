@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
 
-
 const RappelConsoScreen = () => {
-    const [searchResults, setSearchResults] = useState([]); // Résultats de rappel récupérés depuis l'API
-    const [selectedProduct, setSelectedProduct] = useState(null); // Produit sélectionné pour le modal
+    const [searchResults, setSearchResults] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isNoRecallModalVisible, setNoRecallModalVisible] = useState(false); // Modal pour les rappels inexistants
     const [error, setError] = useState('');
 
     const userId = useSelector((state) => state.user.id);
 
-    console.log ("tets4" , userId);
     // Ouvre le modal avec les détails du produit
     const openModal = (product) => {
         setSelectedProduct(product);
@@ -23,26 +22,34 @@ const RappelConsoScreen = () => {
         setSelectedProduct(null);
         setModalVisible(false);
     };
-    console.log("test3" , searchResults);
+
+    // Ferme le modal "Pas de produit rappelé"
+    const closeNoRecallModal = () => {
+        setNoRecallModalVisible(false);
+    };
+
     // Fonction pour récupérer les rappels depuis l'API
     const fetchRecalls = async () => {
         try {
             const response = await fetch(`http://conso-maestro-backend.vercel.app/rappels/check-recall/${userId}`);
             const data = await response.json();
-            console.log("test0" , data );
-            if (data) {  // data.result : réponse si api a fonctionné   data.recalls  data de l'api récupérée
-                setSearchResults(data.recalls); // Utilisez `data.recalls` pour accéder aux produits rappelés
-                console.log("test1" , searchResults);
+            if (data && data.recalls) {
+                // Filtrer les doublons en utilisant un Set basé sur un identifiant unique, ici nom_de_la_marque_du_produit
+                const uniqueRecalls = data.recalls.filter((recall, index, self) =>
+                    index === self.findIndex((r) => (
+                        r.nom_de_la_marque_du_produit === recall.nom_de_la_marque_du_produit
+                    ))
+                );
+                setSearchResults(uniqueRecalls); // Stocker les résultats uniques
             } else {
-                setError("Aucun rappel trouvé.");
-                console.log("test2" , searchResults);
+                setSearchResults([]); // Réinitialiser les résultats si aucun rappel trouvé
+                setNoRecallModalVisible(true); // Afficher le modal "Pas de produit rappelé"
             }
         } catch (err) {
             console.error("Erreur lors de la récupération des données :", err);
+            setError("Erreur lors de la récupération des données.");
         }
     };
-
-    // Exécute `fetchRecalls` une fois au montage du composant
 
     useEffect(() => {
         fetchRecalls();
@@ -62,6 +69,7 @@ const RappelConsoScreen = () => {
                     ))}
                 </View>
 
+                {/* Modal Détails du Produit */}
                 <Modal
                     transparent={true}
                     visible={isModalVisible}
@@ -69,7 +77,7 @@ const RappelConsoScreen = () => {
                     onRequestClose={closeModal}
                 >
                     <View style={styles.modalContainer}>
-                        {selectedProduct && (  // mettre un overflow pour le scroll , changer la police des titres et des textes, ajouter de l'espace,
+                        {selectedProduct && (
                             <>
                                 <Text style={styles.modalTitle}>Détails du Produit</Text>
                                 <Text style={styles.modalText}>Catégorie : {selectedProduct.categorie_de_produit}</Text>
@@ -86,6 +94,21 @@ const RappelConsoScreen = () => {
                                 </TouchableOpacity>
                             </>
                         )}
+                    </View>
+                </Modal>
+
+                {/* Modal Pas de produit rappelé */}
+                <Modal
+                    transparent={true}
+                    visible={isNoRecallModalVisible}
+                    animationType="slide"
+                    onRequestClose={closeNoRecallModal}
+                >
+                    <View style={styles.noRecallModalContainer}>
+                        <Text style={styles.noRecallModalText}>Pas de produit rappelé</Text>
+                        <TouchableOpacity style={styles.closeButton} onPress={closeNoRecallModal}>
+                            <Text style={styles.closeButtonText}>Fermer</Text>
+                        </TouchableOpacity>
                     </View>
                 </Modal>
             </View>
@@ -118,17 +141,16 @@ const styles = StyleSheet.create({
         color: '#333',
         marginBottom: 20,
     },
-    resultsContainerContainer: {
+    resultsContainer: {
         borderWidth: 1,
         backgroundColor: "#A77B5A",
         borderColor: "#A77B5A",
-        width: "85%", // Largeur relative à l'écran
-        height: "65%", // Hauteur relative à l'écran
+        width: "85%",
+        height: "65%",
         borderRadius: 10,
         padding: 10,
         marginBottom: 20,
-      },
-      
+    },
     resultItem: {
         backgroundColor: '#fff',
         padding: 15,
@@ -161,6 +183,18 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 16,
         marginBottom: 5,
+    },
+    noRecallModalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        padding: 20,
+    },
+    noRecallModalText: {
+        color: '#FFF',
+        fontSize: 18,
+        marginBottom: 20,
     },
     closeButton: {
         backgroundColor: '#A77B5A',
