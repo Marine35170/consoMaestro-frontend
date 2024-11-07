@@ -48,7 +48,6 @@ export default function HomeScreen() {
 
     const fetchRecalls = async () => {
       try {
-        const Id = await AsyncStorage.getItem("userId");
 
         const response = await fetch(`https://conso-maestro-backend.vercel.app/rappels/check-recall/${userId}`);
         const data = await response.json();

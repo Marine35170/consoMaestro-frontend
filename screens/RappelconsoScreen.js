@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const RappelConsoScreen = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -44,7 +42,6 @@ const RappelConsoScreen = () => {
                     ))
                 );
                 
-                console.log(data.productId)
                 setSearchResults(uniqueRecalls); // Stocker les résultats uniques
             } else {
                 setSearchResults([]); // Réinitialiser les résultats si aucun rappel trouvé
