@@ -107,9 +107,6 @@ const RappelConsoScreen = () => {
                                 <Text style={styles.modalSectionTitle}>Préconisations</Text>
                                 <Text style={styles.modalText}>{selectedProduct.preconisations_sanitaires}</Text>
 
-                                <Text style={styles.modalSectionTitle}>Description Complémentaire</Text>
-                                <Text style={styles.modalText}>{selectedProduct.description_complementaire_du_risque}</Text>
-
                                 <Text style={styles.modalSectionTitleImportant}>Conduite à Tenir</Text>
 
                                 <Text style={styles.modalText}>{selectedProduct.conduites_a_tenir_par_le_consommateur}</Text>
