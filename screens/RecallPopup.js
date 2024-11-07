@@ -15,7 +15,7 @@ const RecallPopup = ({ isVisible, onClose, onViewRecalls, recallProduct }) => {
     <Modal transparent={true} visible={isVisible} animationType="slide">
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Alerte sécurité sanitaire :</Text>
+          <Text style={styles.modalTitle}>Alerte de sécurité sanitaire :</Text>
           <Text style={styles.modalText}>{recallProduct}</Text>
 
           <View style={styles.buttonRow}>
