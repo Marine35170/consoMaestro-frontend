@@ -173,7 +173,7 @@ const RecipesScreen = () => {
                         style={styles.removeButton}
                       >
                         <Ionicons name="trash" size={24} color="red" />
-                        <Text style={styles.removeButtonText}>Retirer</Text>
+                        <Text style={styles.removeButtonText}>Supprimer</Text>
                       </TouchableOpacity>
                     </View>
                   ))
@@ -257,9 +257,10 @@ export default RecipesScreen;
         color: '#FFF',
       },
       recipeImage: {
-        width: '82%',
+        width: '100%',
         height: 150,
         borderRadius: 10,
+        alignSelf: 'center',
       },
       modalContainer: {
         flex: 1,
@@ -268,23 +269,41 @@ export default RecipesScreen;
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
       },
       modalContent: {
-        backgroundColor: '#FFF',
+        backgroundColor: '#A77B5A',
         borderRadius: 10,
         padding: 20,
         width: '80%',
         maxHeight: '80%',
+        alignItems: 'center',
       },
       modalTitle: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
+        color: '#FFF',
       },
       favoriteCard: {
         marginBottom: 15,
+        alignItems: 'center',
       },
       noFavoritesText: {
         fontSize: 16,
         fontStyle: 'italic',
+      },
+      removeButton: {
+        flexDirection: 'row',
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: '#F0672D', 
+        marginTop: 10,
+        alignSelf: 'center', 
+      },
+      removeButtonText: {
+        fontSize: 16,
+        color: '#FFF',
+        marginLeft: 5,
       },
       closeButton: {
         marginTop: 20,
@@ -292,6 +311,6 @@ export default RecipesScreen;
       },
       closeButtonText: {
         fontSize: 16,
-        color: 'blue',
+        color: 'FFF',
       },
     });
