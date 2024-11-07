@@ -88,10 +88,17 @@ export default function HomeScreen() {
     >
       <View style={styles.container}>
         <View style={styles.header}>
+          <View style={styles.headerLogo}>
           <Image
             source={require("../assets/Squirrel/Heureux.png")}
             style={styles.squirrel}
           />
+          {hasRecall && (
+          <TouchableOpacity onPress={togglePopup} >
+            <Image source={require("../assets/attention.png")} style={styles.alertIcon} />
+          </TouchableOpacity>
+        )}
+        </View>
           <View style={styles.usernameline}>
             <Text style={styles.username}>Bonjour</Text>
             <Text style={styles.colorusername}>{username}</Text>
@@ -114,11 +121,6 @@ export default function HomeScreen() {
           />
         </TouchableOpacity>
         {/* Image d'alerte pour ouvrir le pop-up si un rappel est disponible */}
-        {hasRecall && (
-          <TouchableOpacity onPress={togglePopup} style={styles.alertIconContainer}>
-            <Image source={require("../assets/attention.png")} style={styles.alertIcon} />
-          </TouchableOpacity>
-        )}
 
         {/* Afficher le pop-up de rappel si isPopupVisible est vrai */}
         {hasRecall && (
@@ -152,10 +154,12 @@ const styles = StyleSheet.create({
     height: 60,
     top: -15,
     left: 3,
+    marginRight: 10,
   },
   usernameline: {
     flexDirection: 'row',
     marginRight: 20,
+    top: -15,
 
   },
   colorusername: {
@@ -240,15 +244,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginRight: 4,
   },
-
-  alertIconContainer: {
-    position: "absolute",
-    top: 20,
-    right: 20,
-  },
   alertIcon: {
     width: 40,
     height: 40,
+    top: -15,
+    marginRight: 20,
+  },
+  headerLogo: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 
 });
