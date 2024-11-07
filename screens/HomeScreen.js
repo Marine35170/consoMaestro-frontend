@@ -61,7 +61,7 @@ export default function HomeScreen() {
 
         if (data && data.recalls && data.recalls.length > 0) {
           setHasRecall(true);
-          setRecallProduct(data.recalls[0].nom_de_la_marque_du_produit); // Exemple : première marque rappelée
+          setRecallProduct(data.recalls[0].noms_des_modeles_ou_references); // Exemple : première marque rappelée
         } else {
           setHasRecall(false);
         }
@@ -245,10 +245,10 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   alertIcon: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
     top: -15,
-    marginRight: 20,
+    marginRight: 10,
   },
   headerLogo: {
     flexDirection: "row",
