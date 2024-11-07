@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, Modal, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View, } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import RecallPopup from "./RecallPopup";
 
 export default function HomeScreen() {
   // Hooks et état
   const navigation = useNavigation();
   const username = useSelector((state) => state.user.username); // Récupération du nom d'utilisateur depuis le store Redux
+  const userId = useSelector((state) => state.user.id); // Récupération de l'user ID depuis le store Redux
   const isFocused = useIsFocused(); // Vérifie si l'écran est en focus
   const [advicesInfo, setAdvicesInfo] = useState({
     titre: "",
     description: "",
   }); // État pour stocker les informations des conseils
-  const [recallProduct, setRecallProduct] = useState([]);// État pour le produit rappelé
-  const [isPopupVisible, setPopupVisible] = useState(false); // État pour afficher la popup
-  const [modalContent, setModalContent] = useState(""); // Pour afficher les produits concernés
-  const userId = useSelector((state) => state.user.id);
+  const [hasRecall, setHasRecall] = useState(false); // Vérifier si un rappel existe
+  const [recallProduct, setRecallProduct] = useState(""); // Nom du produit rappelé pour le pop-up
+  const [isPopupVisible, setPopupVisible] = useState(false); // Contrôle de la visibilité du pop-up
+
 
   // Effet pour récupérer les conseils lorsque l'écran est en focus
   useEffect(() => {
@@ -44,61 +46,39 @@ export default function HomeScreen() {
         });
     };
 
-    // pop up pour les rappels conso 
+    fetchAdvice(); // Appel de la fonction fetchAdvice
+  }, [isFocused]);
 
+
+  //  Vérifier l'existence de rappels dans rappel conso 
+
+
+  useEffect(() => {
     const fetchRecalls = async () => {
       try {
-        const Id = await AsyncStorage.getItem("userId");
-
         const response = await fetch(`https://conso-maestro-backend.vercel.app/rappels/check-recall/${userId}`);
         const data = await response.json();
 
-        if (data && data.recalls) {
-          // Récupère tous les noms des produits rappelés
-          setRecallProduct(data.recalls[0].noms_des_modeles_ou_references);
-          setPopupVisible(true); // Affiche la popup si un rappel est trouvé
+        if (data && data.recalls && data.recalls.length > 0) {
+          setHasRecall(true);
+          setRecallProduct(data.recalls[0].nom_de_la_marque_du_produit); // Exemple : première marque rappelée
+        } else {
+          setHasRecall(false);
         }
       } catch (error) {
-        console.error("Erreur lors de la vérification des rappels de produit :", error);
+        console.error("Erreur lors de la récupération des rappels :", error);
       }
     };
-    // Ne charger les rappels que si l'écran est focus
-    if (isFocused) {
-      fetchAdvice();
-      fetchRecalls();
-    }
 
-    // Si l'écran devient inactif, vous pouvez réinitialiser l'état pour éviter que l'image de rappel persiste
-    return () => {
-      setRecallProduct(null);
-      setPopupVisible(false);
-    };
+    fetchRecalls();
   }, [isFocused]);
 
-  // Fonction pour naviguer vers l'écran de rappel conso
-  const handleRecallPress = () => {
-    setModalContent(recallProduct); // Affiche les produits concernés dans la modal
-    setPopupVisible(false); // Ferme la popup initiale
-  };
+  const togglePopup = () => setPopupVisible(!isPopupVisible);
 
   // Fonction pour naviguer vers l'écran de scan
   const handleScanPress = () => {
     navigation.navigate("ScanScreen"); // Navigation vers la page de scan de produit
   };
-
-  // Fonction pour naviguer vers la page des rappels Conso
-  const handleViewRecalls = () => {
-    navigation.navigate("RappelConsoScreen"); // Redirige vers la page des rappels Conso
-    
-  };
-
-  // Perme de réutiliser la pop up warning comme on veut
-  useEffect(() => {
-    if (isFocused) {
-      setPopupVisible(false); // Réinitialise la popup à chaque fois que l'écran devient actif
-      setModalContent(""); // Réinitialise le contenu de la modal
-    }
-  }, [isFocused]);
 
 
   return (
@@ -133,45 +113,20 @@ export default function HomeScreen() {
             style={styles.scanImage}
           />
         </TouchableOpacity>
-
-        {/* Image d'alerte persistante */}
-        {recallProduct && (
-          <TouchableOpacity onPress={handleRecallPress} style={styles.alertContainer}>
-            <Image
-              source={require("../assets/attention.png")}
-              style={styles.alertImage}
-            />
+        {/* Image d'alerte pour ouvrir le pop-up si un rappel est disponible */}
+        {hasRecall && (
+          <TouchableOpacity onPress={togglePopup} style={styles.alertIconContainer}>
+            <Image source={require("../assets/attention.png")} style={styles.alertIcon} />
           </TouchableOpacity>
         )}
 
-        {/* Modal pour afficher les produits concernés */}
-  
-        {modalContent && (
-          <Modal
-            transparent={true}
-            visible={true}
-            animationType="slide"
-            onRequestClose={() => setModalContent("")}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Alerte sécurité sanitaire :</Text>
-
-                
-                <Text style={styles.modalText}>{modalContent}</Text>
-
-                <View style={styles.buttonRow}>
-                  <TouchableOpacity style={styles.closeButton} onPress={handleViewRecalls}>
-                    <Text style={styles.closeButtonText}>Rappels Conso</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.closeButton} onPress={() => setModalContent("")}>
-                    <Text style={styles.closeButtonText}>Fermer</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
+        {/* Afficher le pop-up de rappel si isPopupVisible est vrai */}
+        {hasRecall && (
+          <RecallPopup
+            isVisible={isPopupVisible}
+            onClose={togglePopup}
+            recallProduct={recallProduct}
+          />
         )}
 
       </View>
@@ -195,7 +150,7 @@ const styles = StyleSheet.create({
   squirrel: {
     width: 60,
     height: 60,
-    top: 1,
+    top: -15,
     left: 3,
   },
   usernameline: {
@@ -286,103 +241,14 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
 
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  alertIconContainer: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+  },
+  alertIcon: {
+    width: 40,
+    height: 40,
   },
 
-  alertImage: {
-    position: 'absolute',
-    width: 60,  // Taille de l'image (ajustez selon vos besoins)
-    height: 60,
-    top: -695,
-    right: 35,
-    
-  },
-
-  alertContainer: {
-    position: 'absolute',
-    bottom: 20,  // Cette valeur définit à quel point l'image sera éloignée du bas
-    justifyContent: "center",
-    alignItems: "center"
-  },
-
-  recallListContainer: {
-    marginTop: 10,
-    padding: 10,
-    maxHeight: 200,  // Limite la hauteur de la liste de produits
-    flexGrow: 1,  // Assurez-vous que le ScrollView s'étend au besoin
-  },
-
-  recallProductText: {
-    fontSize: 16,
-    color: "#664C25",  // Couleur du texte
-    marginVertical: 5,
-    paddingVertical: 5,  // Un peu d'espace vertical
-    paddingHorizontal: 10,  // Un peu d'espace horizontal
-    borderWidth: 1,  // Bordure orange autour de chaque produit
-    borderColor: "#E56400",  // Bordure orange
-    backgroundColor: "transparent",  // Fond transparent
-    borderRadius: 5,  // Bordure arrondie
-    fontWeight: "bold",
-  },
-
-  modalText: {
-    fontSize: 18,
-    color: "#E56400",
-    marginBottom: 10,
-    textAlign: "center",
-    
-
-  },
-  modalContent: {
-    backgroundColor: "#FAF9F3",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    width: "80%",
-    maxHeight: "80%",  // Cette hauteur limite la taille de la modal
-  },
-  
-  scrollView: {
-    flexGrow: 1, // Permet au ScrollView d'occuper tout l'espace disponible
-    width: "100%", // Occupe toute la largeur disponible
-  },
-
-  modalTitle:{
-    fontSize: 18,
-    color: "#E56400",
-    marginBottom: 10,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-
-  modalText: {
-    fontSize: 15,
-    textAlign: "center",
-  },
- 
-  buttonRow: {
-    flexDirection: 'row', // Met les éléments sur la même ligne
-    justifyContent: 'center', // Espacement égal entre les boutons (ou 'center' pour les centrer)
-    width: '80%', // Largeur du conteneur pour que les boutons aient un espacement équilibré
-    marginTop: 20, // Espacement au-dessus
-    gap: 20,
-  },
-
-  closeButton: {
-    minWidth: 120,
-    backgroundColor: "#A77B5A",
-    padding: 10,
-    paddingHorizontal: 3,
-    borderRadius: 5,
-    fontSize: 15,
-  },
-  closeButtonText: {
-    color: "#FFF",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
 });
