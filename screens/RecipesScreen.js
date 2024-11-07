@@ -63,7 +63,7 @@ const RecipesScreen = () => {
 
   // Fonction pour basculer l'état de favori d'une recette
   const toggleFavorite = async (recipe) => {
-    const { id, title, image } = recipe;
+    const { id, title, image, description, products } = recipe;
     const isFavorite = favorites.includes(id);
 
     try {
@@ -82,17 +82,19 @@ const RecipesScreen = () => {
           console.error('Erreur lors de la suppression de la recette des favoris:', errorText);
         }
       } else {
-        console.log('Données envoyées à l\'API:', { userId, recipeId: id, title, image, description: recipe.description, products: recipe.products });
+          const products = recipe.extendedIngredients.map((ingredient) => ingredient.name);
+          console.log('Données envoyées à l\'API:', { userId, recipeId: id, title, image, description: recipe.description, products });
         // Requête POST pour ajouter la recette aux favoris
         const response = await fetch('https://conso-maestro-backend.vercel.app/recipes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, recipeId: id, title, image, description: recipe.description, products: recipe.products })
+          body: JSON.stringify({ userId, recipeId: id, title, image, description: recipe.description, products })
         });
 
         if (response.ok) {
           setFavorites((prevFavorites) => [...prevFavorites, id]); // Ajoute l'ID aux favoris
         } else {
+          const errorText = await response.text();
           console.error('Erreur lors de la sauvegarde de la recette mise en favori');
         }
       }
@@ -136,9 +138,9 @@ const RecipesScreen = () => {
                   onPress={() => toggleFavorite(item)} // Gestion des favoris
                 >
                   <Ionicons
-                    name={favorites[item.id] ? 'heart' : 'heart-outline'} // Icône cœur remplie si favori
+                    name={favorites.includes(item.id) ? 'heart' : 'heart-outline'} // Utilise `includes` pour vérifier le statut favori
                     size={24}
-                    color={favorites[item.id] ? 'red' : 'gray'} // Couleur en fonction du favori
+                    color={favorites.includes(item.id) ? 'red' : 'gray'} // Met à jour la couleur en fonction du statut de favori
                   />
                 </TouchableOpacity>
               </View>
