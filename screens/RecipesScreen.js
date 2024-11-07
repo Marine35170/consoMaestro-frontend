@@ -74,9 +74,11 @@ const RecipesScreen = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId })
         });
+        
 
         if (response.ok) {
           setFavorites((prevFavorites) => prevFavorites.filter(favId => favId !== id)); // Retire l'ID des favoris
+          console.log('Recette retirée des favoris:', id);
         } else {
           const errorText = await response.text();
           console.error('Erreur lors de la suppression de la recette des favoris:', errorText);

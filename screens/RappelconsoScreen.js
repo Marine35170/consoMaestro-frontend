@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { useIsFocused } from "@react-navigation/native";
 
 const RappelConsoScreen = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -8,7 +9,7 @@ const RappelConsoScreen = () => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [isNoRecallModalVisible, setNoRecallModalVisible] = useState(false); // Modal pour les rappels inexistants
     const [error, setError] = useState('');
-   
+    const isFocused = useIsFocused(); // Vérifie si l'écran est en focus
 
     const userId = useSelector((state) => state.user.id);
 
@@ -55,7 +56,7 @@ const RappelConsoScreen = () => {
 
     useEffect(() => {
         fetchRecalls();
-    }, []);
+    }, [isFocused]);
 
    
 

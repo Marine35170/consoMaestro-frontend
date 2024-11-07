@@ -255,7 +255,7 @@ const InventaireScreen = ({ route }) => {
       return (
         <View style={styles.stocksButtonsContainer}>
           <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
-            <Text style={styles.buttonText}>Mes Placards</Text>
+            <Text style={styles.buttonText}>Mon Placard</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={handleCongeloPress}>
             <Text style={styles.buttonText}>Mon Congelo</Text>
@@ -269,7 +269,7 @@ const InventaireScreen = ({ route }) => {
             <Text style={styles.buttonText}>Mon Frigo</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={handlePlacardPress}>
-            <Text style={styles.buttonText}>Mes Placards</Text>
+            <Text style={styles.buttonText}>Mon Placard</Text>
           </TouchableOpacity>
         </View>
       );
@@ -280,7 +280,7 @@ const InventaireScreen = ({ route }) => {
             <Text style={styles.buttonText}>Mon Congelo</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={handleFridgePress}>
-            <Text style={styles.buttonText}>Mes Frigo</Text>
+            <Text style={styles.buttonText}>Mon Frigo</Text>
           </TouchableOpacity>
         </View>
       );
@@ -564,7 +564,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: "Hitchcut-Regular",
-    fontWeight: "bold",
     textAlign: "center",
     color: "#E56400",
   },
