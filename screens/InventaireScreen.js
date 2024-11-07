@@ -346,7 +346,7 @@ const InventaireScreen = ({ route }) => {
           />
           <Text style={styles.modalTitle}>
             Oh non, ton produit est périmé, tu devrais le mettre au congelateur
-            si possible!
+            si il n'est pas trop tard! attention ne prend pas de risque!
           </Text>
           <TouchableOpacity
             style={styles.closeButton}
@@ -563,6 +563,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   buttonText: {
+    fontFamily: "Hitchcut-Regular",
     fontWeight: "bold",
     textAlign: "center",
     color: "#E56400",

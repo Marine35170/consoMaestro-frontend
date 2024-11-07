@@ -119,7 +119,7 @@ const RecipesScreen = () => {
             <Ionicons name="heart" size={32} color="red" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.textfavories}>Mes favories</Text>
+        <Text style={styles.textfavories}>Mes favorites</Text>
         <Text style={styles.text}>Idées recettes</Text>
         {loading ? (
           <ActivityIndicator size="large" color="#FFF" /> // Affichage de l'indicateur de chargement si `loading` est true
