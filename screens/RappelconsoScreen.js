@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { View, Text, StyleSheet, Image, ImageBackground, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const RappelConsoScreen = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -8,6 +10,7 @@ const RappelConsoScreen = () => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [isNoRecallModalVisible, setNoRecallModalVisible] = useState(false); // Modal pour les rappels inexistants
     const [error, setError] = useState('');
+   
 
     const userId = useSelector((state) => state.user.id);
 
@@ -40,6 +43,8 @@ const RappelConsoScreen = () => {
                         r.nom_de_la_marque_du_produit === recall.nom_de_la_marque_du_produit
                     ))
                 );
+                
+                console.log(data.productId)
                 setSearchResults(uniqueRecalls); // Stocker les résultats uniques
             } else {
                 setSearchResults([]); // Réinitialiser les résultats si aucun rappel trouvé
@@ -54,6 +59,8 @@ const RappelConsoScreen = () => {
     useEffect(() => {
         fetchRecalls();
     }, []);
+
+   
 
     return (
         <ImageBackground source={require('../assets/backgroundRappelConso.png')} style={styles.background}>
@@ -70,6 +77,7 @@ const RappelConsoScreen = () => {
                         ))}
                     </ScrollView>
                 </View>
+                
 
                 {/* Modal Détails du Produit */}
                 <Modal
@@ -80,16 +88,14 @@ const RappelConsoScreen = () => {
                 >
                     <View style={styles.modalContainer}>
                         {selectedProduct && (
+                            <View style={styles.modalContent}>
                             <ScrollView contentContainerStyle={styles.scrollContainer}>
                                 <Text style={styles.modalTitle}>Détails du Produit</Text>
-
-                                <Text style={styles.modalSectionTitle}>Catégorie</Text>
-                                <Text style={styles.modalText}>{selectedProduct.categorie_de_produit}</Text>
 
                                 <Text style={styles.modalSectionTitle}>Marque</Text>
                                 <Text style={styles.modalText}>{selectedProduct.nom_de_la_marque_du_produit}</Text>
 
-                                <Text style={styles.modalSectionTitle}>Modèle</Text>
+                                <Text style={styles.modalSectionTitle}>Gamme</Text>
                                 <Text style={styles.modalText}>{selectedProduct.noms_des_modeles_ou_references}</Text>
 
                                 <Text style={styles.modalSectionTitle}>Identification</Text>
@@ -107,13 +113,15 @@ const RappelConsoScreen = () => {
                                 <Text style={styles.modalSectionTitle}>Description Complémentaire</Text>
                                 <Text style={styles.modalText}>{selectedProduct.description_complementaire_du_risque}</Text>
 
-                                <Text style={styles.modalSectionTitle}>Conduite à Tenir</Text>
+                                <Text style={styles.modalSectionTitleImportant}>Conduite à Tenir</Text>
+
                                 <Text style={styles.modalText}>{selectedProduct.conduites_a_tenir_par_le_consommateur}</Text>
 
                                 <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                                     <Text style={styles.closeButtonText}>Fermer</Text>
                                 </TouchableOpacity>
                             </ScrollView>
+                            </View>
                         )}
                     </View>
                 </Modal>
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#E56400",
     },
-
+    
     scrollContainer: {
         flexGrow: 1,
         alignItems: 'center',
@@ -205,12 +213,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.80)',
-        padding: 20,
+       
     },
+    modalContent: {
+        backgroundColor: "#FAF9F3",
+        padding: 15 ,
+        borderRadius: 10,
+        alignItems: "center",
+        width: "80%",
+        maxHeight: "80%",  // Cette hauteur limite la taille de la modal
+      },
     modalTitle: {
+        fontFamily: "Hitchcut-Regular",
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#FFF',
+        color: '#FF4B4C',
         marginBottom: 20,
     },
 
@@ -220,9 +237,16 @@ const styles = StyleSheet.create({
         color: '#E56400',
         marginTop: 10,
     },
+    modalSectionTitleImportant:{
+        fontFamily: "Hitchcut-Regular",
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#FF4B4C',
+        marginTop: 10,
+        paddingVertical: 20,
+    },
 
     modalText: {
-        color: '#FFF',
         fontSize: 16,
         marginBottom: 5,
         fontWeight: 'bold'
@@ -249,5 +273,6 @@ const styles = StyleSheet.create({
     closeButtonText: {
         color: '#FFF',
         fontSize: 16,
+        fontWeight: 'bold'
     },
 });

@@ -41,8 +41,7 @@ const MenuScreen = () => {
                 <View style={styles.alertContainer}>
                     <TouchableOpacity style={styles.buttonDGCCRF} onPress={handleRappelConsoPress}>
                         <View style={styles.textContainer}>
-                            <Text style={styles.buttonText}>Mes rappels conso</Text>
-                            <Text style={styles.buttonText}>DGCCRF</Text>
+                            <Text style={styles.buttonText}>Mes rappels conso DGCCRF</Text>
                         </View>
                     </TouchableOpacity>
 
@@ -132,7 +131,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 10,
-        marginTop: 30,
+        marginTop: 20,
         marginBottom: 30,
         width: 300,
         alignItems: 'center', // Centre horizontalement le texte
@@ -224,7 +223,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: "bold",
-
 
     },
     iconAndText: {

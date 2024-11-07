@@ -89,6 +89,7 @@ export default function HomeScreen() {
   // Fonction pour naviguer vers la page des rappels Conso
   const handleViewRecalls = () => {
     navigation.navigate("RappelConsoScreen"); // Redirige vers la page des rappels Conso
+    
   };
 
   // Perme de réutiliser la pop up warning comme on veut
@@ -154,7 +155,7 @@ export default function HomeScreen() {
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalText}>Produits concernés :</Text>
+                <Text style={styles.modalTitle}>Alerte sécurité sanitaire :</Text>
 
                 
                 <Text style={styles.modalText}>{modalContent}</Text>
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
   squirrel: {
     width: 60,
     height: 60,
-    top: -15,
+    top: 1,
     left: 3,
   },
   usernameline: {
@@ -293,10 +294,12 @@ const styles = StyleSheet.create({
   },
 
   alertImage: {
+    position: 'absolute',
     width: 60,  // Taille de l'image (ajustez selon vos besoins)
     height: 60,
-    position: 'absolute', // Position absolue pour la fixer
-    bottom: 2, // Positionner l'image à 20 unités du bas de l'écran
+    top: -695,
+    right: 35,
+    
   },
 
   alertContainer: {
@@ -323,6 +326,7 @@ const styles = StyleSheet.create({
     borderColor: "#E56400",  // Bordure orange
     backgroundColor: "transparent",  // Fond transparent
     borderRadius: 5,  // Bordure arrondie
+    fontWeight: "bold",
   },
 
   modalText: {
@@ -330,6 +334,8 @@ const styles = StyleSheet.create({
     color: "#E56400",
     marginBottom: 10,
     textAlign: "center",
+    
+
   },
   modalContent: {
     backgroundColor: "#FAF9F3",
@@ -345,12 +351,19 @@ const styles = StyleSheet.create({
     width: "100%", // Occupe toute la largeur disponible
   },
 
-  modalText: {
+  modalTitle:{
     fontSize: 18,
     color: "#E56400",
     marginBottom: 10,
     textAlign: "center",
+    fontWeight: "bold",
   },
+
+  modalText: {
+    fontSize: 15,
+    textAlign: "center",
+  },
+ 
   buttonRow: {
     flexDirection: 'row', // Met les éléments sur la même ligne
     justifyContent: 'center', // Espacement égal entre les boutons (ou 'center' pour les centrer)
@@ -358,13 +371,18 @@ const styles = StyleSheet.create({
     marginTop: 20, // Espacement au-dessus
     gap: 20,
   },
+
   closeButton: {
+    minWidth: 120,
     backgroundColor: "#A77B5A",
     padding: 10,
+    paddingHorizontal: 3,
     borderRadius: 5,
+    fontSize: 15,
   },
   closeButtonText: {
     color: "#FFF",
-    fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });
