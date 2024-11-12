@@ -43,7 +43,7 @@ const RappelConsoScreen = () => {
                     ))
                 );
                 
-                setSearchResults(uniqueRecalls); // Stocker les résultats uniques
+                setSearchResults(uniqueRecalls); // Stocker les résultats uniques/
             } else {
                 setSearchResults([]); // Réinitialiser les résultats si aucun rappel trouvé
                 setNoRecallModalVisible(true); // Afficher le modal "Pas de produit rappelé"
