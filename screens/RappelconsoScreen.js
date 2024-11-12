@@ -25,7 +25,7 @@ const RappelConsoScreen = () => {
         setModalVisible(false);
     };
 
-    // Ferme le modal "Pas de produit rappelé"
+    // Ferme le modal "Pas de produit rappelé".
     const closeNoRecallModal = () => {
         setNoRecallModalVisible(false);
     };
