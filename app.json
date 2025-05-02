@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "ConsoMaestro-Frontend",
-    "slug": "ConsoMaestro-Frontend",
+    "newArchEnabled": true,
+    "name": "Panier Futé",
+    "slug": "panier-fute",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,24 +13,29 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kervella.panierfute"
     },
     "android": {
+      "package": "com.kervella.panierfute",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "expo-font",
-        {
-          "fonts": ["path/to/file.ttf"]
-        }
-      ]
-    ]
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "82a7dc07-f37b-402a-a50a-d7c4b5521c25"
+      }
+    }
   }
 }
