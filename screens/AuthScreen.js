@@ -24,10 +24,7 @@ import {
 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
-import {
-  addUserIdToStore,
-  addUsernameToStore,
-} from "../reducers/userReducer";
+import { addUserIdToStore, addUsernameToStore } from "../reducers/userReducer";
 import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
@@ -58,10 +55,10 @@ export default function AuthScreen() {
         useNativeDriver: true,
       }).start();
     };
-  
+
     const showSub = Keyboard.addListener("keyboardDidShow", onShow);
     const hideSub = Keyboard.addListener("keyboardDidHide", onHide);
-  
+
     return () => {
       showSub.remove();
       hideSub.remove();
@@ -78,13 +75,13 @@ export default function AuthScreen() {
 
   // --- Handlers ---
   const handleSignIn = async () => {
-    const username = loginUsername.trim().toLowerCase();;
+    const username = loginUsername.trim().toLowerCase();
     const password = loginPassword.trim();
-  
+
     if (!username || !password) {
       return Alert.alert("Erreur", "Veuillez renseigner tous les champs.");
     }
-  
+
     try {
       const res = await fetch(
         "https://conso-maestro-backend-eight.vercel.app/users/signin",
@@ -96,30 +93,30 @@ export default function AuthScreen() {
       );
       const data = await res.json();
       console.log("returned signin data:", data);
-  
+
       if (!data.result) {
         return Alert.alert("Erreur", data.error || "Identifiants invalides");
       }
-  
+
       // Récupère l'ID et le username depuis la racine de data
       const userId = data.userId;
       const returnedUsername = data.username;
       const token = data.token;
-  
+
       if (!userId) {
         console.error("Pas de userId dans la réponse", data);
         return Alert.alert("Erreur", "Impossible de récupérer l'utilisateur.");
       }
-  
+
       // Sauvegarde en Redux
       dispatch(addUserIdToStore(userId));
       dispatch(addUsernameToStore(returnedUsername));
-  
+
       // Stocke le token si présent
       if (token) {
         await AsyncStorage.setItem("userToken", token);
       }
-  
+
       // Navigue vers l'app
       navigation.replace("TabNavigator");
     } catch (err) {
@@ -127,9 +124,6 @@ export default function AuthScreen() {
       Alert.alert("Erreur de connexion", "Veuillez réessayer.");
     }
   };
-  
-  
-  
 
   const handleSignUp = async () => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signupEmail.trim())) {
@@ -173,9 +167,11 @@ export default function AuthScreen() {
         source={require("../assets/basket.png")}
         style={[styles.logo, { transform: [{ scale: scaleAnim }] }]}
       />
-
-      <Text style={styles.appTitle}>Panier Futé</Text>
-
+      <View style={styles.titleRow}>
+        <Text style={styles.title}>Panier</Text>
+        
+        <Text style={styles.titleTwo}>Futé</Text>
+      </View>
       {/* Form card */}
       <View style={styles.card}>
         <View style={styles.inputRow}>
@@ -189,7 +185,9 @@ export default function AuthScreen() {
             onChangeText={setLoginUsername}
           />
         </View>
-        <View style={[styles.inputRow, styles.inputRowLast, styles.inputMargin]}>
+        <View
+          style={[styles.inputRow, styles.inputRowLast, styles.inputMargin]}
+        >
           <FontAwesome name="lock" size={24} color="#204825" />
           <TextInput
             style={styles.input}
@@ -202,10 +200,7 @@ export default function AuthScreen() {
         </View>
       </View>
 
-      <TouchableOpacity
-        style={styles.primaryBtn}
-        onPress={handleSignIn}
-      >
+      <TouchableOpacity style={styles.primaryBtn} onPress={handleSignIn}>
         <Text style={styles.primaryTxt}>Se connecter</Text>
       </TouchableOpacity>
 
@@ -229,7 +224,6 @@ export default function AuthScreen() {
       </TouchableOpacity>
 
       <Text style={styles.privacy}>Politique de confidentialité</Text>
-
 
       {/* Modal Inscription */}
       <Modal visible={signupVisible} transparent animationType="slide">
@@ -309,21 +303,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     paddingTop: 40,
-    
   },
   logo: {
     width: 180,
     height: 180,
     resizeMode: "contain",
-    marginTop: 40,
+    marginTop: 50,
     marginBottom: 10,
-    
+  
   },
-  appTitle: {
-    fontSize: 36,
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30, // espace sous le titre
+  },
+  title: {
+    fontSize: 46,
     fontWeight: "bold",
-    color: "#375a33",
-    marginBottom: 40,
+    color: "#a6c297",
+  },
+  titleTwo: {
+    fontSize: 46,
+    fontWeight: "bold",
+    color: "#ffb64b",
   },
   card: {
     width: CARD_WIDTH,
@@ -341,13 +344,12 @@ const styles = StyleSheet.create({
     borderColor: "#DDD",
     paddingVertical: 2,
     top: "5%",
-    
   },
   inputRowLast: {
     borderBottomWidth: 0,
   },
-  inputMargin: { 
-    marginTop: 10
+  inputMargin: {
+    marginTop: 10,
   },
   input: {
     flex: 1,

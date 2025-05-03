@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fcf6ec",
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingTop: 100, // +40px pour descendre tout l'écran
+    paddingTop: 100, 
     paddingHorizontal: 16,
   },
   titleRow: {
@@ -122,16 +122,14 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontWeight: "bold",
     color: "#a6c297",
-    // plus de marginTop ici
   },
   titleDynamic: {
     fontSize: 35,
     fontWeight: "bold",
     color: "#ffb64b",
-    // plus de marginTop non plus
   },
   basket: {
-    width: 210, // agrandi
+    width: 210, 
     height: 210,
     resizeMode: "contain",
     marginBottom: 30,
@@ -139,13 +137,14 @@ const styles = StyleSheet.create({
   scanBtn: {
     width: BTN_WIDTH,
     backgroundColor: "#eee3cc",
-    borderRadius: 20, // corner radius
+    borderRadius: 20, 
     paddingVertical: 16,
     alignItems: "center",
     marginBottom: 40,
   },
   scanTxt: {
-    fontSize: 24,
+    fontSize: 20,
+      fontWeight: "bold",
     color: "#000000",
     
   },
@@ -158,15 +157,15 @@ const styles = StyleSheet.create({
   },
   tipRow: {
     flexDirection: "row",
-    alignItems: "center",   // on centre l'icône et le groupe de textes
+    alignItems: "center",   
   },
   tipIcon: {
-    width: 60,              // ajuste selon ton visuel
+    width: 60,              
     height: 60,
-    marginRight: 12,        // espace entre icône et texte
+    marginRight: 12,     
   },
   tipTextGroup: {
-    flex: 1,                // prend tout l'espace restant
+    flex: 1,                
   },
   tipTitle: {
     fontSize: 20,

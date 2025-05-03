@@ -1,27 +1,28 @@
+// ScanScreen.js
 import React, { useState, useEffect } from "react";
 import {
-  Text,
+  SafeAreaView,
   View,
-  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
   Modal,
   Alert,
   Image,
+  StyleSheet,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
 } from "react-native";
-// Migration de expo-barcode-scanner vers expo-camera/next
-import { CameraView, Camera } from 'expo-camera';
+import { CameraView, Camera } from "expo-camera";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 export default function ScanScreen() {
-  // États pour la gestion des permissions, du scanner, des données et du modal
+  // ==== logique inchangée ====
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [barcodeData, setBarcodeData] = useState("");
@@ -36,12 +37,10 @@ export default function ScanScreen() {
   const userId = useSelector((state) => state.user.id);
   const navigation = useNavigation();
 
-  // Images pour les lieux de stockage
-  const fridgeImage = require("../assets/FRIGO.png");
-  const freezerImage = require("../assets/congelo.png");
-  const cupboardImage = require("../assets/Placard.png");
+  const fridgeImage   = require("../assets/frigo.png");
+  const freezerImage  = require("../assets/congelo.png");
+  const cupboardImage = require("../assets/placard.png");
 
-  // Demande de permissions pour accéder à la caméra
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -49,71 +48,71 @@ export default function ScanScreen() {
     })();
   }, []);
 
-  // Gestion de la visibilité du clavier
   useEffect(() => {
-    const showListener = Keyboard.addListener("keyboardDidShow", () => setIsKeyboardVisible(true));
-    const hideListener = Keyboard.addListener("keyboardDidHide", () => setIsKeyboardVisible(false));
+    const show = Keyboard.addListener("keyboardDidShow", () => setIsKeyboardVisible(true));
+    const hide = Keyboard.addListener("keyboardDidHide", () => setIsKeyboardVisible(false));
     return () => {
-      showListener.remove();
-      hideListener.remove();
+      show.remove();
+      hide.remove();
     };
   }, []);
 
-  // Fonction appelée lors du scan d'un code-barres
   const handleBarCodeScanned = ({ data }) => {
     setScanned(true);
     setBarcodeData(data);
     fetchProductData(userId, data);
   };
-
-  // Fonction appelée lors de la saisie manuelle d'un code-barres
   const handleBarCodeWrite = () => {
     setScanned(true);
     fetchProductData(userId, barcodeData);
   };
-
-  // Récupération des données du produit via l'UPC
   const fetchProductData = async (userId, data) => {
     try {
-      const response = await fetch(`https://conso-maestro-backend-eight.vercel.app/products/${userId}/${data}`);
-      const result = await response.json();
-      if (!result.result) {
-        Alert.alert("Erreur", result.message);
+      const res = await fetch(
+        `https://conso-maestro-backend-eight.vercel.app/products/${userId}/${data}`
+      );
+      const json = await res.json();
+      if (!json.result) {
+        Alert.alert("Erreur", json.message);
         setScanned(false);
       } else {
-        setProduct(result.product);
-        setProductId(result.product._id);
+        setProduct(json.product);
+        setProductId(json.product._id);
         setShowModal(true);
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       Alert.alert("Erreur", "Impossible de récupérer le produit");
     }
   };
-
-  // Sélecteur de date
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
-  const handleConfirm = (date) => {
+  const handleConfirm  = (date) => {
     setDlc(date);
     hideDatePicker();
   };
-
-  // Sauvegarde du produit
   const saveProduct = async () => {
     if (!dlc || !storagePlace) {
-      Alert.alert("Erreur", "Veuillez sélectionner une DLC et un lieu de stockage.");
+      Alert.alert("Erreur", "Sélectionnez DLC + lieu de stockage");
       return;
     }
-    const formattedDlc = dlc.toISOString().split("T")[0];
+    const fDlc = dlc.toISOString().split("T")[0];
     try {
-      const response = await fetch(`https://conso-maestro-backend-eight.vercel.app/products/${formattedDlc}`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ upc: barcodeData, dlc: formattedDlc, user: userId, _id: productId, storagePlace }),
-      });
-      const data = await response.json();
-      if (response.ok) {
+      const res = await fetch(
+        `https://conso-maestro-backend-eight.vercel.app/products/${fDlc}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            upc: barcodeData,
+            dlc: fDlc,
+            user: userId,
+            _id: productId,
+            storagePlace,
+          }),
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
         Alert.alert("Succès", data.message);
         setShowModal(false);
         setScanned(false);
@@ -122,140 +121,298 @@ export default function ScanScreen() {
       } else {
         Alert.alert("Erreur", data.message);
       }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Erreur", "Erreur de connexion au serveur");
+    } catch {
+      Alert.alert("Erreur", "Connexion impossible");
     }
   };
 
-  if (hasPermission === null) return <Text>Demande de permission de la caméra...</Text>;
-  if (hasPermission === false) return <Text>Pas d'accès à la caméra</Text>;
+  if (hasPermission === null)  return <Text>Chargement caméra…</Text>;
+  if (hasPermission === false) return <Text>Pas d’accès caméra</Text>;
 
-  const handleFinish = () => navigation.navigate('Menu');
+  const handleFinish = () => navigation.navigate("Menu");
 
+  // ==== FIN logique, début UI ====
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'height' : 'height'}>
-        <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
-          <View style={styles.container}>
-            <View style={styles.textScan}>
-              <Text style={styles.text}>Scannez votre produit</Text>
-            </View>
+    <SafeAreaView style={styles.screen}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          {/* Titre */}
+          <Text style={styles.title}>Scannez votre produit</Text>
 
+          {/* Scanner */}
+          <View style={styles.scannerContainer}>
             <CameraView
-              style={[styles.camera, isKeyboardVisible && styles.cameraKeyboardVisible]}
+              style={[
+                styles.camera,
+                isKeyboardVisible && { height: 150, width: 150 },
+              ]}
               barcodeScannerEnabled
               onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
             />
-
-            <Text style={styles.ou}>OU</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Je saisis mon code-barre..."
-              placeholderTextColor="#664C25"
-              keyboardType="numeric"
-              value={barcodeData}
-              onChangeText={setBarcodeData}
-            />
-            <TouchableOpacity style={styles.valider} onPress={handleBarCodeWrite}>
-              <Text style={styles.buttonFinish}>Valider mon code-barre</Text>
-            </TouchableOpacity>
-
-            <View style={styles.enregistrement}>
-              <TouchableOpacity style={styles.fin} onPress={handleFinish}>
-                <Image style={styles.buttonCheck} source={require("../assets/buttonCheck.png")} />
-              </TouchableOpacity>
-            </View>
-
-            <Modal visible={showModal} animationType="slide">
-              <ImageBackground source={require('../assets/backgroundScanne.png')} style={styles.background}>
-                <View style={styles.modalContainer}>
-                  <View style={styles.productNameContainer}>
-                    <Text style={styles.productName}>{product?.name}</Text>
-                  </View>
-
-                  <View style={styles.storageOption}>
-                    <Text style={styles.textStockage}>Choisissez votre lieu de stockage:</Text>
-                  </View>
-                  <View style={styles.storageOptions}>
-                    {[
-                      { label: 'Frigo', image: fridgeImage },
-                      { label: 'Congelo', image: freezerImage },
-                      { label: 'Placard', image: cupboardImage }
-                    ].map((place) => (
-                      <TouchableOpacity key={place.label} onPress={() => setStoragePlace(place.label)}>
-                        <View style={storagePlace === place.label ? styles.selectedOptionImage : styles.noSelectedImage}>
-                          <Image source={place.image} style={styles.optionImage} />
-                        </View>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-
-                  <TouchableOpacity style={styles.date} onPress={showDatePicker}>
-                    <Text style={styles.inputDate}>{dlc ? dlc.toLocaleDateString() : 'Sélectionner la DLC'}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.enregistrerButtun} onPress={saveProduct}>
-                    <Text style={styles.buttonText}>Enregistrer</Text>
-                  </TouchableOpacity>
-
-                  <DateTimePickerModal
-                    isVisible={isDatePickerVisible}
-                    mode="date"
-                    onConfirm={handleConfirm}
-                    onCancel={hideDatePicker}
-                  />
-                </View>
-              </ImageBackground>
-            </Modal>
           </View>
-        </ImageBackground>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+
+          {/* OU */}
+          <Text style={styles.or}>OU</Text>
+
+          {/* Saisie */}
+          <TextInput
+            style={styles.input}
+            placeholder="Je saisis mon code-barre…"
+            placeholderTextColor="#664C25"
+            keyboardType="numeric"
+            value={barcodeData}
+            onChangeText={setBarcodeData}
+          />
+
+          {/* Bouton Valider */}
+          <TouchableOpacity
+            style={styles.validateBtn}
+            onPress={handleBarCodeWrite}
+          >
+            <View style={styles.btnRow}>
+              <Text style={styles.validateText}>Valider mon code-barre</Text>
+              <Ionicons
+                name="chevron-forward-outline"
+                size={20}
+                color="#204825"
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* Check de confirmation */}
+          <TouchableOpacity
+            style={styles.confirmBtn}
+            onPress={handleFinish}
+          >
+            <Ionicons name="checkmark" size={32} color="#fcf6ec" />
+          </TouchableOpacity>
+
+          {/* Modal DLC / stockage */}
+          <Modal visible={showModal} animationType="slide" transparent>
+            <TouchableWithoutFeedback onPress={() => setShowModal(false)}>
+              <View style={styles.modalBackdrop} />
+            </TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>{product?.name}</Text>
+              <Text style={styles.modalLabel}>
+                Choisissez lieu de stockage :
+              </Text>
+              <View style={styles.storageRow}>
+                {[
+                  { label: "Frigo", image: fridgeImage },
+                  { label: "Congelo", image: freezerImage },
+                  { label: "Placard", image: cupboardImage },
+                ].map((p) => (
+                  <TouchableOpacity
+                    key={p.label}
+                    onPress={() => setStoragePlace(p.label)}
+                  >
+                    <View
+                      style={[
+                        styles.storageBox,
+                        storagePlace === p.label
+                          ? styles.storageBoxSelected
+                          : styles.storageBoxUnselected,
+                      ]}
+                    >
+                      <Image source={p.image} style={styles.storageIcon} />
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TouchableOpacity
+                style={styles.datePickerBtn}
+                onPress={showDatePicker}
+              >
+                <Text style={styles.datePickerText}>
+                  {dlc
+                    ? dlc.toLocaleDateString()
+                    : "Sélectionner la DLC"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.saveBtn}
+                onPress={saveProduct}
+              >
+                <Text style={styles.saveTxt}>Enregistrer</Text>
+              </TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
+            </View>
+          </Modal>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
+  // ta palette
+  theme: {
+    screenBg:       "#fcf6ec",
+    title:          "#204825",
+    or:             "#ffb64b",
+    scannerBorder:  "#204825",
+    inputBorder:    "#a6c297",
+    inputBg:        "#fcf6ec",
+    validateBg:     "#F7E1A8",
+    confirmBg:      "#204825",
+    saveBg:         "#EF6F5E",
+    saveTxt:        "#fcf6ec",
+  },
+
+  screen: {
     flex: 1,
-    resizeMode: 'cover',
+    backgroundColor: "#FCF6EC",
   },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    padding: 20,
   },
-  camera: {
-    width: 300,
-    height: 350,
+
+  title: {
+    fontSize: 30,
+    fontWeight: "600",
+    color: "#ffb64b",
+    marginVertical: 20,
+    marginTop: 40,
+    marginBottom: 40,
+  },
+
+  scannerContainer: {
+    width: "85%",
+    aspectRatio: 1.2,
+    borderWidth: 4,
+    borderColor: "#a6c297",
+    borderRadius: 16,
+    overflow: "hidden",
+    marginBottom: 24,
+  },
+  camera: { flex: 1 },
+
+  or: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#a6c297",
+    marginBottom: 16,
+  },
+
+  input: {
+    width: "85%",
+    backgroundColor: "#FFF",
+    borderColor: "#a6c297",
+    borderWidth: 1,
     borderRadius: 10,
-    marginBottom: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    color: "#204825",
+    marginBottom: 16,
   },
-  cameraKeyboardVisible: {
-    width: 150,
-    height: 150,
+
+  validateBtn: {
+    width: "85%",
+    backgroundColor: "#eee3cc",
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 24,
   },
-  text: { fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: '#fff' },
-  textScan: { marginTop: 30, width: 300, height: 40, paddingTop: 5, borderRadius: 10, marginBottom: 40, backgroundColor: '#B19276' },
-  ou: { fontSize: 20, fontWeight: 'bold', color: '#E56400', marginBottom: 10 },
-  input: { backgroundColor: '#FAF9F3', borderWidth: 1, width: '85%', height: '8%', borderRadius: 10, borderColor: '#A77B5A', padding: 10, marginTop: 10, color: '#E56400' },
-  fin: { marginTop: 20, marginBottom: 20, width: '40%', height: '5%', borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  productName: { fontSize: 30, fontWeight: 'bold', color: '#fff' },
-  productNameContainer: { padding: 10, borderRadius: 10, backgroundColor: '#69914a', top: -80, borderColor: '#FFF', borderWidth: 1 },
-  storageOptions: { flexDirection: 'row', justifyContent: 'space-around', width: '80%', marginBottom: 20 },
-  textStockage: { fontSize: 20, fontWeight: 'bold', color: '#E56400', textAlign: 'center' },
-  storageOption: { marginBottom: 10, backgroundColor: '#fff', borderRadius: 10, width: '90%', height: '5%', justifyContent: 'center', borderColor: '#E56400', borderWidth: 1 },
-  selectedOptionImage: { backgroundColor: '#E56400', padding: 5, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginBottom: 5, borderWidth: 2, borderColor: '#FAF9F3', width: 80, height: 80 },
-  noSelectedImage: { backgroundColor: '#A77B5A', padding: 5, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginBottom: 5, borderWidth: 2, borderColor: '#FAF9F3', width: 80, height: 80 },
-  inputDate: { fontSize: 20, color: '#E56400' },
-  enregistrerButtun: { backgroundColor: '#E56400', width: 150, height: 40, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
-  optionImage: { width: 50, height: 50, marginTop: 10, marginBottom: 10 },
-  buttonText: { fontSize: 20, color: '#FFFFFF' },
-  date: { backgroundColor: '#FFFFFF', width: 200, height: 40, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 40, marginTop: 50, borderColor: '#E56400', borderWidth: 1 },
-  buttonFinish: { color: '#fff', fontWeight: 'bold' },
-  valider: { backgroundColor: '#B19276', width: 200, height: 40, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginTop: 20, marginBottom: 20 },
-  enregistrement: { justifyContent: 'center', alignItems: 'center' },
-  buttonCheck: { width: 80, height: 80, zIndex: 1 },
+  btnRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+  },
+  validateText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+  },
+
+  confirmBtn: {
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    backgroundColor: "#ffb64b",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  // Modal styles
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  modalContent: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    backgroundColor: "#fcf6ec",
+    padding: 20,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#204825",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  modalLabel: {
+    fontSize: 16,
+    color: "#ffb64b",
+    marginBottom: 12,
+  },
+  storageRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 16,
+  },
+  storageBox: {
+    padding: 10,
+    borderRadius: 12,
+  },
+  storageBoxSelected: {
+    backgroundColor: "#ffb64b",
+  },
+  storageBoxUnselected: {
+    backgroundColor: "#eee3cc",
+  },
+  storageIcon: {
+    width: 48,
+    height: 48,
+  },
+
+  datePickerBtn: {
+    backgroundColor: "#fcf6ec",
+    borderColor: "#a6c297",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  datePickerText: {
+    color: "#204825",
+    fontSize: 16,
+  },
+
+  saveBtn: {
+    backgroundColor: "#EF6F5E",
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+  saveTxt: {
+    color: "#fcf6ec",
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });

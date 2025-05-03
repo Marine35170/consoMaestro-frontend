@@ -1,540 +1,376 @@
+// ProfileScreen.js
 import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
+  SafeAreaView,
   Modal,
-  ImageBackground,
   TextInput,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
 
 export default function ProfileScreen() {
-  const navigation = useNavigation(); // Hook to navigate between screens
-  const [userInfo, setUserInfo] = useState({
-    email: "",
-    username: "",
-    password: "",
-  }); // State to store user info
-  const [isRewardsModalVisible, setRewardsModalVisible] = useState(false); // State to control Rewards modal visibility
-  const [isSponsorshipsModalVisible, setSponsorshipsModalVisible] =
-    useState(false); // State to control Sponsorships modal visibility
-  const [isEditModalVisible, setEditModalVisible] = useState(false); // State to control Edit modal visibility
-  // States to store edited user info
+  const navigation = useNavigation();
+  const handleFaq = () => navigation.navigate("FaqScreen");
+
+  // --- États ---
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [rewardCount, setRewardCount] = useState(0);
+  const [savedRecipesCount, setSavedRecipesCount] = useState(0);
+
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editedEmail, setEditedEmail] = useState("");
   const [editedUsername, setEditedUsername] = useState("");
-  // State to display a success message once the update's successful
   const [successMessage, setSuccessMessage] = useState("");
-  // State to display a message when there are no changes
   const [noChangesMessage, setNoChangesMessage] = useState("");
-  // State to control Account Deletion modal visibility
-  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
-  // State to display a success message once the delete's successful
-  const [isAccountDeleted, setIsAccountDeleted] = useState(false);
 
-  // useEffect hook to fetch user data when the component loads
+  // --- Récupère le profil au chargement ---
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const token = await AsyncStorage.getItem("userToken"); // Retrieve the stored token
+    (async () => {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return navigation.replace("AuthScreen");
 
-      // Fetch user data from the backend
-      fetch("https://conso-maestro-backend-eight.vercel.app/users/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          contentType: "application/json",
-        }, // Send token in Authorization header
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("data from fetch", data);
-          // Update state with user info if response is successful
-          setUserInfo({
-            email: data.user.email || "Non disponible",
-            username: data.user.username || "Non disponible",
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-
-    fetchUserInfo(); // Calls fetchUserInfo function
+      try {
+        const res = await fetch(
+          "https://conso-maestro-backend-eight.vercel.app/users/profile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const { user } = await res.json();
+        setUsername(user.username);
+        setEmail(user.email);
+        setRewardCount(user.badges?.length || 0);
+        setSavedRecipesCount(user.savedRecipes?.length || 0);
+      } catch (e) {
+        console.warn("Erreur fetch profile:", e);
+      }
+    })();
   }, []);
 
-  // Function to handle account deletion
-  const handleDeleteAccount = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      const response = await fetch(
-        "https://conso-maestro-backend-eight.vercel.app/users/delete",
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-
-      if (data.success) {
-        setIsAccountDeleted(true);
-        await AsyncStorage.removeItem("userToken");
-        setTimeout(() => {
-          setDeleteModalVisible(false);
-          navigation.navigate("AuthScreen");
-        }, 3000);
-      } else {
-        console.error("Erreur lors de la suppression du compte");
-      }
-    } catch (error) {
-      console.error("Erreur de suppression du compte:", error);
-    }
+  // --- Déconnexion ---
+  const handleSignOut = async () => {
+    await AsyncStorage.removeItem("userToken");
+    navigation.replace("AuthScreen");
   };
 
+  // --- Ouvre la modal d’édition ---
+  const handleEditProfile = () => {
+    setEditedEmail(email);
+    setEditedUsername(username);
+    setNoChangesMessage("");
+    setSuccessMessage("");
+    setEditModalVisible(true);
+  };
+
+  // --- Mise à jour profil ---
   const handleUpdateUserInfo = async () => {
-    const token = await AsyncStorage.getItem("userToken"); // Retrieve the stored token
-    console.log("Email à mettre à jour:", editedEmail);
-    console.log("Nom d'utilisateur à mettre à jour:", editedUsername);
-
+    const token = await AsyncStorage.getItem("userToken");
     const updateData = {};
-    if (editedEmail && editedEmail !== userInfo.email) {
-      updateData.email = editedEmail;
-    }
-    if (editedUsername && editedUsername !== userInfo.username) {
+    if (editedEmail && editedEmail !== email) updateData.email = editedEmail;
+    if (editedUsername && editedUsername !== username)
       updateData.username = editedUsername;
-    }
 
-    // Check if there are fields to update
     if (Object.keys(updateData).length === 0) {
       setNoChangesMessage("Aucune modification détectée.");
       setTimeout(() => setNoChangesMessage(""), 3000);
       return;
     }
 
-    // Fetch user data from the backend
-    fetch("https://conso-maestro-backend-eight.vercel.app/users/update", {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updateData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Réponse de l'API:", data);
-
-        // Update only the fields that were modified
-        setUserInfo((prevInfo) => ({
-          ...prevInfo,
-          ...updateData, // Merge updated fields with existing state
-        }));
-
-        setEditModalVisible(false);
-        setSuccessMessage("Informations mises à jour avec succès !");
-        setTimeout(() => setSuccessMessage(""), 3000);
-      })
-      .catch((error) => {
-        console.error("Erreur de mise à jour :", error);
+    try {
+      const res = await fetch(
+        "https://conso-maestro-backend-eight.vercel.app/users/update",
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updateData),
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        if (updateData.email) setEmail(updateData.email);
+        if (updateData.username) setUsername(updateData.username);
+        setSuccessMessage("Profil mis à jour !");
+      } else {
         setSuccessMessage("Erreur de mise à jour.");
-        setTimeout(() => setSuccessMessage(""), 3000);
-      });
-  };
-
-  // Function to handle user sign-out
-  const handleSignOut = async () => {
-    await AsyncStorage.removeItem("userToken"); // Clear token from local storage
-    navigation.navigate("AuthScreen"); // Navigate to Auth screen
+      }
+    } catch (e) {
+      console.warn("Erreur update profile:", e);
+      setSuccessMessage("Erreur réseau.");
+    } finally {
+      setTimeout(() => setSuccessMessage(""), 3000);
+      setEditModalVisible(false);
+    }
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/backgroundProfile.png")}
-      style={styles.background}
-    >
-      <View style={styles.container}>
-        {/* Section des informations utilisateur */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.sectionTitle}>Mes informations personnelles</Text>
-          <View style={styles.infoRow}>
-            <Text style={styles.persoSectionTitle}>E-mail:</Text>
-            <Text style={styles.infoText}>{userInfo.email}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.persoSectionTitle}>Nom d'utilisateur:</Text>
-            <Text style={styles.infoText}>{userInfo.username}</Text>
-          </View>
+    <SafeAreaView style={styles.screen}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Ionicons
+          name="person-circle-outline"
+          size={140}
+          color={styles.theme.mainTitleColor}
+        />
+        <Text style={styles.username}>{username || "Utilisateur"}</Text>
+      </View>
 
-          {/* Affiche un message de succès en cas de mise à jour réussie */}
-          {successMessage ? (
-            <Text style={styles.successMessage}>{successMessage}</Text>
-          ) : null}
-
-          {/* Bouton pour ouvrir la modal d'édition */}
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => {
-              setEditedEmail(userInfo.email);
-              setEditedUsername(userInfo.username);
-              setEditModalVisible(true);
-            }}
-          >
-            <Text style={styles.editButtonText}>Modifier</Text>
-          </TouchableOpacity>
+      {/* Grille centrée à 85% */}
+      <View style={styles.grid}>
+        <View style={[styles.card, { backgroundColor: styles.theme.gridBg }]}>
+          <Text style={[styles.cardNumber, { color: styles.theme.subTitle }]}>
+            {rewardCount}
+          </Text>
+          <Text style={[styles.cardLabel, { color: styles.theme.subTitle }]}>
+            Mes récompenses
+          </Text>
         </View>
-
-        {/* Section Options pour afficher les récompenses et les parrainages */}
-        <View style={styles.optionsContainer}>
-          <View style={styles.titleWithIcon}>
-            <Text style={styles.sectionTitle}>Options</Text>
-            <FontAwesome
-              name="cog"
-              size={27}
-              color="#FFF"
-              style={styles.icon}
-            />
-          </View>
-
-          {/* Bouton pour afficher la modal des récompenses */}
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => setRewardsModalVisible(true)}
-          >
-            <Text style={styles.optionButtonText}>Mes Récompenses</Text>
-          </TouchableOpacity>
-
-          {/* Bouton pour afficher la modal des parrainages */}
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => setSponsorshipsModalVisible(true)}
-          >
-            <Text style={styles.optionButtonText}>Mes Parrainages</Text>
-          </TouchableOpacity>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: styles.theme.mainTitleColor },
+          ]}
+        >
+          <Text style={[styles.cardNumber, { color: styles.theme.otherGrid }]}>
+            {savedRecipesCount}
+          </Text>
+          <Text style={[styles.cardLabel, { color: styles.theme.otherGrid }]}>
+            Mes recettes
+          </Text>
         </View>
+      </View>
 
-        {/* Modal pour afficher les récompenses */}
-        <Modal
-          transparent={true}
-          visible={isRewardsModalVisible}
-          animationType="slide"
-          onRequestClose={() => setRewardsModalVisible(false)}
+      {/* Actions centrées à 85% */}
+      <View style={styles.actions}>
+        +{" "}
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              backgroundColor: styles.theme.buttonBg,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 16,
+            },
+          ]}
+          onPress={handleEditProfile}
         >
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Mes Récompenses</Text>
-            <Text style={styles.modalContent}>
-              Page en cours de construction... 👷🏻‍♀️
-            </Text>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setRewardsModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Fermer</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-
-        {/* Modal pour afficher les parrainages */}
-        <Modal
-          transparent={true}
-          visible={isSponsorshipsModalVisible}
-          animationType="slide"
-          onRequestClose={() => setSponsorshipsModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Mes Parrainages</Text>
-            <Text style={styles.modalContent}>
-              Page en cours de construction... 👷🏿‍♂️
-            </Text>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setSponsorshipsModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Fermer</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-
-        {/* Modal pour modifier l'email et le nom d'utilisateur */}
-        <Modal
-          transparent={true}
-          visible={isEditModalVisible}
-          animationType="slide"
-          onRequestClose={() => setEditModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Modifier les informations</Text>
-
-            {/* Display the no changes message in red */}
-            {noChangesMessage ? (
-              <Text style={styles.noChangesMessage}>{noChangesMessage}</Text>
-            ) : null}
-
-            {/* Champ de saisie pour l'email */}
-            <TextInput
-              style={styles.input}
-              value={editedEmail}
-              onChangeText={setEditedEmail}
-              placeholder="Nouvel e-mail"
-              keyboardType="email-address"
-            />
-
-            {/* Champ de saisie pour le nom d'utilisateur */}
-            <TextInput
-              style={styles.input}
-              value={editedUsername}
-              onChangeText={setEditedUsername}
-              placeholder="Nouveau nom d'utilisateur"
-            />
-
-            {/* Bouton pour sauvegarder les modifications */}
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleUpdateUserInfo}
-            >
-              <Text style={styles.saveButtonText}>Enregistrer</Text>
-            </TouchableOpacity>
-
-            {/* Bouton pour fermer la modal d'édition sans sauvegarder */}
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setEditModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Annuler</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-
-        {/* Bouton de déconnexion */}
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-          <Text style={styles.signOutButtonText}>Déconnexion</Text>
+          <Text style={[styles.buttonText, { color: styles.theme.otherGrid }]}>
+            Modifier le profil
+          </Text>
           <Ionicons
-            name="exit-outline"
-            size={24}
-            color="#FFF"
-            style={styles.signOutIcon}
+            name="chevron-forward-outline"
+            size={20}
+            color={styles.theme.otherGrid}
           />
         </TouchableOpacity>
-
-        {/* Bouton suppression compte */}
+        {/* Nouvelle entrée FAQ */}
         <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => setDeleteModalVisible(true)}
+          style={[
+            styles.button,
+            {
+              backgroundColor: styles.theme.buttonBg,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 16,
+            },
+          ]}
+          onPress={handleFaq}
         >
-          <Text style={styles.deleteButtonText}>Supprimer mon compte</Text>
+          <Text style={[styles.buttonText, { color: styles.theme.otherGrid }]}>
+            FAQ & bonnes pratiques
+          </Text>
+          <Ionicons
+            name="chevron-forward-outline"
+            size={20}
+            color={styles.theme.otherGrid}
+          />
         </TouchableOpacity>
-
-        {/* Modale de confirmation de suppression */}
-        <Modal
-          transparent={true}
-          visible={isDeleteModalVisible}
-          animationType="slide"
-          onRequestClose={() => setDeleteModalVisible(false)}
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              backgroundColor: styles.theme.critickBtn,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 16,
+            },
+          ]}
+          onPress={handleSignOut}
         >
-          <View style={styles.modalContainer}>
-            {isAccountDeleted ? (
-              <Text style={styles.modalContent}>
-                Votre compte a bien été supprimé.
-              </Text>
-            ) : (
-              <>
-                <Text style={styles.modalTitle}>
-                  Êtes-vous certain de votre choix ?
-                </Text>
-                <Text style={styles.modalContent}>
-                  Cette action est irréversible.
-                </Text>
-                <TouchableOpacity
-                  style={styles.confirmButton}
-                  onPress={handleDeleteAccount}
-                >
-                  <Text style={styles.confirmButtonText}>
-                    Oui, je supprime mon compte
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => setDeleteModalVisible(false)}
-                >
-                  <Text style={styles.cancelButtonText}>
-                    Non, je conserve mon compte
-                  </Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        </Modal>
+          <Text style={[styles.buttonText, { color: "#FFF" }]}>
+            Déconnexion
+          </Text>
+          <Ionicons name="chevron-forward-outline" size={20} color="#FFF" />
+        </TouchableOpacity>
       </View>
-    </ImageBackground>
+
+      {/* Modal d'édition */}
+      <Modal
+        transparent
+        visible={isEditModalVisible}
+        animationType="slide"
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Modifier mes infos</Text>
+          {noChangesMessage ? (
+            <Text style={styles.noChanges}>{noChangesMessage}</Text>
+          ) : null}
+          <TextInput
+            style={styles.input}
+            value={editedEmail}
+            onChangeText={setEditedEmail}
+            placeholder="Nouvel e-mail"
+            keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            value={editedUsername}
+            onChangeText={setEditedUsername}
+            placeholder="Nouveau pseudo"
+          />
+          <TouchableOpacity
+            style={[styles.saveBtn, { backgroundColor: styles.theme.gridBg }]}
+            onPress={handleUpdateUserInfo}
+          >
+            <Text style={[styles.saveTxt, { color: styles.theme.subTitle }]}>
+              Enregistrer
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.saveBtn, { backgroundColor: "#ccc" }]}
+            onPress={() => setEditModalVisible(false)}
+          >
+            <Text style={styles.saveTxt}>Annuler</Text>
+          </TouchableOpacity>
+          {successMessage ? (
+            <Text style={styles.success}>{successMessage}</Text>
+          ) : null}
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  container: { flex: 1, paddingHorizontal: 20, paddingVertical: 40 },
-  infoContainer: {
-    backgroundColor: "#69914a",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-    marginTop: 100,
+  theme: {
+    screenBg: "#fcf6ec",
+    buttonBg: "#eee3cc",
+    gridBg: "#F7E1A8",
+    otherGrid: "#204825",
+    mainTitleColor: "#a6c297",
+    subTitle: "#ffb64b",
+    critickBtn: "#EF6F5E",
   },
-  sectionTitle: {
-    fontFamily: "Hitchcut-Regular",
-    fontSize: 17,
+  screen: {
+    flex: 1,
+    backgroundColor: "#fcf6ec",
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 50,
+    marginTop: 40,
+  },
+  username: {
+    marginTop: 10,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#ffb64b",
+  },
 
-    color: "#FFF",
-    marginBottom: 10,
-    textAlign: "center",
+  // ← width 85% + centré
+  grid: {
+    width: "85%",
+    alignSelf: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 30,
   },
-  infoRow: {
+  card: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 25,
+    borderRadius: 12,
+    marginHorizontal: 5,
+  },
+  cardNumber: {
+    fontSize: 28,
+    fontWeight: "bold",
+  },
+  cardLabel: {
+    marginTop: 5,
+    fontSize: 14,
+  },
+
+  // ← width 85% + centré
+  actions: {
+    width: "85%",
+    alignSelf: "center",
+    marginTop: 10,
+  },
+  button: {
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginVertical: 6,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  btnContent: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 5, // Ajustez l'espacement vertical entre chaque ligne si nécessaire
+    justifyContent: "center",
   },
-  persoSectionTitle: {
-    flexDirection: 'row',
-    fontSize: 16,
-    color: "#FFF",
-    fontWeight: "bold",
-    marginRight: 20,
-    marginBottom: 5, 
-  },
-
-  infoText: { fontSize: 16, marginBottom: 5, color: "#FFF" },
-  successMessage: {
-    fontSize: 16,
-    color: "green",
-    textAlign: "center",
-    marginTop: 10,
-  },
-  editButton: {
-    backgroundColor: "#A77B5A",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: "#FFF",
-  },
-  editButtonText: { color: "#FFF", fontSize: 16, textAlign: "center" },
-  optionsContainer: {
-    backgroundColor: "#69914a",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-    marginTop: 30,
-  },
-  optionButton: {
-    backgroundColor: "#A77B5A",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderColor: "#FFF",
-  },
-  optionButtonText: { color: "#FFF", fontSize: 16, textAlign: "center" },
+  /* --- Modal --- */
   modalContainer: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
-  },
-  modalContent: {
-    fontSize: 16,
-    color: "#FFF",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  noChangesMessage: {
-    fontSize: 16,
-    color: "red",
-    textAlign: "center",
-    marginBottom: 10,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 20,
+    color: "#fff",
+    textAlign: "center",
+    marginBottom: 15,
+  },
+  noChanges: {
+    color: "#ffb64b",
+    textAlign: "center",
+    marginBottom: 10,
   },
   input: {
-    width: "80%",
-    backgroundColor: "#FFF",
-    padding: 10,
-    marginVertical: 5,
+    backgroundColor: "#fff",
+    padding: 12,
     borderRadius: 8,
+    marginVertical: 8,
   },
-  saveButton: {
-    backgroundColor: "#69914a",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  saveButtonText: { color: "#FFF", fontSize: 16, textAlign: "center" },
-  closeButton: {
-    backgroundColor: "#A77B5A",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  closeButtonText: { color: "#FFF", fontSize: 16, textAlign: "center" },
-  titleWithIcon: {
-    flexDirection: "row",
+  saveBtn: {
+    padding: 12,
+    borderRadius: 8,
     alignItems: "center",
-    justifyContent: "center",
+    marginVertical: 6,
   },
-  icon: { marginLeft: 17, marginBottom: 10 },
-  signOutButton: {
-    flexDirection: "row",
-    backgroundColor: "#F0672D",
-    paddingVertical: 10,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  signOutButtonText: {
-    color: "#FFF",
+  saveTxt: {
+    fontWeight: "600",
     fontSize: 16,
-    fontWeight: "bold",
-    marginRight: 8,
   },
-  signOutIcon: { marginBottom: -2 },
-  deleteButton: {
-    backgroundColor: "#FF4C4C",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  deleteButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  confirmButton: {
-    backgroundColor: "green",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  confirmButtonText: { color: "#FFF", fontSize: 16, textAlign: "center" },
-  cancelButton: {
-    backgroundColor: "red",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  cancelButtonText: { color: "#FFF", fontSize: 16, textAlign: "center" },
-  successMessage: {
-    fontSize: 16,
-    color: "green",
+  success: {
+    color: "lightgreen",
     textAlign: "center",
     marginTop: 10,
   },

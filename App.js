@@ -1,128 +1,129 @@
-import { NavigationContainer } from '@react-navigation/native'; // Importation de la bibliothèque de navigation
-import { createNativeStackNavigator } from '@react-navigation/native-stack'; // Création d'une navigation par pile
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; // Création d'une navigation par onglets
-import HomeScreen from './screens/HomeScreen'; // Importation des écrans
-import ProfileScreen from './screens/ProfileScreen';
-import MenuScreen from './screens/MenuScreen';
-import { Ionicons } from '@expo/vector-icons'; // Importation des icônes Ionicons
-import ScanScreen from './screens/ScanScreen';
-import AuthScreen from './screens/AuthScreen';
-import QuickConsoScreen from './screens/QuickconsoScreen';
-import InventaireScreen from './screens/InventaireScreen';
-import RecipesScreen from './screens/RecipesScreen';
-import RappelConsoScreen from './screens/RappelconsoScreen';
-import { Provider } from 'react-redux'; // Importation de Redux pour la gestion d'état
-import { configureStore } from '@reduxjs/toolkit'; // Configuration du store Redux
-import userReducer from './reducers/userReducer'; // Réducteur pour la gestion de l'utilisateur
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faUtensils } from '@fortawesome/free-solid-svg-icons';
-import { useFonts } from 'expo-font'; // Importation de la gestion des polices
-import * as SplashScreen from 'expo-splash-screen'; // Importation de l'écran de démarrage
 import React, { useEffect } from "react";
-import { LogBox } from 'react-native'; // Importation de LogBox pour désactiver les warnings
+import { LogBox } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
 
+import HomeScreen from "./screens/HomeScreen";
+import MenuScreen from "./screens/MenuScreen";
+import ProfileScreen from "./screens/ProfileScreen";
+import ScanScreen from "./screens/ScanScreen";
+import AuthScreen from "./screens/AuthScreen";
+import QuickConsoScreen from "./screens/QuickconsoScreen";
+import InventaireScreen from "./screens/InventaireScreen";
+import RecipesScreen from "./screens/RecipesScreen";
+import RappelConsoScreen from "./screens/RappelconsoScreen";
 
-const Stack = createNativeStackNavigator(); // Création de la pile de navigation
-const Tab = createBottomTabNavigator(); // Création de la navigation par onglets
+import userReducer from "./reducers/userReducer";
 
-// Désactiver tous les warnings
-LogBox.ignoreAllLogs(); // Ajoute cette ligne pour ignorer tous les warnings
-
-// Empêche l'écran de démarrage de se fermer automatiquement
+LogBox.ignoreAllLogs();
 SplashScreen.preventAutoHideAsync();
 
-// Configuration du store Redux
 const store = configureStore({
-  reducer: {
-    user: userReducer, // Gestion de l'état utilisateur
-  },
+  reducer: { user: userReducer },
 });
 
-// Configuration de la navigation par onglets
-const TabNavigator = () => {
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false, // Masque l'en-tête par défaut
-        tabBarShowLabel: false, // Masque les libellés des onglets
+        headerShown: false,
+        tabBarShowLabel: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          // Définition des icônes pour chaque onglet
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'Menu') {
-            return <FontAwesomeIcon icon={faUtensils} size={size} color={color} />;
+          let name;
+          if (route.name === "Home") {
+            name = focused ? "barcode" : "barcode-outline";
+          } else if (route.name === "Menu") {
+            name = focused ? "restaurant" : "restaurant-outline";
+          } else if (route.name === "Profile") {
+            name = focused ? "person" : "person-outline";
           }
-
-          // Retourne l'icône correspondante
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={name} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#664C25', // Couleur de l'icône active
-        tabBarInactiveTintColor: '#FFF', // Couleur de l'icône inactive
+        tabBarActiveTintColor: "#feb54a",
+        tabBarInactiveTintColor: "#afa399",
+        tabBarItemStyle: {
+          paddingTop: 10,    // remonte un peu l’icône
+        },
         tabBarStyle: {
-          backgroundColor: '#A77B5A', // Couleur de fond de la barre de navigation
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 70,           // laisse de la place au safe area
+          backgroundColor: 'rgba(255,255,255,0.95)',
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          overflow: 'visible',           // pour ne pas couper les icônes
+          elevation: 5,                  // Android shadow
+          shadowColor: '#000',           // iOS shadow
+          shadowOpacity: 0.1,
+          shadowOffset: { width: 0, height: -3 },
+        shadowRadius: 5,    // ← on remonte un peu tout le contenu
+        paddingBottom: 15, 
+        },
+        tabBarItemStyle: {
+          paddingTop: 8,     
         },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen}/>
-      <Tab.Screen name="Menu" component={MenuScreen}/>
-      {/* Écrans cachés dans la barre de navigation */}
+      <Tab.Screen name="Menu" component={MenuScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+
+      {/* écrans cachés */}
       <Tab.Screen
         name="InventaireScreen"
         component={InventaireScreen}
-        options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
+        options={{ tabBarButton: () => null }}
       />
-       <Tab.Screen
+      <Tab.Screen
         name="RecipesScreen"
         component={RecipesScreen}
         options={{ tabBarButton: () => null }}
-      
       />
-      <Stack.Screen 
-      name="QuickConsoScreen" 
-      component={QuickConsoScreen} 
-      options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
+      <Tab.Screen
+        name="QuickConsoScreen"
+        component={QuickConsoScreen}
+        options={{ tabBarButton: () => null }}
       />
-      <Stack.Screen 
-      name="RappelConsoScreen" 
-      component={RappelConsoScreen}
-      options={{ tabBarButton: () => null }} // Ne pas afficher ce tab
+      <Tab.Screen
+        name="RappelConsoScreen"
+        component={RappelConsoScreen}
+        options={{ tabBarButton: () => null }}
       />
     </Tab.Navigator>
-    
   );
-};
+}
 
-// Fonction principale de l'application
 export default function App() {
-
   const [loaded, error] = useFonts({
-    'Hitchcut-Regular': require('./assets/fonts/Hitchcut-Regular.ttf'),
+    "Hitchcut-Regular": require("./assets/fonts/Hitchcut-Regular.ttf"),
   });
 
   useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
+    if (loaded || error) SplashScreen.hideAsync();
   }, [loaded, error]);
 
-  if (!loaded && !error) {
-    return null;
-  }
- return (
-  <Provider store={store}> 
-   <NavigationContainer> 
-     <Stack.Navigator screenOptions={{ headerShown: false }}> 
-       <Stack.Screen name="AuthScreen" component={AuthScreen} />
-       <Stack.Screen name="TabNavigator" component={TabNavigator} />
-       <Stack.Screen name="ScanScreen" component={ScanScreen} />
-     </Stack.Navigator>
-   </NavigationContainer>
-   </Provider>
- );
-}
+  if (!loaded && !error) return null;
 
+  return (
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="AuthScreen" component={AuthScreen} />
+          <Stack.Screen name="TabNavigator" component={TabNavigator} />
+          <Stack.Screen name="ScanScreen" component={ScanScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  );
+}

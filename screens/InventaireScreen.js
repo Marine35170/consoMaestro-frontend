@@ -204,13 +204,13 @@ const InventaireScreen = ({ route }) => {
         let Encart;
         // Sélection de l'image en fonction de l'emplacement de stockage
         if (data.storagePlace === "Frigo") {
-          imageSource = require("../assets/FRIGO.png");
+          imageSource = require("../assets/frigo.png");
           Encart = styles.buttonFrigo;
         } else if (data.storagePlace === "Congelo") {
           imageSource = require("../assets/congelo.png");
           Encart = styles.buttonFreezer;
         } else if (data.storagePlace === "Placard") {
-          imageSource = require("../assets/Placard.png");
+          imageSource = require("../assets/placard.png");
           Encart = styles.buttonPlacard;
         }
 
