@@ -1,506 +1,442 @@
+// QuickConsoScreen.js
 import React, { useState, useEffect } from "react";
-import { useIsFocused } from "@react-navigation/native";
 import {
+  SafeAreaView,
   View,
   Text,
-  StyleSheet,
+  FlatList,
   TouchableOpacity,
   Image,
-  Modal,
-  ScrollView,
+  Alert,
+  StyleSheet,
+  Platform,
 } from "react-native";
-import moment from "moment"; // Utilisation de moment.js pour manipuler les dates
+import moment from "moment";
 import { useSelector } from "react-redux";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { Swipeable } from "react-native-gesture-handler";
 
-const QuickConsoScreen = () => {
-  // États pour gérer les modals et les informations sur les produits
-  const [shortDlcModalVisible, setShortDlcModalVisible] = useState(false); // Modal pour DLC courte
-  const [longDlcModalVisible, setLongDlcModalVisible] = useState(false); // Modal pour DLC longue
-  const [lateDlcModalVisible, setLateDlcModalVisible] = useState(false); // Modal pour DLC passée
-  const [middleDlcModalVisible, setMiddleDlcModalVisible] = useState(false); // Modal pour DLC moyenne
-  const [productsInfo, setProductsInfo] = useState([]);
-  const userId = useSelector((state) => state.user.id);
+// Palette
+const COLORS = {
+  bg: "#fcf6ec",
+  white: "#fff",
+  text: "#204825",
+  mustard: "#fcdc90",
+  placard: "#EEE3CC",
+  red: "#EF6F5E",
+  orange: "#f5a058",
+  green: "#69914a",
+  lightGreen: "#a6c297",
+  black: "#333333",
+};
+
+// Lieux et icônes
+const STORAGE_PLACES = ["Tous", "Frigo", "Congelo", "Placard"];
+const ICONS = {
+  Frigo: require("../assets/frigo.png"),
+  Congelo: require("../assets/congelo.png"),
+  Placard: require("../assets/placard.png"),
+};
+
+export default function QuickConsoScreen() {
+  const userId = useSelector((s) => s.user.id);
   const isFocused = useIsFocused();
-  const [refresh, setRefresh] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [filter, setFilter] = useState("Tous");
 
-  // Fonction pour changer l'emplacement de stockage d'un produit
-  const changementStoragePlace = async (data, newStoragePlace) => {
+  // ── FETCH ───────────────────────────────────────────
+  useEffect(() => {
+    if (!isFocused) return;
+    (async () => {
+      try {
+        const res = await fetch(
+          `https://conso-maestro-backend-eight.vercel.app/quickconso/${userId}`
+        );
+        const json = await res.json();
+        if (json.result) {
+          const sorted = json.data.sort(
+            (a, b) => new Date(a.dlc) - new Date(b.dlc)
+          );
+          setProducts(sorted);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [isFocused]);
+
+  // ── SUPPRIMER UN PRODUIT ───────────────────────────
+  const deleteOne = async (item) => {
     try {
-      const response = await fetch(
-        `https://conso-maestro-backend-eight.vercel.app/products/${data._id}`,
+      // 🔥 bien utiliser des backticks pour interpoler item._id
+      const res = await fetch(
+        `https://conso-maestro-backend-eight.vercel.app/products/${item._id}`,
+        { method: "DELETE" }
+      );
+      if (!res.ok) throw new Error("Suppression échouée");
+      // mise à jour de l’UI
+      setProducts(prev => prev.filter(p => p._id !== item._id));
+    } catch (err) {
+      console.error("deleteOne error:", err);
+      Alert.alert("Erreur", "Impossible de supprimer ce produit.");
+    }
+  };
+  
+
+  // ── VIDER TOUT ─────────────────────────────────────
+  const clearAll = () => {
+    if (!products.length) return;
+    Alert.alert(
+      "Vider la liste ?",
+      "Supprimer tous les produits à consommer rapidement ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Oui",
+          style: "destructive",
+          onPress: () => {
+            const toDelete = [...products];
+            setProducts([]);
+            // 2. En tâche de fond, on envoie toutes les requêtes DELETE
+            toDelete.forEach(async (p) => {
+              try {
+                await fetch(
+                  `https://conso-maestro-backend-eight.vercel.app/products/${p._id}`,
+                  { method: "DELETE" }
+                );
+              } catch (e) {
+                console.error("Échec suppression produit", p._id, e);
+              }
+            });
+          },
+        },
+      ]
+    );
+  };
+
+  // ── CYCLE LIEU ─────────────────────────────────────
+  const cyclePlace = async (item) => {
+    const places = ["Frigo", "Congelo", "Placard"];
+    const idx = places.indexOf(item.storagePlace);
+    const next = places[(idx + 1) % places.length];
+    try {
+      const res = await fetch(
+        `https://conso-maestro-backend-eight.vercel.app/products/${item._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ newStoragePlace }),
+          body: JSON.stringify({ newStoragePlace: next }),
         }
       );
-      const result = await response.json();
-      if (result.result) {
-        console.log("Produit mis à jour avec succès:", result.message);
-      } else {
-        console.error(
-          "Erreur lors de la mise à jour du produit:",
-          result.message
-        );
-      }
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour du produit:", error);
-    }
-  };
-
-  // Fonction pour gérer le clic sur l'image et changer l'emplacement de stockage
-  const handleImageClick = async (data) => {
-    let newStoragePlace;
-    if (data.storagePlace === "Frigo") {
-      newStoragePlace = "Congelo";
-    } else if (data.storagePlace === "Congelo") {
-      newStoragePlace = "Placard";
-    } else if (data.storagePlace === "Placard") {
-      newStoragePlace = "Frigo";
-    }
-
-    await changementStoragePlace(data, newStoragePlace);
-    setProductsInfo((prevProductsInfo) =>
-      prevProductsInfo.map((product) =>
-        product._id === data._id
-          ? { ...product, storagePlace: newStoragePlace }
-          : product
-      )
-    );
-  };
-
-  // Hook pour récupérer les produits à consommer rapidement
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(
-          `https://conso-maestro-backend-eight.vercel.app/quickconso/${userId}`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        const data = await response.json();
-        if (data.result) {
-          const sortedProducts = data.data.sort(
-            (a, b) => new Date(a.dlc) - new Date(b.dlc)
-          );
-          setProductsInfo(sortedProducts); // Met à jour l'état avec les infos des produits
-        } else {
-          console.error(
-            "Erreur lors de la récupération des produits:",
-            data.message
-          );
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des produits:", error);
-      }
-    };
-
-    fetchProducts();
-  }, [isFocused, refresh]);
-
-  // Fonction pour supprimer un produit
-  const handleProductDelete = async (data) => {
-    try {
-      const response = await fetch(
-        `https://conso-maestro-backend-eight.vercel.app/products/${data._id}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        }
+      const j = await res.json();
+      if (!j.result) throw new Error();
+      setProducts((prev) =>
+        prev
+          .map((p) => (p._id === item._id ? { ...p, storagePlace: next } : p))
+          .filter((p) => !(next === "Congelo" && p._id === item._id))
       );
-      const result = await response.json();
-      if (result.result) {
-        console.log("Produit supprimé avec succès :", result.message);
-        setProductsInfo((prevProductsInfo) =>
-          prevProductsInfo.filter((product) => product._id !== data._id)
-        );
-        setRefresh((prev) => !prev); // Force le rafraîchissement
-      } else {
-        console.error(
-          "Erreur lors de la suppression du produit :",
-          result.message
-        );
-      }
-    } catch (error) {
-      console.error("Erreur lors de la suppression du produit :", error);
+    } catch {
+      Alert.alert("Erreur", "Impossible de changer de lieu.");
     }
   };
 
-  // Fonction pour gérer la couleur de la DLC
-  const handleDlcColor = (dlcDate) => {
-    const today = moment();
-    const expirationDate = moment(dlcDate);
-    const daysRemaining = expirationDate.diff(today, "days");
+  // ── FILTRAGE ────────────────────────────────────────
+  const displayed =
+    filter === "Tous"
+      ? products
+      : products.filter((p) => p.storagePlace === filter);
 
-    // Logique de couleur : Rouge si la DLC est à 2 jours ou moins, Orange si entre 2 et 4 jours, Vert sinon
-    if (daysRemaining < 0) {
-      return styles.blackDlcContainer; // Rouge si dépassée
-    } else if (daysRemaining <= 2) {
-      return styles.redDlcContainer; // Rouge si à 2 jours ou moins
-    } else if (daysRemaining <= 4) {
-      return styles.orangeDlcContainer; // Orange si entre 2 et 4 jours
-    } else {
-      return styles.greenDlcContainer; // Vert sinon
-    }
+  // ── DLC UTILS ───────────────────────────────────────
+  const daysRem = (dlc) => {
+    const d = moment(dlc).diff(moment(), "days");
+    return d < 0 ? "–" : `${d}j`;
   };
-
-  // Fonction pour gérer l'affichage des modals selon les jours restants
-  const handleDlcPress = (dlcDate) => {
-    const today = moment();
-    const expirationDate = moment(dlcDate);
-    const daysRemaining = expirationDate.diff(today, "days");
-
-    if (daysRemaining < 0) {
-      setLateDlcModalVisible(true);
-    } else if (daysRemaining <= 2) {
-      setShortDlcModalVisible(true);
-    } else if (daysRemaining <= 4) {
-      setMiddleDlcModalVisible(true);
-    } else if (daysRemaining > 4) {
-      setLongDlcModalVisible(true);
-    }
+  const badgeColor = (dlc) => {
+    const d = moment(dlc).diff(moment(), "days");
+    if (d < 1) return styles.badgeRed;
+    if (d <= 3) return styles.badgeOrange;
+    if (d <= 4) return styles.badgeYellow;
+    return styles.badgeGreen;
   };
-
-  // Rendu des produits
-  const products = productsInfo.map((data, i) => {
-    const formattedDlc = new Date(data.dlc).toLocaleDateString();
-    let imageSource;
-    let Encart;
-    // Sélection de l'image en fonction de l'emplacement de stockage
-    if (data.storagePlace === "Frigo") {
-      imageSource = require("../assets/frigo.png");
-      Encart = styles.buttonFrigo;
-    } else if (data.storagePlace === "Congelo") {
-      imageSource = require("../assets/congelo.png");
-      Encart = styles.buttonFreezer;
-    } else if (data.storagePlace === "Placard") {
-      imageSource = require("../assets/placard.png");
-      Encart = styles.buttonPlacard;
-    }
-
-    return (
-      <View style={styles.ProductLineContainer} key={data._id}>
-        <Text style={styles.ProductTitle}>{data.name}</Text>
-        <TouchableOpacity onPress={() => handleDlcPress(data.dlc)}>
-          <View style={[styles.DlcContainer, handleDlcColor(data.dlc)]}>
-            <Text style={styles.DlcText}>{formattedDlc}</Text>
-          </View>
-        </TouchableOpacity>
-        <View style={Encart}>
-          <TouchableOpacity onPress={() => handleImageClick(data)}>
-            <Image source={imageSource} style={styles.freezerLogo} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonDelete}>
-          <TouchableOpacity onPress={() => handleProductDelete(data)}>
-            <FontAwesomeIcon
-              icon={faXmark}
-              size={27}
-              color="#FF4C4C"
-              style={styles.iconDelete}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  });
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../assets/Squirrel/Heureux.png")}
-        style={styles.squirrel}
-      />
-      <Text style={styles.PageTitle}>A consommer rapidement !</Text>
-      <View style={styles.productContainer}>
-        <ScrollView style={{ flexGrow: 1 }}>{products}</ScrollView>
+    <SafeAreaView style={styles.screen}>
+      {/* Title + clear */}
+      <View style={styles.topRow}>
+        <View style={styles.titileRow}>
+          <Text style={styles.title}>À consommer</Text>
+          <Text style={styles.titleYellow}>rapidement</Text>
+        </View>
       </View>
 
-      {/* Modales pour la DLC courte  */}
-      <Modal
-        transparent={true}
-        visible={shortDlcModalVisible}
-        animationType="slide"
-        onRequestClose={() => setShortDlcModalVisible(false)}
+      {/* Segmented control */}
+      <View style={styles.filterRow}>
+        {STORAGE_PLACES.map((f, i) => (
+          <React.Fragment key={f}>
+            {i > 0 && <View style={styles.separator} />}
+            <TouchableOpacity
+              style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
+              onPress={() => setFilter(f)}
+            >
+              <Text
+                style={[
+                  styles.filterText,
+                  filter === f && styles.filterTextActive,
+                ]}
+              >
+                {f}
+              </Text>
+            </TouchableOpacity>
+          </React.Fragment>
+        ))}
+      </View>
+
+      {/* Bouton “Tout supprimer” flottant */}
+      <TouchableOpacity
+        style={styles.clearAllFloating}
+        onPress={clearAll}
+        activeOpacity={0.8}
       >
-        <View style={styles.modalContainer}>
-          <Image
-            source={require("../assets/Squirrel/Triste.png")}
-            style={styles.squirrelModal}
-          />
-          <Text style={styles.modalTitle}>
-            Oh non, ton produit va bientôt périmer, cuisine-le vite ! Ton
-            porte-monnaie et la Planète te diront MERCI !
-          </Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setShortDlcModalVisible(false)}
-          >
-            <Text style={styles.closeButtonText}>Fermer</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+        <Ionicons name="trash-outline" size={28} color={COLORS.white} />
+      </TouchableOpacity>
 
-      {/* Modales pour la DLC passé */}
+      {/* Liste avec Swipeable */}
+      <FlatList
+        data={displayed}
+        keyExtractor={(p) => p._id}
+        contentContainerStyle={{ padding: 16 }}
+        ListEmptyComponent={
+          <Text style={styles.empty}>Rien à consommer pour l’instant.</Text>
+        }
+        renderItem={({ item }) => {
+          // actions à droite
+          const renderRightActions = () => (
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.moveBtn]}
+                onPress={() => cyclePlace(item)}
+              >
+                <Ionicons
+                  name="swap-horizontal-outline"
+                  size={20}
+                  color="#fff"
+                />
 
-      <Modal
-        transparent={true}
-        visible={lateDlcModalVisible}
-        animationType="slide"
-        onRequestClose={() => setLateDlcModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <Image
-            source={require("../assets/Squirrel/Triste.png")}
-            style={styles.squirrelModal}
-          />
-          <Text style={styles.modalTitle}>
-            Oh non, ton produit est périmé, tu devrais le mettre au congelateur
-            si possible!
-          </Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setLateDlcModalVisible(false)}
-          >
-            <Text style={styles.closeButtonText}>Fermer</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+                <Text style={styles.actionText}>Déplacer</Text>
+              </TouchableOpacity>
 
-      {/* Modales pour la DLC moyenne */}
+              <View style={styles.separatorSwipe} />
 
-      <Modal
-        transparent={true}
-        visible={middleDlcModalVisible}
-        animationType="slide"
-        onRequestClose={() => setMiddleDlcModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <Image
-            source={require("../assets/Squirrel/Normal.png")}
-            style={styles.squirrelModal}
-          />
-          <Text style={styles.modalTitle}>
-            Ton produit est encore frais, tu peux le garder encore un moment.
-            Mais tu devrais commencer à penser à le consommer, ou le congeler.
-          </Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setMiddleDlcModalVisible(false)}
-          >
-            <Text style={styles.closeButtonText}>Fermer</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.deleteBtn]}
+                onPress={() => deleteOne(item)}
+              >
+                <Ionicons name="trash-outline" size={20} color="#fff" />
+                <Text style={styles.actionText}>Supprimer</Text>
+              </TouchableOpacity>
+            </View>
+          );
 
-      {/* Modales pour la DLC longue */}
-
-      <Modal
-        transparent={true}
-        visible={longDlcModalVisible}
-        animationType="slide"
-        onRequestClose={() => setLongDlcModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <Image
-            source={require("../assets/Squirrel/Heureux.png")}
-            style={styles.squirrelModal}
-          />
-          <Text style={styles.modalTitle}>
-            Ton produit est encore frais, tu peux le garder encore un moment.
-          </Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setLongDlcModalVisible(false)}
-          >
-            <Text style={styles.closeButtonText}>Fermer</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    </View>
+          return (
+            <Swipeable
+              renderRightActions={renderRightActions}
+              overshootRight={false}
+            >
+              <View style={styles.card}>
+                {/* Cercle + icône */}
+                <View
+                  style={[
+                    styles.circle,
+                    item.storagePlace === "Frigo"
+                      ? styles.circleFrigo
+                      : item.storagePlace === "Congelo"
+                      ? styles.circleFreezer
+                      : styles.circlePlacard,
+                  ]}
+                >
+                  <Image
+                    source={ICONS[item.storagePlace]}
+                    style={styles.circleIcon}
+                  />
+                </View>
+                {/* Nom */}
+                <Text style={styles.name}>{item.name}</Text>
+                {/* Badge DLC */}
+                <View style={[styles.badge, badgeColor(item.dlc)]}>
+                  <Text style={styles.badgeText}>{daysRem(item.dlc)}</Text>
+                </View>
+                Chevron indicateur de swipe
+                <View style={styles.swipeHint}>
+                  <Ionicons
+                    name="chevron-back-outline"
+                    size={24}
+                    color={COLORS.lightGreen}
+                  />
+                </View>
+              </View>
+            </Swipeable>
+          );
+        }}
+      />
+    </SafeAreaView>
   );
-};
+}
 
-// Styles pour les différents éléments du composant
+const SPACING = 4;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#EFE5D8", // Couleur de fond de la page
+  screen: { flex: 1, backgroundColor: "#FCF6EC" },
+
+  topRow: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+  },
+  titileRow: {
     alignItems: "center",
     justifyContent: "center",
   },
-  squirrel: {
-    position: "absolute",
-    width: 50,
-    height: 50,
-    top: 50,
-    left: 30,
-  },
-  PageTitle: {
-    color: "#E56400", // Couleur du titre
-    fontFamily: "Hitchcut-Regular",
-    fontSize: 20,
+  title: {
+    fontSize: 35,
+    fontWeight: "700",
+    color: "#a6c297",
     textAlign: "center",
-    marginBottom: 20,
-    top: 10,
   },
-  productContainer: {
-    borderWidth: 1,
-    backgroundColor: "#A77B5A",
-    borderColor: "#A77B5A",
-    width: "85%", // Largeur relative à l'écran
-    height: "65%", // Hauteur relative à l'écran
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 20,
+  titleYellow: {
+    fontSize: 35,
+    fontWeight: "700",
+    color: "#ffb64b",
+    textAlign: "center",
+    marginTop: 4,
+    marginBottom: 10,
   },
-
-  ProductLineContainer: {
+  /* Filter */
+  filterRow: {
     flexDirection: "row",
-    justifyContent: "space-between", // Pour espacer les éléments
-    backgroundColor: "#FAF9F3",
-    borderColor: "#A77B5A",
-    borderWidth: 2,
-    width: "100%",
-    height: 52,
-    borderRadius: 10,
-    padding: 10,
-    alignItems: "center", // Centrer verticalement
-    marginTop: 5,
-    marginBottom: 5,
+    backgroundColor: "#fff5d7",
+    borderRadius: 30,
+    marginHorizontal: 16,
+    marginTop: 12,
+    overflow: "hidden",
   },
-  ProductTitle: {
+  separator: {
+    width: 1,
+    backgroundColor: "#ffb64b",
+    marginVertical: SPACING * 2,
+  },
+  filterBtn: {
     flex: 1,
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#E56400",
-    paddingRight: 30,          // Espace entre le texte et les boutons
-  },
-  DlcButtonContainer: {
+    paddingVertical: 10,
     alignItems: "center",
   },
-  DlcContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: 90,
-    height: 47,
-    borderRadius: 10,
-    padding: 10,
-    marginRight: 2, // Espace entre DlcContainer et buttonFreezer
-    right: 10,
+  filterBtnActive: {
+    backgroundColor: "#ffb64b",
+    borderRadius: 20,
   },
-  DlcText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#FFF",
-  },
-  buttonFreezer: {
-    justifyContent: "center",
-    borderColor: "#A77B5A",
-    borderWidth: 1,
-    width: 50,
-    height: 47,
-    borderRadius: 10,
-    alignItems: "center",
-    right: 5,
-    backgroundColor: "#0d1180",
-  },
-  buttonPlacard: {
-    justifyContent: "center",
-    borderColor: "#A77B5A",
-    borderWidth: 1,
-    width: 50,
-    height: 47,
-    borderRadius: 10,
-    alignItems: "center",
-    right: 5,
-    backgroundColor: "#A77B5A",
-  },
-  buttonFrigo: {
-    justifyContent: "center",
-    borderColor: "#A77B5A",
-    borderWidth: 1,
-    width: 50,
-    height: 47,
-    borderRadius: 10,
-    alignItems: "center",
-    right: 5,
-    backgroundColor: "#64d3df",
-  },
-  freezerLogo: {
-    width: 30,
-    height: 30,
-  },
-  iconDelete: {},
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 20,
-  },
-  squirrelModal: {
-    justifyContent: "center",
-    width: 95,
-    height: 90,
-    marginBottom: 30,
-    padding: 10,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#FFF",
-    marginBottom: 20,
+  filterText: { color: COLORS.text },
+  filterTextActive: { color: COLORS.white, fontWeight: "600" },
+
+  empty: {
     textAlign: "center",
-  },
-  closeButton: {
-    backgroundColor: "#A77B5A",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  closeButtonText: {
-    color: "#FFF",
-    fontSize: 16,
+    color: "#999",
+    marginTop: 40,
   },
 
-  stocksButtonsContainer: {
-    flexDirection: "row", // Aligne les boutons d'accès en ligne
+  /* Card */
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 12,
+    marginBottom: 12,
   },
-  button: {
+  circle: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FAF9F3",
-    borderColor: "#A77B5A",
-    borderWidth: 1,
-    width: 150,
-    height: 70,
+    marginRight: 12,
+  },
+  circleFrigo: { backgroundColor: COLORS.lightGreen },
+  circleFreezer: { backgroundColor: "#fcdc90" },
+  circlePlacard: { backgroundColor: COLORS.lightGreen },
+  circleIcon: { width: 30, height: 30 },
+
+  name: {
+    flex: 1,
+    fontSize: 16,
+    color: COLORS.text,
+    ...Platform.select({
+      ios: { fontWeight: "700" },
+      android: { fontFamily: "sans-serif-medium" },
+    }),
+  },
+
+  badge: {
     borderRadius: 10,
-    padding: 10,
-    marginRight: 16,
-    marginLeft: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginRight: 12,
   },
-  buttonText: {
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#E56400",
+  badgeText: { color: COLORS.white, fontWeight: "600", fontSize: 12 },
+  badgeRed: { backgroundColor: COLORS.red },
+  badgeOrange: { backgroundColor: COLORS.orange },
+  badgeGreen: { backgroundColor: COLORS.lightGreen },
+  badgeYellow: { backgroundColor: COLORS.mustard },
+
+  /* Swipe actions */
+  actionsContainer: {
+    flexDirection: "row",
+    width: 200,
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
-  //couleurs DLC dynamiques
-  redDlcContainer: {
-    backgroundColor: "#FF6347", // Rouge
+  actionBtn: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 12,
+    marginBottom: 12,
   },
-  orangeDlcContainer: {
-    backgroundColor: "#FFA500", // Orange
+  moveBtn: {
+    backgroundColor: COLORS.lightGreen,
+    paddingLeft: 15,
   },
-  greenDlcContainer: {
-    backgroundColor: "#69914a", // Vert
+  separatorSwipe: {
+    width: 1,
+    height: "60%", // 60% de la hauteur de la carte
+    alignSelf: "center",
+    backgroundColor: "#FFF",
+    marginVertical: SPACING * 2,
   },
-  blackDlcContainer: {
-    backgroundColor: "#000000", // Noir
+  deleteBtn: {
+    backgroundColor: COLORS.lightGreen,
+    borderEndEndRadius: 20,
+    borderBottomEndRadius: 20,
+    borderStartEndRadius: 20,
+  },
+  actionText: {
+    color: "#fff",
+    marginTop: 4,
+    fontSize: 12,
+    paddingLeft: 15,
+  },
+
+  clearAllFloating: {
+    position: "absolute",
+    bottom: 100,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: COLORS.red,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
-
-export default QuickConsoScreen;

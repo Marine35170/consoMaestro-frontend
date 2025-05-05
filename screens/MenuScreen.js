@@ -55,7 +55,7 @@ export default function MenuScreen() {
 
       <View style={styles.grid}>
         {items.map(({ key, label, bgColor, onPress }) => {
-          const isYellow = bgColor === '#F7E1A8';
+          const isYellow = bgColor === 'black' || bgColor === '#F7E1A8';
           return (
             <TouchableOpacity
               key={key}
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 36,
+    fontSize: 35,
     fontWeight: '700',
     color: '#ffb64b',
     textAlign: 'center',

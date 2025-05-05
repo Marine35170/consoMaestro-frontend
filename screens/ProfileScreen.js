@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
   },
   username: {
     marginTop: 10,
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: "bold",
     color: "#ffb64b",
   },
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingVertical: 25,
-    borderRadius: 12,
+    borderRadius: 20,
     marginHorizontal: 5,
   },
   cardNumber: {
@@ -320,8 +320,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    paddingVertical: 14,
-    borderRadius: 8,
+    paddingVertical: 16,
+    borderRadius: 20,
     alignItems: "center",
     marginVertical: 6,
   },

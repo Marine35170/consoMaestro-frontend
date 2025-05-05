@@ -1,3 +1,4 @@
+// App.js
 import React, { useEffect } from "react";
 import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -8,6 +9,7 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import HomeScreen from "./screens/HomeScreen";
 import MenuScreen from "./screens/MenuScreen";
@@ -22,7 +24,9 @@ import RappelConsoScreen from "./screens/RappelconsoScreen";
 import userReducer from "./reducers/userReducer";
 
 LogBox.ignoreAllLogs();
-SplashScreen.preventAutoHideAsync();
+
+// On ne prévient plus ici la cache du splash, on gérera ça après le chargement des fonts
+// SplashScreen.preventAutoHideAsync();
 
 const store = configureStore({
   reducer: { user: userReducer },
@@ -39,39 +43,33 @@ function TabNavigator() {
         tabBarShowLabel: false,
         tabBarIcon: ({ focused, color, size }) => {
           let name;
-          if (route.name === "Home") {
+          if (route.name === "Home")
             name = focused ? "barcode" : "barcode-outline";
-          } else if (route.name === "Menu") {
+          if (route.name === "Menu")
             name = focused ? "restaurant" : "restaurant-outline";
-          } else if (route.name === "Profile") {
+          if (route.name === "Profile")
             name = focused ? "person" : "person-outline";
-          }
           return <Ionicons name={name} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#feb54a",
         tabBarInactiveTintColor: "#afa399",
-        tabBarItemStyle: {
-          paddingTop: 10,    // remonte un peu l’icône
-        },
+        tabBarItemStyle: { paddingTop: 8 },
         tabBarStyle: {
-          position: 'absolute',
+          position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
-          height: 70,           // laisse de la place au safe area
-          backgroundColor: 'rgba(255,255,255,0.95)',
+          height: 70,
+          backgroundColor: "rgba(255,255,255,0.95)",
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
-          overflow: 'visible',           // pour ne pas couper les icônes
-          elevation: 5,                  // Android shadow
-          shadowColor: '#000',           // iOS shadow
+          overflow: "visible",
+          elevation: 5,
+          shadowColor: "#000",
           shadowOpacity: 0.1,
           shadowOffset: { width: 0, height: -3 },
-        shadowRadius: 5,    // ← on remonte un peu tout le contenu
-        paddingBottom: 15, 
-        },
-        tabBarItemStyle: {
-          paddingTop: 8,     
+          shadowRadius: 5,
+          paddingBottom: 15,
         },
       })}
     >
@@ -105,25 +103,42 @@ function TabNavigator() {
 }
 
 export default function App() {
-  const [loaded, error] = useFonts({
-    "Hitchcut-Regular": require("./assets/fonts/Hitchcut-Regular.ttf"),
+  // 1️⃣ On appelle useFonts DANS le corps du composant
+  const [fontsLoaded, fontError] = useFonts({
+    // si vous n'utilisez plus "Hitchcut", laissez l'objet vide
+    // ou chargez d'autres polices ici
+    // e.g. "OpenSans-Regular": require("./assets/fonts/OpenSans-Regular.ttf"),
   });
 
+  // 2️⃣ On cache le splash screen dès que les fonts sont chargées (ou en erreur)
   useEffect(() => {
-    if (loaded || error) SplashScreen.hideAsync();
-  }, [loaded, error]);
+    if (fontsLoaded || fontError) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
-  if (!loaded && !error) return null;
+  // 3️⃣ Tant que le chargement des polices n'est pas terminé, on ne rend rien
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
+  // 4️⃣ En cas d'erreur de chargement de police, on log simplement
+  if (fontError) {
+    console.error("Error loading fonts:", fontError);
+    // Vous pouvez choisir de rendre un fallback ici
+  }
 
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="AuthScreen" component={AuthScreen} />
-          <Stack.Screen name="TabNavigator" component={TabNavigator} />
-          <Stack.Screen name="ScanScreen" component={ScanScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="AuthScreen" component={AuthScreen} />
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="ScanScreen" component={ScanScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </GestureHandlerRootView>
   );
 }
