@@ -16,6 +16,8 @@ export default function InventaireScreen() {
   const [productsInfo, setProductsInfo] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
+ 
+
   // ── ➋ Fetch à chaque fois que STORAGE_TYPE ou FOCUS change
   useEffect(() => {
     if (!isFocused) return;
@@ -39,27 +41,42 @@ export default function InventaireScreen() {
     })();
   }, [isFocused, storageType, refresh]);
 
-  // ── ➌ Boutons de choix de stockage
-  const renderStorageButtons = () => (
+ // ── ➌ Boutons de choix de stockage (segmented control)
+const renderStorageButtons = () => {
+  const storageLabels = {
+    frigo:  "Mon Frigo",
+    congelo: "Mon Congélo",
+    placard: "Mes Placards",
+  };
+  const keys = ["frigo", "congelo", "placard"];
+  return (
     <View style={styles.stocksButtonsContainer}>
-      {[
-        { key: "frigo",  label: "Mon Frigo" },
-        { key: "congelo", label: "Mon Congélo" },
-        { key: "placard", label: "Mon Placard" },
-      ].map(({ key, label }) => (
-        <TouchableOpacity
-          key={key}
-          style={[
-            styles.button,
-            storageType === key && styles.buttonActive
-          ]}
-          onPress={() => setStorageType(key)}
-        >
-          <Text style={styles.buttonText}>{label}</Text>
-        </TouchableOpacity>
+      {keys.map((key, i) => (
+        <React.Fragment key={key}>
+          {/* séparateur vertical sauf avant le premier */}
+          {i > 0 && <View style={styles.separator} />}
+          <TouchableOpacity
+            style={[
+              styles.button,
+              storageType === key && styles.buttonActive,
+            ]}
+            onPress={() => setStorageType(key)}
+          >
+            <Text
+              style={[
+                styles.buttonText,
+                storageType === key && styles.buttonTextActive,
+              ]}
+            >
+              {storageLabels[key]}
+            </Text>
+          </TouchableOpacity>
+        </React.Fragment>
       ))}
     </View>
   );
+};
+
 
   const storageLabels = {
     frigo:  "Mon Frigo",
@@ -122,10 +139,10 @@ export default function InventaireScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.PageTitle}>{dynamicTitle}</Text>
+    <Text style={styles.PageTitle}>{dynamicTitle}</Text>
+    {renderStorageButtons()}
+   
 
-      {/* ➌ */}
-      {renderStorageButtons()}
 
       {/* ➍ */}
       <View style={styles.productContainer}>
@@ -139,6 +156,7 @@ export default function InventaireScreen() {
     </View>
   );
 }
+const SPACING = 4;
 
 const styles = StyleSheet.create({
   container: {
@@ -156,6 +174,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
     overflow: "hidden",
     },
+    separator: {
+      width: 1,
+      backgroundColor: "#ffb64b",
+      marginVertical: SPACING * 2,
+    },
   button: {
     flex: 1,
     paddingVertical: 10,
@@ -167,11 +190,15 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 14,
-    color: "#FFF",
-    fontWeight: "600",
-  },
-  buttonTextActive: { color: "#red", fontWeight: "600" },
+    color: "black",
 
+  },
+  buttonTextActive: { 
+    fontSize: 14,
+    color: "#FFF", 
+    fontWeight: "600" 
+  },
+  
   productContainer: {
     flexDirection: "row",
     alignItems: "center",
