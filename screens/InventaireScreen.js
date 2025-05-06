@@ -61,6 +61,13 @@ export default function InventaireScreen() {
     </View>
   );
 
+  const storageLabels = {
+    frigo:  "Mon Frigo",
+    congelo: "Mon Congélo",
+    placard: "Mes Placards",
+  };
+  const dynamicTitle = storageLabels[storageType];
+
   // ── ➍ Rendu des lignes
   const renderProduct = (data, i) => {
     const daysRemaining = moment(data.dlc).diff(moment(), "days");
@@ -115,7 +122,7 @@ export default function InventaireScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.PageTitle}>Mon Frigo</Text>
+      <Text style={styles.PageTitle}>{dynamicTitle}</Text>
 
       {/* ➌ */}
       {renderStorageButtons()}
@@ -163,7 +170,7 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontWeight: "600",
   },
-  buttonTextActive: { color: "#FFF", fontWeight: "600" },
+  buttonTextActive: { color: "#red", fontWeight: "600" },
 
   productContainer: {
     flexDirection: "row",
