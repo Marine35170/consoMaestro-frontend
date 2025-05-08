@@ -1,24 +1,54 @@
 // InventaireScreen.js
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Alert,
+  StyleSheet,
+} from "react-native";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { Swipeable } from "react-native-gesture-handler";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
+// Palette 
+const COLORS = {
+  bg: "#fcf6ec",
+  white: "#fff",
+  text: "#204825",
+  mustard: "#fcdc90",
+  placard: "#EEE3CC",
+  red: "#EF6F5E",
+  orange: "#f5a058",
+  green: "#69914a",
+  lightGreen: "#a6c297",
+  black: "#333333",
+};
+
+// Icônes
+const ICONS = {
+  frigo: require("../assets/frigo.png"),
+  congelo: require("../assets/congelo.png"),
+  placard: require("../assets/placard.png"),
+};
 
 export default function InventaireScreen() {
   const userId = useSelector((s) => s.user.id);
   const isFocused = useIsFocused();
 
-  // ── ➊ On gère localement le storageType
+  // ── États
   const [storageType, setStorageType] = useState("frigo");
-  const [productsInfo, setProductsInfo] = useState([]);
+  const [products, setProducts] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
- 
-
-  // ── ➋ Fetch à chaque fois que STORAGE_TYPE ou FOCUS change
+  // ── Fetch selon storageType
   useEffect(() => {
     if (!isFocused) return;
     (async () => {
@@ -27,211 +57,316 @@ export default function InventaireScreen() {
           `https://conso-maestro-backend-eight.vercel.app/inventaire/${userId}/${storageType}`
         );
         const json = await res.json();
-        if (!json.result) {
-          throw new Error(json.message);
-        }
-        // tri par DLC ascendante
-        setProductsInfo(
+        if (!json.result) throw new Error(json.message);
+        setProducts(
           json.data.sort((a, b) => new Date(a.dlc) - new Date(b.dlc))
         );
       } catch (err) {
-        console.error("Erreur fetch inventaire:", err);
+        console.error(err);
         Alert.alert("Erreur", err.message);
       }
     })();
   }, [isFocused, storageType, refresh]);
 
- // ── ➌ Boutons de choix de stockage (segmented control)
-const renderStorageButtons = () => {
+  // ── Supprimer un produit
+  const deleteOne = async (item) => {
+    try {
+      await fetch(
+        `https://conso-maestro-backend-eight.vercel.app/products/${item._id}`,
+        { method: "DELETE" }
+      );
+      setProducts((p) => p.filter((x) => x._id !== item._id));
+    } catch (err) {
+      console.error("deleteOne error:", err);
+      Alert.alert("Erreur", "Impossible de supprimer ce produit.");
+    }
+  };
+
+  // ── Changer de storage (cycle)
+  const cyclePlace = async (item) => {
+    const order = ["frigo", "congelo", "placard"];
+    const idx = order.indexOf(item.storagePlace.toLowerCase());
+    const next = order[(idx + 1) % order.length];
+    try {
+      const res = await fetch(
+        `https://conso-maestro-backend-eight.vercel.app/products/${item._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newStoragePlace: next }),
+        }
+      );
+      const j = await res.json();
+      if (!j.result) throw new Error();
+      setProducts((prev) =>
+        prev
+          .map((p) =>
+            p._id === item._id ? { ...p, storagePlace: next } : p
+          )
+          // si on congèle, on retire de cette liste
+          .filter((p) =>
+            next === "congelo" && p._id === item._id ? false : true
+          )
+      );
+    } catch {
+      Alert.alert("Erreur", "Impossible de déplacer");
+    }
+  };
+
+  // ── Dynamic title/map des boutons
   const storageLabels = {
-    frigo:  "Mon Frigo",
+    frigo: "Mon Frigo",
     congelo: "Mon Congélo",
     placard: "Mes Placards",
   };
-  const keys = ["frigo", "congelo", "placard"];
+  const options = ["frigo", "congelo", "placard"];
+
+  // ── Utilitaires DLC
+  const daysRem = (dlc) => {
+    const d = moment(dlc).diff(moment(), "days");
+    return d < 0 ? "–" : `${d}j`;
+  };
+  const badgeColor = (dlc) => {
+    const d = moment(dlc).diff(moment(), "days");
+    if (d < 0) return styles.badgeBlack;
+    if (d <= 2) return styles.badgeRed;
+    if (d <= 4) return styles.badgeOrange;
+    return styles.badgeGreen;
+  };
+
   return (
-    <View style={styles.stocksButtonsContainer}>
-      {keys.map((key, i) => (
-        <React.Fragment key={key}>
-          {/* séparateur vertical sauf avant le premier */}
-          {i > 0 && <View style={styles.separator} />}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              storageType === key && styles.buttonActive,
-            ]}
-            onPress={() => setStorageType(key)}
-          >
-            <Text
+    <SafeAreaView style={styles.screen}>
+      {/* Title dynamique */}
+      <Text style={styles.PageTitle}>{storageLabels[storageType]}</Text>
+
+      {/* Segmented control */}
+      <View style={styles.filterRow}>
+        {options.map((key, i) => (
+          <React.Fragment key={key}>
+            {i > 0 && <View style={styles.separator} />}
+            <TouchableOpacity
+              onPress={() => setStorageType(key)}
               style={[
-                styles.buttonText,
-                storageType === key && styles.buttonTextActive,
+                styles.filterBtn,
+                storageType === key && styles.filterBtnActive,
               ]}
             >
-              {storageLabels[key]}
-            </Text>
-          </TouchableOpacity>
-        </React.Fragment>
-      ))}
-    </View>
-  );
-};
-
-
-  const storageLabels = {
-    frigo:  "Mon Frigo",
-    congelo: "Mon Congélo",
-    placard: "Mes Placards",
-  };
-  const dynamicTitle = storageLabels[storageType];
-
-  // ── ➍ Rendu des lignes
-  const renderProduct = (data, i) => {
-    const daysRemaining = moment(data.dlc).diff(moment(), "days");
-    const formatted = daysRemaining < 0 ? "–" : `${daysRemaining}j`;
-    const colorBadge =
-      daysRemaining < 0 ? styles.blackDlcContainer
-      : daysRemaining <= 2 ? styles.redDlcContainer
-      : daysRemaining <= 4 ? styles.orangeDlcContainer
-      : styles.greenDlcContainer;
-
-    // Icone / style selon storageType
-    const icons = {
-      frigo: require("../assets/frigo.png"),
-      congelo: require("../assets/congelo.png"),
-      placard: require("../assets/placard.png"),
-    };
-
-    return (
-      <View style={styles.ProductLineContainer} key={data._id || i}>
-        <Text style={styles.ProductTitle}>{data.name}</Text>
-        <TouchableOpacity onPress={() => Alert.alert("DLC", formatted)}>
-          <View style={[styles.DlcContainer, colorBadge]}>
-            <Text style={styles.DlcText}>{formatted}</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {
-          // rotation logique inchangée
-          const next =
-            data.storagePlace === "Frigo"   ? "Congelo" :
-            data.storagePlace === "Congelo"  ? "Placard" :
-                                                "Frigo";
-          fetch(`https://conso-maestro-backend-eight.vercel.app/products/${data._id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ newStoragePlace: next }),
-          }).then(() => setRefresh(r => !r))
-            .catch(console.error);
-        }}>
-          <Image source={icons[data.storagePlace.toLowerCase()]} style={styles.freezerLogo} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {
-          fetch(`https://conso-maestro-backend-eight.vercel.app/products/${data._id}`, {
-            method: "DELETE"
-          }).then(() => setRefresh(r => !r))
-            .catch(console.error);
-        }}>
-          <FontAwesomeIcon icon={faXmark} size={20} color="#FF4C4C" />
-        </TouchableOpacity>
+              <Text
+                style={[
+                  styles.filterText,
+                  storageType === key && styles.filterTextActive,
+                ]}
+              >
+                {storageLabels[key]}
+              </Text>
+            </TouchableOpacity>
+          </React.Fragment>
+        ))}
       </View>
-    );
-  };
 
-  return (
-    <View style={styles.container}>
-    <Text style={styles.PageTitle}>{dynamicTitle}</Text>
-    {renderStorageButtons()}
-   
+      {/* Liste Swipeable */}
+      <FlatList
+        data={products}
+        keyExtractor={(p) => p._id}
+        contentContainerStyle={{ padding: 16 }}
+        ListEmptyComponent={
+          <Text style={styles.empty}>Aucun produit</Text>
+        }
+        renderItem={({ item }) => {
+          const renderRightActions = () => (
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.moveBtn]}
+                onPress={() => cyclePlace(item)}
+              >
+                <Ionicons
+                  name="swap-horizontal-outline"
+                  size={20}
+                  color="#fff"
+                />
+                <Text style={styles.actionText}>Déplacer</Text>
+              </TouchableOpacity>
+              <View style={styles.separatorSwipe} />
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.deleteBtn]}
+                onPress={() => deleteOne(item)}
+              >
+                <Ionicons name="trash-outline" size={20} color="#fff" />
+                <Text style={styles.actionText}>Supprimer</Text>
+              </TouchableOpacity>
+            </View>
+          );
 
+          return (
+            <Swipeable
+              renderRightActions={renderRightActions}
+              overshootRight={false}
+            >
+              <View style={styles.card}>
+                {/* Cercle icône */}
+                <View
+                  style={[
+                    styles.circle,
+                    item.storagePlace.toLowerCase() === "frigo"
+                      ? styles.circleFrigo
+                      : item.storagePlace.toLowerCase() === "congelo"
+                      ? styles.circleFreezer
+                      : styles.circlePlacard,
+                  ]}
+                >
+                  <Image
+                    source={ICONS[item.storagePlace.toLowerCase()]}
+                    style={styles.circleIcon}
+                  />
+                </View>
 
-      {/* ➍ */}
-      <View style={styles.productContainer}>
-        <ScrollView>
-          {productsInfo.map(renderProduct)}
-          {productsInfo.length === 0 && (
-            <Text style={styles.noProducts}>Aucun produit</Text>
-          )}
-        </ScrollView>
-      </View>
-    </View>
+                {/* Nom */}
+                <Text style={styles.name}>{item.name}</Text>
+
+                {/* Badge DLC */}
+                <View style={[styles.badge, badgeColor(item.dlc)]}>
+                  <Text style={styles.badgeText}>{daysRem(item.dlc)}</Text>
+                </View>
+
+                {/* Indicateur Swipe */}
+                <View style={styles.swipeHint}>
+                  <Ionicons
+                    name="chevron-back-outline"
+                    size={24}
+                    color={COLORS.lightGreen}
+                  />
+                </View>
+              </View>
+            </Swipeable>
+          );
+        }}
+      />
+    </SafeAreaView>
   );
 }
-const SPACING = 4;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, alignItems: "center", paddingTop: 50,
-    backgroundColor: "#FCF6EC",
-  },
+  screen: { flex: 1, backgroundColor: COLORS.bg },
+
+  /* Title + Segmented */
   PageTitle: {
-    fontSize: 35, fontWeight: "700", color: "#ffb64b", marginBottom: 20,
+    fontSize: 35,
+    fontWeight: "700",
+    color: "#ffb64b",
+    textAlign: "center",
+    marginVertical: 12,
   },
-  stocksButtonsContainer: {
+  filterRow: {
     flexDirection: "row",
-    backgroundColor: "#fff5d7",
-    borderRadius: 30,
+    backgroundColor: COLORS.placard,
+    borderRadius: 24,
     marginHorizontal: 16,
-    marginTop: 12,
     overflow: "hidden",
-    },
-    separator: {
-      width: 1,
-      backgroundColor: "#ffb64b",
-      marginVertical: SPACING * 2,
-    },
-  button: {
+  },
+  filterBtn: {
     flex: 1,
-    paddingVertical: 10,
+    padding: 10,
     alignItems: "center",
   },
-  buttonActive: {
+  filterBtnActive: {
     backgroundColor: "#ffb64b",
     borderRadius: 20,
   },
-  buttonText: {
-    fontSize: 14,
-    color: "black",
+  filterText: {
+    color: COLORS.text,
+  },
+  filterTextActive: {
+    color: COLORS.white,
+    fontWeight: "600",
+  },
 
+  /* Empty */
+  empty: {
+    textAlign: "center",
+    color: "#999",
+    marginTop: 40,
   },
-  buttonTextActive: { 
-    fontSize: 14,
-    color: "#FFF", 
-    fontWeight: "600" 
-  },
-  
-  productContainer: {
+
+  /* Card produit */
+  card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF",
+    backgroundColor: COLORS.white,
     borderRadius: 20,
     padding: 12,
     marginBottom: 12,
-  
   },
-  ProductLineContainer: {
-    flexDirection: "row",
+  circle: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     alignItems: "center",
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    padding: 10,
-    marginVertical: 4,
+    justifyContent: "center",
+    marginRight: 12,
   },
-  ProductTitle: {
+  circleFrigo: { backgroundColor: COLORS.lightGreen },
+  circleFreezer: { backgroundColor: COLORS.mustard },
+  circlePlacard: { backgroundColor: COLORS.lightGreen },
+  circleIcon: { width: 28, height: 28 },
+
+  name: {
     flex: 1,
-    fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 16,
+    color: COLORS.text,
   },
-  DlcContainer: {
+
+  badge: {
     borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginHorizontal: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    marginRight: 12,
   },
-  DlcText: { color: "#FFF", fontWeight: "600" },
-  redDlcContainer: { backgroundColor: "#FF6347" },
-  orangeDlcContainer: { backgroundColor: "#FFA500" },
-  greenDlcContainer: { backgroundColor: "#69914a" },
-  blackDlcContainer: { backgroundColor: "#000" },
-  freezerLogo: { width: 24, height: 24, marginHorizontal: 8 },
-  noProducts: { textAlign: "center", marginTop: 20, color: "#444" },
+  badgeText: {
+    color: COLORS.white,
+    fontWeight: "600",
+    fontSize: 12,
+  },
+  badgeRed: { backgroundColor: COLORS.red },
+  badgeOrange: { backgroundColor: COLORS.orange },
+  badgeGreen: { backgroundColor: COLORS.green },
+  badgeBlack: { backgroundColor: COLORS.black },
+
+  /* Swipe actions */
+  actionsContainer: {
+    flexDirection: "row",
+    width: 200,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  actionBtn: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 12,
+    marginBottom: 12,
+  },
+  moveBtn: {
+    backgroundColor: COLORS.lightGreen,
+    paddingLeft: 20,
+  },
+  deleteBtn: {
+    backgroundColor: COLORS.red,
+    borderEndEndRadius: 20,
+    borderBottomEndRadius: 20,
+    borderStartEndRadius: 20,
+  },
+  separatorSwipe: {
+    width: 1,
+    backgroundColor: COLORS.white,
+    marginVertical: 12,
+  },
+  actionText: {
+    color: COLORS.white,
+    fontSize: 12,
+    marginTop: 4,
+  },
+
+  swipeHint: {
+    marginLeft: 8,
+  },
 });

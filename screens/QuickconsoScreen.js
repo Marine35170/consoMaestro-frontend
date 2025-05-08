@@ -42,6 +42,8 @@ const ICONS = {
 export default function QuickConsoScreen() {
   const userId = useSelector((s) => s.user.id);
   const isFocused = useIsFocused();
+
+  // ── États
   const [products, setProducts] = useState([]);
   const [filter, setFilter] = useState("Tous");
 
@@ -174,7 +176,7 @@ export default function QuickConsoScreen() {
       <View style={styles.filterRow}>
         {STORAGE_PLACES.map((f, i) => (
           <React.Fragment key={f}>
-            {i > 0 && <View style={styles.separator} />}
+            {i > 0 && <View/>}
             <TouchableOpacity
               style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
               onPress={() => setFilter(f)}
@@ -191,15 +193,6 @@ export default function QuickConsoScreen() {
           </React.Fragment>
         ))}
       </View>
-
-      {/* Bouton “Tout supprimer” flottant */}
-      <TouchableOpacity
-        style={styles.clearAllFloating}
-        onPress={clearAll}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="trash-outline" size={28} color={COLORS.white} />
-      </TouchableOpacity>
 
       {/* Liste avec Swipeable */}
       <FlatList
@@ -260,13 +253,16 @@ export default function QuickConsoScreen() {
                     style={styles.circleIcon}
                   />
                 </View>
+                
                 {/* Nom */}
                 <Text style={styles.name}>{item.name}</Text>
+               
                 {/* Badge DLC */}
                 <View style={[styles.badge, badgeColor(item.dlc)]}>
                   <Text style={styles.badgeText}>{daysRem(item.dlc)}</Text>
                 </View>
-                Chevron indicateur de swipe
+
+                {/* Indicateur Swipe */}
                 <View style={styles.swipeHint}>
                   <Ionicons
                     name="chevron-back-outline"
@@ -318,11 +314,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     overflow: "hidden",
   },
-  separator: {
-    width: 1,
-    backgroundColor: "#ffb64b",
-    marginVertical: SPACING * 2,
-  },
   filterBtn: {
     flex: 1,
     paddingVertical: 10,
@@ -332,9 +323,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffb64b",
     borderRadius: 20,
   },
-  filterText: { color: COLORS.text },
-  filterTextActive: { color: COLORS.white, fontWeight: "600" },
-
+  filterText: { 
+    color: COLORS.text 
+  },
+  filterTextActive: { 
+    color: COLORS.white, 
+    fontWeight: "600" 
+  },
   empty: {
     textAlign: "center",
     color: "#999",
@@ -411,7 +406,7 @@ const styles = StyleSheet.create({
     marginVertical: SPACING * 2,
   },
   deleteBtn: {
-    backgroundColor: COLORS.lightGreen,
+    backgroundColor: COLORS.red,
     borderEndEndRadius: 20,
     borderBottomEndRadius: 20,
     borderStartEndRadius: 20,
@@ -421,22 +416,5 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     paddingLeft: 15,
-  },
-
-  clearAllFloating: {
-    position: "absolute",
-    bottom: 100,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: COLORS.red,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
   },
 });

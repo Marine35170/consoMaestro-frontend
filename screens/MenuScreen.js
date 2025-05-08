@@ -24,29 +24,29 @@ export default function MenuScreen() {
 
   const items = [
     {
-      key: 'frigo',
-      label: 'Frigo',
-      bgColor: '#F7E1A8',
-      onPress: () => nav.navigate('InventaireScreen', { storageType: 'frigo' }),
-    },
-    {
       key: 'congelo',
       label: 'Congélo',
-      bgColor: '#a6c297',
+      bgColor: '#F7E1A8',
       onPress: () => nav.navigate('InventaireScreen', { storageType: 'congelo' }),
     },
     {
-      key: 'quick',
-      label: 'À consommer\nrapidement',
+      key: 'frigo',
+      label: 'Frigo',
       bgColor: '#a6c297',
-      onPress: () => nav.navigate('QuickConsoScreen'),
+      onPress: () => nav.navigate('InventaireScreen', { storageType: 'frigo' }),
     },
     {
       key: 'placard',
       label: 'Placard',
-      bgColor: '#F7E1A8',
+      bgColor: '#a6c297',
       onPress: () => nav.navigate('InventaireScreen', { storageType: 'placard' }),
     },
+    {
+      key: 'quick',
+      label: 'À consommer\nrapidement',
+      bgColor: '#F7E1A8',
+      onPress: () => nav.navigate('QuickConsoScreen'),
+    }, 
   ];
 
   return (
@@ -67,7 +67,7 @@ export default function MenuScreen() {
               <Text
                 style={[
                   styles.cardLabel,
-                  { color: isYellow ? '#204825' : '#FFFFFF' }
+                  { color: isYellow ? '#000' : '#FFFFFF' }
                 ]}
               >
                 {label}
